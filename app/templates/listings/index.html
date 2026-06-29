@@ -8,6 +8,7 @@
     <h1>Inserate</h1>
     <p class="muted">Alle aktuell gespeicherten Rooms / Apartments.</p>
   </div>
+  <a class="btn btn-primary" href="{{ url_for('listings.new') }}">Neues Inserat</a>
 </div>
 
 {% if listings %}
@@ -27,6 +28,7 @@
 {% else %}
   <div class="card">
     <p>Noch keine Inserate vorhanden. Leg das erste an.</p>
+    <a class="btn btn-primary" href="{{ url_for('listings.new') }}">Inserat erstellen</a>
   </div>
 {% endif %}
 {% endblock %}

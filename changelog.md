@@ -51,7 +51,7 @@ Wohnungs-/Zimmerinseraten.
 **Neu:**
 - `app/forms.py`: `ProfileEditForm` und `ListingForm`
 - `app/models.py`: `Listing`-Modell plus Beziehung `User.listings`
-- `app/routes/profile.py`: `/profile/edit` speichert Budget, Lifestyle, Bio und Foto-URL
+- `app/routes/profile.py`: `/profile/edit` speichert Budget, Lifestyle, Bio und Profilbild
 - `app/routes/listings.py`: `/listings/` Übersicht, `/listings/new` Formular zum Erstellen
 - Templates: `profile_edit.html`, `listings/index.html`, `listings/new.html`
 - Navigation + CSS für Inserate ergänzt

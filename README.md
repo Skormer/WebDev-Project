@@ -37,7 +37,7 @@ pip install -r requirements.txt
 copy .env.example .env        # then fill in values; safe to skip for local dev
 
 # 4. Create the database with sample data
-python seed.py                # builds flatemate.db + 10 dummy users
+python seed.py                # builds flatemate.db + 10 dummy users + 5 dummy listings
 
 # 5. Run the dev server
 python main.py                # http://127.0.0.1:5000
@@ -58,25 +58,32 @@ python main.py                # http://127.0.0.1:5000
 - Schema changes: `db.create_all()` only creates *missing* tables, it does not migrate
   changed columns. Re-run `python seed.py` (rebuilds) or add Flask-Migrate later.
 
+## 🖼️ Image Uploads
+
+Profile pictures and listing photos are uploaded as JPEG files and saved into
+`app/static/uploads/`. The folder is ignored by Git, so uploaded images stay local to
+your workspace. Listing creation uses a file upload, not a public image URL field.
+
 ## 📁 Structure
 
 ```
 config.py                 # env config; SQLite fallback when no DATABASE_URL
 main.py                   # entry point -> create_app()
-seed.py                   # (re)create tables + 10 dummy users
+seed.py                   # (re)create tables + 10 dummy users + 5 listings
 app/
 ├── __init__.py           # app factory: extensions + blueprints
 ├── extensions.py         # db, login_manager
-├── models.py             # User (more tables added in later steps)
-├── forms.py              # LoginForm, RegisterForm
-├── routes/               # auth.py, profile.py
-├── templates/            # base, auth/, profile
-└── static/css/
+├── models.py             # User + Listing
+├── forms.py              # auth, profile, listing forms
+├── routes/               # auth.py, profile.py, listings.py
+├── templates/            # base, auth/, profile, listings/
+└── static/css/           # base styles + responsive listing grid
 ```
 
 ## ✅ Current status
 
-**Step 3 done:** registration/login, viewing profiles, editing your own profile,
-creating listings, and documenting the ER model are implemented. Search,
-matching, chat and the remaining special features follow in later steps per
-[`BUILD_PLAN.md`](BUILD_PLAN.md).
+**Current:** registration/login, viewing profiles, editing your own profile,
+profile status (`suchend` / `anbietend`), creating/listing/detail views, the
+ER model, responsive listing UI, and local JPEG uploads for profile and listing
+images are implemented. Search, matching, chat and the remaining special
+features follow in later steps per [`BUILD_PLAN.md`](BUILD_PLAN.md).

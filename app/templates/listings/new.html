@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Inserat erstellen · FlateMate{% endblock %}
+
+{% block content %}
+<div class="card form-card">
+  <h1>Inserat erstellen</h1>
+  <form method="post" enctype="multipart/form-data" novalidate>
+    {{ form.hidden_tag() }}
+
+    <label>{{ form.title.label }}</label>
+    {{ form.title(class="input") }}
+    {% for e in form.title.errors %}<span class="field-error">{{ e }}</span>{% endfor %}
+
+    <label>{{ form.description.label }}</label>
+    {{ form.description(class="input", rows="5") }}
+    {% for e in form.description.errors %}<span class="field-error">{{ e }}</span>{% endfor %}
+
+    <label>{{ form.rent.label }}</label>
+    {{ form.rent(class="input") }}
+    {% for e in form.rent.errors %}<span class="field-error">{{ e }}</span>{% endfor %}
+
+    <label>{{ form.deposit.label }}</label>
+    {{ form.deposit(class="input") }}
+
+    <label>{{ form.location.label }}</label>
+    {{ form.location(class="input") }}
+    {% for e in form.location.errors %}<span class="field-error">{{ e }}</span>{% endfor %}
+
+    <label>{{ form.room_size.label }}</label>
+    {{ form.room_size(class="input") }}
+
+    <label>{{ form.available_from.label }}</label>
+    {{ form.available_from(class="input", type="date") }}
+
+    <label>{{ form.flatmates.label }}</label>
+    {{ form.flatmates(class="input") }}
+
+    <label>{{ form.foto.label }}</label>
+    {{ form.foto(class="input", accept="image/jpeg") }}
+    {% for e in form.foto.errors %}<span class="field-error">{{ e }}</span>{% endfor %}
+    <p class="muted">Nur JPEG-Dateien (.jpg / .jpeg).</p>
+
+    <div class="checkbox-group">
+      <label>{{ form.furnished() }} {{ form.furnished.label.text }}</label>
+      <label>{{ form.pets_allowed() }} {{ form.pets_allowed.label.text }}</label>
+      <label>{{ form.smoking_allowed() }} {{ form.smoking_allowed.label.text }}</label>
+    </div>
+
+    {{ form.submit(class="btn btn-primary") }}
+  </form>
+  <p class="muted"><a href="{{ url_for('listings.index') }}">Zurück zu den Inseraten</a></p>
+</div>
+{% endblock %}

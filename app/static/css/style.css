@@ -29,6 +29,7 @@ a:hover { text-decoration: underline; }
   border-bottom: 1px solid var(--border);
 }
 .brand { font-weight: 700; font-size: 1.2rem; text-decoration: none; color: var(--text); }
+a.brand:hover { text-decoration: none; }
 .navbar nav a { margin-left: 1.2rem; text-decoration: none; color: var(--primary); }
 
 .container { max-width: 760px; margin: 2rem auto; padding: 0 1rem; }
@@ -54,6 +55,7 @@ label { display: block; margin: 0.8rem 0 0.3rem; font-weight: 600; font-size: 0.
   font-size: 1rem;
 }
 .btn {
+  display: inline-block;
   display: inline-block;
   margin-top: 1.2rem;
   padding: 0.6rem 1.2rem;
@@ -162,6 +164,12 @@ label { display: block; margin: 0.8rem 0 0.3rem; font-weight: 600; font-size: 0.
 .listing-details { margin-top: 1rem; }
 .owner-card h2 { margin: 0; }
 .back-link { margin-top: 1rem; }
+.checkbox-group {
+  margin-top: 1rem;
+}
+.checkbox-group label {
+  font-weight: 500;
+}
 
 @media (max-width: 800px) {
   .listing-detail-layout {

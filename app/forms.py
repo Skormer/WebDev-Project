@@ -51,5 +51,5 @@ class ListingForm(FlaskForm):
     pets_allowed = BooleanField("Haustiere erlaubt")
     smoking_allowed = BooleanField("Rauchen erlaubt")
     flatmates = IntegerField("Anzahl Mitbewohner")
-    photo_url = StringField("Foto-URL", validators=[Length(max=500)])
+    foto = FileField("Bild (JPEG)", validators=[FileAllowed(["jpg", "jpeg"], "Nur JPEG-Bilder erlaubt.")])
     submit = SubmitField("Inserat speichern")

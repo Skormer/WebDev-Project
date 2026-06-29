@@ -67,4 +67,4 @@ class Listing(db.Model):
 def load_user(user_id):
     return db.session.get(User, int(user_id))
 
-# Weitere Tabellen (Listing, Message, ...) folgen in späteren Schritten – siehe BUILD_PLAN.md.
+# Weitere Tabellen (Message, Favorite, Application, ...) folgen in späteren Schritten.
