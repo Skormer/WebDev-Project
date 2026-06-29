@@ -36,6 +36,7 @@ def edit():
             current_user.foto_url = url_for("static", filename=f"uploads/{filename}")
 
         current_user.name = form.name.data.strip()
+        current_user.rolle = form.rolle.data
         current_user.alter = form.alter.data
         current_user.beruf = form.beruf.data.strip() if form.beruf.data else None
         current_user.budget_min = form.budget_min.data

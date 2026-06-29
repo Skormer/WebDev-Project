@@ -25,6 +25,8 @@ class User(UserMixin, db.Model):
     lat = db.Column(db.Float)
     lng = db.Column(db.Float)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    # "suchend" = sucht ein Zimmer/WG, "anbietend" = inseriert ein Zimmer/WG
+    rolle = db.Column(db.String(20), nullable=False, default="suchend")
 
     listings = db.relationship("Listing", backref="owner", lazy=True)
 

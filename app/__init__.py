@@ -30,7 +30,7 @@ def create_app(config_class=Config):
     @app.route("/")
     def index():
         if current_user.is_authenticated:
-            return redirect(url_for("profile.me"))
+            return redirect(url_for("listings.index"))
         return redirect(url_for("auth.login"))
 
     return app

@@ -16,6 +16,10 @@ body {
   color: var(--text);
 }
 
+/* Links standardmäßig ohne Unterstrich, nur beim Hover */
+a { color: var(--primary); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
 .navbar {
   display: flex;
   align-items: center;
@@ -28,6 +32,7 @@ body {
 .navbar nav a { margin-left: 1.2rem; text-decoration: none; color: var(--primary); }
 
 .container { max-width: 760px; margin: 2rem auto; padding: 0 1rem; }
+.container.container-wide { max-width: 1200px; }
 
 .card {
   background: var(--card);
@@ -49,13 +54,17 @@ label { display: block; margin: 0.8rem 0 0.3rem; font-weight: 600; font-size: 0.
   font-size: 1rem;
 }
 .btn {
+  display: inline-block;
   margin-top: 1.2rem;
   padding: 0.6rem 1.2rem;
   border: none;
   border-radius: 8px;
   font-size: 1rem;
   cursor: pointer;
+  text-align: center;
+  text-decoration: none;
 }
+.btn:hover { text-decoration: none; }
 .btn-primary { background: var(--primary); color: #fff; }
 
 .muted { color: var(--muted); }
@@ -76,6 +85,17 @@ label { display: block; margin: 0.8rem 0 0.3rem; font-weight: 600; font-size: 0.
   background: var(--primary); color: #fff; font-size: 1.8rem; font-weight: 700;
 }
 .badge { font-size: 0.7rem; background: var(--primary); color: #fff; padding: 0.1rem 0.5rem; border-radius: 6px; vertical-align: middle; }
+.role-badge {
+  display: inline-block;
+  margin-top: 0.35rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.2rem 0.7rem;
+  border-radius: 999px;
+  color: #fff;
+}
+.role-suchend { background: #1a4fb4; }     /* Auf Wohnungssuche */
+.role-anbietend { background: #1b7a3d; }   /* Bietet ein Inserat an */
 .details { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem 1.5rem; margin: 1rem 0; }
 .details dt { font-size: 0.8rem; color: var(--muted); }
 .details dd { margin: 0; font-weight: 600; }
@@ -91,28 +111,33 @@ label { display: block; margin: 0.8rem 0 0.3rem; font-weight: 600; font-size: 0.
 }
 .listing-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 1rem;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
 }
-.listing-link {
-  color: inherit;
-  text-decoration: none;
+@media (min-width: 600px) {
+  .listing-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (min-width: 900px) {
+  .listing-grid { grid-template-columns: repeat(3, 1fr); }
+}
+.listing-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.listing-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
 }
 .listing-card h2 { margin-top: 0.5rem; }
+.listing-btn { margin-top: auto; align-self: flex-start; text-decoration: none; }
 .listing-image {
   width: 100%;
   height: 180px;
   object-fit: cover;
   border-radius: 10px;
   margin-bottom: 0.75rem;
-}
-.listing-link .listing-card {
-  height: 100%;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
-}
-.listing-link:hover .listing-card {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
 }
 .listing-detail-layout {
   display: grid;

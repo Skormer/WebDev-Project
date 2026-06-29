@@ -15,6 +15,9 @@
         {% if user.beruf %}{{ user.beruf }}{% endif %}
         {% if user.alter %} · {{ user.alter }} Jahre{% endif %}
       </p>
+      <span class="role-badge role-{{ user.rolle }}">
+        {{ 'Bietet ein Inserat an' if user.rolle == 'anbietend' else 'Auf Wohnungssuche' }}
+      </span>
     </div>
   </div>
 

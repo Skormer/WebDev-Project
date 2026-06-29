@@ -1,6 +1,6 @@
 from flask_wtf.file import FileAllowed, FileField
 from flask_wtf import FlaskForm
-from wtforms import BooleanField, DateField, IntegerField, PasswordField, StringField, SubmitField, TextAreaField
+from wtforms import BooleanField, DateField, IntegerField, PasswordField, SelectField, StringField, SubmitField, TextAreaField
 from wtforms.validators import DataRequired, Email, EqualTo, Length
 
 
@@ -23,6 +23,10 @@ class RegisterForm(FlaskForm):
 
 class ProfileEditForm(FlaskForm):
     name = StringField("Name", validators=[DataRequired(), Length(max=120)])
+    rolle = SelectField(
+        "Status",
+        choices=[("suchend", "Auf Wohnungssuche"), ("anbietend", "Bietet ein Inserat an")],
+    )
     alter = IntegerField("Alter")
     beruf = StringField("Beruf", validators=[Length(max=120)])
     budget_min = IntegerField("Minimales Budget")

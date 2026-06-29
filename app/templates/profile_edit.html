@@ -11,6 +11,9 @@
     {{ form.name(class="input") }}
     {% for e in form.name.errors %}<span class="field-error">{{ e }}</span>{% endfor %}
 
+    <label>{{ form.rolle.label }}</label>
+    {{ form.rolle(class="input") }}
+
     <label>{{ form.alter.label }}</label>
     {{ form.alter(class="input") }}
 

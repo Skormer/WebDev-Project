@@ -84,3 +84,29 @@ einen echten JPEG-Dateiupload umgestellt.
 - `.gitignore`: Upload-Ordner ignoriert
 
 **Getestet:** Syntax-/Import-Check der geänderten Flask-Dateien ohne Fehler.
+
+## Schritt 5 — Inserate-UI & Build-Plan überarbeitet (2026-06-29)
+
+Verbesserte Darstellung der Inserate-Übersicht und neue Startseite.
+
+**Neu:**
+- `BUILD_PLAN.md`: Gliederung von Tagen auf **Grundfunktionen / Sonderfunktionen** umgestellt
+- `app/templates/listings/index.html`: Karten sind kein Hyperlink mehr, sondern haben einen
+  **„Details ansehen"-Button**
+- `app/static/css/style.css`: Inserate-Grid responsiv — **3 pro Reihe ab 900px**, 2 ab 600px,
+  1 darunter; breiteres Layout (`container-wide`, max. 1100px)
+- `app/templates/base.html`: `main` nimmt eine optionale Seitenklasse (`main_class`-Block)
+- `app/__init__.py`: Startseite (Logo) zeigt eingeloggt jetzt die **Inserate** statt des Profils
+- `app/static/css/style.css`: Links global ohne Unterstrich (nur beim Hover), `container-wide`
+  auf **1200px** erhöht, Buttons sauber (`text-decoration: none`)
+- **Neues User-Feld `rolle`** (`suchend` / `anbietend`), um eindeutig zu zeigen, ob jemand
+  ein Inserat anbietet oder auf Wohnungssuche ist:
+  - `app/models.py`: Spalte `rolle` (Default `suchend`)
+  - `app/forms.py`: `SelectField` „Status" im Profil-Bearbeiten-Formular
+  - `app/routes/profile.py`: speichert `rolle`
+  - `app/templates/profile.html` + `listings/detail.html`: farbiges Status-Badge
+  - `seed.py`: Inserenten → `anbietend`, restliche User → `suchend`
+
+**Getestet:** App-Boot + Test-Client: `/` → `/listings/` (eingeloggt), Inserate-Grid mit
+Buttons; Profil zeigt Status-Badge; Bearbeiten-Formular wählt den aktuellen Status vor und
+speichert Änderungen. DB neu geseedet (Schema-Änderung).

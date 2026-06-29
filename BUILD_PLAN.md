@@ -44,33 +44,36 @@ Login zum Testen: `lena@example.com` / `test1234`
 1. supabase.com → Projekt erstellen.
 2. Project Settings → Database → Connection string (URI) kopieren.
 3. In `.env` als `DATABASE_URL` einsetzen, `[YOUR-PASSWORD]` ersetzen.
-4. Für Fotos: Storage → Bucket „listings" erstellen (Tag 3).
+4. Für Fotos: Storage → Bucket „listings" erstellen (bei Sonderfunktion Foto-Upload).
 5. ⚠️ Projekt pausiert nach 7 Tagen Inaktivität → vor Bewertung im Dashboard reaktivieren.
 
-## Build-Reihenfolge (Schritt für Schritt)
+## Funktionsumfang (Schritt für Schritt)
 
-### Tag 1 — Fundament ✅ (Gerüst steht)
-- [x] App-Factory, Models, Auth, eigenes Profil, Seed
-- [x] Profil bearbeiten: Formular (Budget, Lifestyle, Bio, Foto-URL) in `profile.py`
-- [x] Inserat erstellen: Formular + Route in `listings.py`
-- [x] ER-Modell dokumentieren (Artefakt)
+Status: `[x]` fertig · `[ ]` offen
 
-### Tag 2 — Grundfunktionen
-- [x] `listings.py`: Detail-View mit Fotos ausbauen (Feature View)
-- [ ] `search.py`: alle Filter (Preis, Zimmer, Ort, Verfügbarkeit) + Template
-- [ ] `search.py`: `match_score()` ausbauen (Budget + Lifestyle gewichten) → Ergebnisse sortieren
-- [ ] `chat.py`: Inbox-Übersicht + Chat-Template fertigstellen
-- [ ] Foto-Upload zu Supabase Storage statt URL-Feld
+### Grundfunktionen (Pflicht — Basis für Note 4.0)
 
-### Tag 3 — Sonderfunktionen (min. 3) + Testing
-- [ ] A: Favoriten speichern/entfernen + Favoriten-Liste
-- [ ] B: Auf Inserat bewerben → `Application` + Status-Handling
-- [ ] C: Email an Inserent bei Bewerbung → Resend HTTP-API (nicht SMTP!)
-- [ ] D: Geo-Suche → Haversine-Distanz + Leaflet-Karte
-- [ ] E: Besichtigungstermin → `Appointment` + Buchungs-UI
+- [x] **Fundament**: App-Factory, Models, Auth (Register/Login/Logout), Seed
+- [x] **View**: eigenes & fremdes Profil anzeigen, Profil bearbeiten
+- [x] **Store**: Daten in DB persistieren (User, Listing)
+- [x] **ER-Modell** dokumentiert (Artefakt)
+- [x] **Inserate**: erstellen (`listings.py`) + Detail-View mit Fotos
+- [ ] **Search**: alle Filter (Preis, Zimmer, Ort, Verfügbarkeit) + Template (`search.py`)
+- [ ] **Match**: `match_score()` ausbauen (Budget + Lifestyle gewichten) → Ergebnisse sortieren
+- [ ] **Chat**: 1:1 Inbox-Übersicht + Chat-Template fertigstellen (`chat.py`)
+- [ ] **Foto-Upload** zu Supabase Storage statt URL-Feld
+
+### Sonderfunktionen (mind. 3 wählen — mehr/besser = bessere Note)
+
+- [ ] **Favoriten** speichern/entfernen + Favoriten-Liste
+- [ ] **Bewerbung** auf Inserat → `Application` + Status-Handling
+- [ ] **Email** an Inserent bei Bewerbung → Resend HTTP-API (nicht SMTP!)
+- [ ] **Geo-Suche** → Haversine-Distanz + Leaflet-Karte
+- [ ] **Besichtigungstermin** → `Appointment` + Buchungs-UI
+
+### Testing, Deployment & Abgabe
+
 - [ ] Test-Prozeduren ausführen → priorisierte Bug-Liste
-
-### Do–Sa — Deploy & Abgabe
 - [ ] `gunicorn` Start-Command auf Render, `DATABASE_URL` als Env-Var
 - [ ] Bugs fixen, UX polieren
 - [ ] Video-Demo (max. 10 Min, alle sprechen), Tagebuch, GitHub-Release + duda/heej

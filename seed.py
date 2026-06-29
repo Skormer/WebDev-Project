@@ -131,9 +131,11 @@ def run():
         db.drop_all()
         db.create_all()
 
+        owner_emails = {listing["owner_email"] for listing in DUMMY_LISTINGS}
         users_by_email = {}
         for data in DUMMY_USERS:
             user = User(**data)
+            user.rolle = "anbietend" if data["email"] in owner_emails else "suchend"
             user.set_password("test1234")
             db.session.add(user)
             users_by_email[user.email] = user
