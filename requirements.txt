@@ -1,5 +1,6 @@
 blinker
 click
+dotenv
 email-validator
 Flask
 python-dotenv

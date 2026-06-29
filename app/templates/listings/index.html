@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Inserate · FlateMate{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1>Inserate</h1>
+    <p class="muted">Alle aktuell gespeicherten Rooms / Apartments.</p>
+  </div>
+</div>
+
+{% if listings %}
+  <div class="listing-grid">
+    {% for listing in listings %}
+      <a class="listing-link" href="{{ url_for('listings.detail', listing_id=listing.id) }}">
+        <article class="card listing-card">
+          {% if listing.photo_url %}
+            <img class="listing-image" src="{{ listing.photo_url }}" alt="{{ listing.title }}">
+          {% endif %}
+          <h2>{{ listing.title }}</h2>
+          <p class="muted">{{ listing.location }} · CHF {{ listing.rent }}</p>
+          <p>{{ listing.description }}</p>
+        </article>
+      </a>
+    {% endfor %}
+  </div>
+{% else %}
+  <div class="card">
+    <p>Noch keine Inserate vorhanden. Leg das erste an.</p>
+  </div>
+{% endif %}
+{% endblock %}

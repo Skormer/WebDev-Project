@@ -26,6 +26,8 @@ class User(UserMixin, db.Model):
     lng = db.Column(db.Float)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
+    listings = db.relationship("Listing", backref="owner", lazy=True)
+
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 
@@ -34,6 +36,29 @@ class User(UserMixin, db.Model):
 
     def __repr__(self):
         return f"<User {self.email}>"
+
+
+class Listing(db.Model):
+    __tablename__ = "listing"
+
+    id = db.Column(db.Integer, primary_key=True)
+    owner_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    title = db.Column(db.String(200), nullable=False)
+    description = db.Column(db.Text, nullable=False)
+    rent = db.Column(db.Integer, nullable=False)
+    deposit = db.Column(db.Integer)
+    location = db.Column(db.String(200), nullable=False)
+    room_size = db.Column(db.Integer)
+    available_from = db.Column(db.Date)
+    furnished = db.Column(db.Boolean, default=False)
+    pets_allowed = db.Column(db.Boolean, default=False)
+    smoking_allowed = db.Column(db.Boolean, default=False)
+    flatmates = db.Column(db.Integer)
+    photo_url = db.Column(db.String(500))
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def __repr__(self):
+        return f"<Listing {self.title}>"
 
 
 @login_manager.user_loader

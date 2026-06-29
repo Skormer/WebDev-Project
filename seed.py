@@ -1,4 +1,4 @@
-"""Legt die Tabellen neu an und füllt 10 Dummy-User ein.
+"""Legt die Tabellen neu an und füllt 10 Dummy-User plus Dummy-Inserate ein.
 
     python seed.py
 
@@ -6,9 +6,11 @@ ACHTUNG: drop_all() löscht bestehende Daten. Login zum Testen:
     lena@example.com / test1234   (Passwort ist bei allen gleich)
 """
 
+from datetime import date
+
 from app import create_app
 from app.extensions import db
-from app.models import User
+from app.models import Listing, User
 
 app = create_app()
 
@@ -45,17 +47,108 @@ DUMMY_USERS = [
      "bio": "Geselliger Typ, organisiere gerne WG-Abende."},
 ]
 
+DUMMY_LISTINGS = [
+    {
+        "owner_email": "lena@example.com",
+        "title": "Helles WG-Zimmer nahe Zürich HB",
+        "description": "Freies Zimmer in einer ruhigen 3er-WG mit großem Balkon und gemeinsamer Küche.",
+        "rent": 820,
+        "deposit": 1600,
+        "location": "Zürich, Kreis 4",
+        "room_size": 18,
+        "available_from": date(2026, 8, 1),
+        "furnished": True,
+        "pets_allowed": False,
+        "smoking_allowed": False,
+        "flatmates": 2,
+        "photo_url": "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85",
+    },
+    {
+        "owner_email": "tim@example.com",
+        "title": "Möblierte Wohnung mit Homeoffice-Platz",
+        "description": "Modernes Apartment mit schnellem Internet, ideal für Homeoffice und ruhiges Arbeiten.",
+        "rent": 1240,
+        "deposit": 2400,
+        "location": "Basel, Gundeldingen",
+        "room_size": 32,
+        "available_from": date(2026, 7, 15),
+        "furnished": True,
+        "pets_allowed": True,
+        "smoking_allowed": False,
+        "flatmates": 0,
+        "photo_url": "https://images.unsplash.com/photo-1494526585095-c41746248156",
+    },
+    {
+        "owner_email": "sara@example.com",
+        "title": "Gemütliches Zimmer in gepflegter WG",
+        "description": "Helles Zimmer mit Blick ins Grüne, ruhige Mitbewohner und gemeinsame Abendessen willkommen.",
+        "rent": 760,
+        "deposit": 1500,
+        "location": "Bern, Länggasse",
+        "room_size": 16,
+        "available_from": date(2026, 9, 1),
+        "furnished": False,
+        "pets_allowed": False,
+        "smoking_allowed": False,
+        "flatmates": 3,
+        "photo_url": "https://images.unsplash.com/photo-1484154218962-a197022b5858",
+    },
+    {
+        "owner_email": "nina@example.com",
+        "title": "Studio für Studierende",
+        "description": "Kleines Studio in Uni-Nähe mit Küche und Bad, perfekt für den Start in der Stadt.",
+        "rent": 690,
+        "deposit": 1200,
+        "location": "Zürich, Oerlikon",
+        "room_size": 24,
+        "available_from": date(2026, 8, 15),
+        "furnished": True,
+        "pets_allowed": False,
+        "smoking_allowed": False,
+        "flatmates": 0,
+        "photo_url": "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688",
+    },
+    {
+        "owner_email": "pascal@example.com",
+        "title": "Große Wohnung mit Gemeinschaftsraum",
+        "description": "Helle Wohnung mit Platz für gemeinsame WG-Abende und guter Anbindung an den ÖV.",
+        "rent": 1320,
+        "deposit": 2600,
+        "location": "Winterthur, Seen",
+        "room_size": 48,
+        "available_from": date(2026, 10, 1),
+        "furnished": False,
+        "pets_allowed": False,
+        "smoking_allowed": True,
+        "flatmates": 1,
+        "photo_url": "https://images.unsplash.com/photo-1494526585095-c41746248156",
+    },
+]
+
 
 def run():
     with app.app_context():
         db.drop_all()
         db.create_all()
+
+        users_by_email = {}
         for data in DUMMY_USERS:
             user = User(**data)
             user.set_password("test1234")
             db.session.add(user)
+            users_by_email[user.email] = user
         db.session.commit()
-        print(f"{len(DUMMY_USERS)} Dummy-User angelegt. Login: lena@example.com / test1234")
+
+        for data in DUMMY_LISTINGS:
+            owner = users_by_email[data.pop("owner_email")]
+            listing = Listing(owner=owner, **data)
+            db.session.add(listing)
+        db.session.commit()
+
+        print(
+            f"{len(DUMMY_USERS)} Dummy-User und {len(DUMMY_LISTINGS)} Dummy-Inserate angelegt. "
+            "Login: lena@example.com / test1234"
+        )
 
 
 if __name__ == "__main__":

@@ -51,12 +51,12 @@ Login zum Testen: `lena@example.com` / `test1234`
 
 ### Tag 1 — Fundament ✅ (Gerüst steht)
 - [x] App-Factory, Models, Auth, eigenes Profil, Seed
-- [ ] Profil bearbeiten: Formular (Budget, Lifestyle, Bio, Foto-URL) in `profile.py`
-- [ ] Inserat erstellen: Formular + Route in `listings.py`
-- [ ] ER-Modell dokumentieren (Artefakt)
+- [x] Profil bearbeiten: Formular (Budget, Lifestyle, Bio, Foto-URL) in `profile.py`
+- [x] Inserat erstellen: Formular + Route in `listings.py`
+- [x] ER-Modell dokumentieren (Artefakt)
 
 ### Tag 2 — Grundfunktionen
-- [ ] `listings.py`: Detail-View mit Fotos ausbauen (Feature View)
+- [x] `listings.py`: Detail-View mit Fotos ausbauen (Feature View)
 - [ ] `search.py`: alle Filter (Preis, Zimmer, Ort, Verfügbarkeit) + Template
 - [ ] `search.py`: `match_score()` ausbauen (Budget + Lifestyle gewichten) → Ergebnisse sortieren
 - [ ] `chat.py`: Inbox-Übersicht + Chat-Template fertigstellen

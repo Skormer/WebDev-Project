@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}{{ listing.title }} · FlateMate{% endblock %}
+
+{% block content %}
+<div class="listing-detail-layout">
+  <section class="card listing-detail-card">
+    {% if listing.photo_url %}
+      <img class="listing-detail-image" src="{{ listing.photo_url }}" alt="{{ listing.title }}">
+    {% endif %}
+
+    <p class="eyebrow">Inserat</p>
+    <h1>{{ listing.title }}</h1>
+    <p class="muted">{{ listing.location }} · CHF {{ listing.rent }}{% if listing.deposit %} · Depot CHF {{ listing.deposit }}{% endif %}</p>
+
+    <dl class="details listing-details">
+      <div><dt>Zimmergröße</dt><dd>{{ listing.room_size or '–' }} m²</dd></div>
+      <div><dt>Verfügbar ab</dt><dd>{{ listing.available_from.strftime('%d.%m.%Y') if listing.available_from else '–' }}</dd></div>
+      <div><dt>Möbliert</dt><dd>{{ 'Ja' if listing.furnished else 'Nein' }}</dd></div>
+      <div><dt>Haustiere erlaubt</dt><dd>{{ 'Ja' if listing.pets_allowed else 'Nein' }}</dd></div>
+      <div><dt>Rauchen erlaubt</dt><dd>{{ 'Ja' if listing.smoking_allowed else 'Nein' }}</dd></div>
+      <div><dt>Mitbewohner</dt><dd>{{ listing.flatmates if listing.flatmates is not none else '–' }}</dd></div>
+    </dl>
+
+    <h2>Beschreibung</h2>
+    <p class="bio">{{ listing.description }}</p>
+  </section>
+
+  <aside class="card owner-card">
+    <p class="eyebrow">Vermieter / Inserent</p>
+    <div class="profile-header">
+      {% if owner.foto_url %}
+        <img class="avatar" src="{{ owner.foto_url }}" alt="Foto von {{ owner.name }}">
+      {% else %}
+        <div class="avatar avatar-placeholder">{{ owner.name[0]|upper }}</div>
+      {% endif %}
+      <div>
+        <h2>{{ owner.name }}</h2>
+        <p class="muted">
+          {% if owner.beruf %}{{ owner.beruf }}{% endif %}
+          {% if owner.alter %} · {{ owner.alter }} Jahre{% endif %}
+        </p>
+      </div>
+    </div>
+
+    <dl class="details listing-details">
+      <div><dt>Email</dt><dd>{{ owner.email }}</dd></div>
+      <div><dt>Budget</dt><dd>{% if owner.budget_min or owner.budget_max %}{{ owner.budget_min or '?' }}–{{ owner.budget_max or '?' }} CHF{% else %}–{% endif %}</dd></div>
+      <div><dt>Raucher</dt><dd>{{ 'Ja' if owner.raucher else 'Nein' }}</dd></div>
+      <div><dt>Haustiere</dt><dd>{{ 'Ja' if owner.haustiere else 'Nein' }}</dd></div>
+      <div><dt>Sauberkeit</dt><dd>{{ owner.sauberkeit ~ ' / 5' if owner.sauberkeit else '–' }}</dd></div>
+    </dl>
+
+    {% if owner.bio %}
+      <h3>Über den Inserenten</h3>
+      <p class="bio">{{ owner.bio }}</p>
+    {% endif %}
+
+    <p class="muted"><a href="{{ url_for('profile.view', user_id=owner.id) }}">Vollständiges Profil öffnen</a></p>
+  </aside>
+</div>
+
+<p class="muted back-link"><a href="{{ url_for('listings.index') }}">Zurück zu den Inseraten</a></p>
+{% endblock %}

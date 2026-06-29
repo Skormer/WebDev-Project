@@ -80,3 +80,66 @@ label { display: block; margin: 0.8rem 0 0.3rem; font-weight: 600; font-size: 0.
 .details dt { font-size: 0.8rem; color: var(--muted); }
 .details dd { margin: 0; font-weight: 600; }
 .bio { line-height: 1.5; }
+
+/* Listings */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+.listing-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1rem;
+}
+.listing-link {
+  color: inherit;
+  text-decoration: none;
+}
+.listing-card h2 { margin-top: 0.5rem; }
+.listing-image {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 10px;
+  margin-bottom: 0.75rem;
+}
+.listing-link .listing-card {
+  height: 100%;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.listing-link:hover .listing-card {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+.listing-detail-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(280px, 0.8fr);
+  gap: 1rem;
+  align-items: start;
+}
+.listing-detail-image {
+  width: 100%;
+  max-height: 360px;
+  object-fit: cover;
+  border-radius: 12px;
+  margin-bottom: 1rem;
+}
+.eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.75rem;
+  color: var(--muted);
+  margin: 0 0 0.5rem;
+}
+.listing-details { margin-top: 1rem; }
+.owner-card h2 { margin: 0; }
+.back-link { margin-top: 1rem; }
+
+@media (max-width: 800px) {
+  .listing-detail-layout {
+    grid-template-columns: 1fr;
+  }
+}

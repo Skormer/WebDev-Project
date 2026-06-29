@@ -39,7 +39,7 @@
   {% endif %}
 
   {% if own %}
-    <p class="muted"><em>Profil bearbeiten folgt in einem späteren Schritt.</em></p>
+    <p class="muted"><a href="{{ url_for('profile.edit') }}">Profil bearbeiten</a></p>
   {% endif %}
 </div>
 {% endblock %}

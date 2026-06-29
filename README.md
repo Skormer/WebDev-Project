@@ -76,6 +76,7 @@ app/
 
 ## ✅ Current status
 
-**Step 1 done:** registration/login with hashed passwords, and viewing your own profile
-(plus other users') from the database. Only the `User` table exists so far; listings,
-search, matching and chat follow in later steps per [`BUILD_PLAN.md`](BUILD_PLAN.md).
+**Step 3 done:** registration/login, viewing profiles, editing your own profile,
+creating listings, and documenting the ER model are implemented. Search,
+matching, chat and the remaining special features follow in later steps per
+[`BUILD_PLAN.md`](BUILD_PLAN.md).

@@ -42,3 +42,45 @@ nur die `User`-Tabelle statt aller 7 (bewusst kleiner Schritt).
 
 **Getestet:** Login (richtig/falsch), Profil-Anzeige mit DB-Daten, Logout,
 Auth-Schutz (`/profile` → Redirect zu `/login`).
+
+## Schritt 2 — Profil bearbeiten & Inserat erstellen (2026-06-29)
+
+Erweiterung des Grundgerüsts um bearbeitbare Profile und das Erstellen von
+Wohnungs-/Zimmerinseraten.
+
+**Neu:**
+- `app/forms.py`: `ProfileEditForm` und `ListingForm`
+- `app/models.py`: `Listing`-Modell plus Beziehung `User.listings`
+- `app/routes/profile.py`: `/profile/edit` speichert Budget, Lifestyle, Bio und Foto-URL
+- `app/routes/listings.py`: `/listings/` Übersicht, `/listings/new` Formular zum Erstellen
+- Templates: `profile_edit.html`, `listings/index.html`, `listings/new.html`
+- Navigation + CSS für Inserate ergänzt
+
+**Getestet:** Syntax-/Import-Check der geänderten Flask-Dateien ohne Fehler.
+
+## Schritt 3 — ER-Modell dokumentiert (2026-06-29)
+
+Das Datenmodell wurde als eigenes Artefakt dokumentiert und in die Projekt-
+Unterlagen eingeordnet.
+
+**Neu:**
+- `temp_flatemate_er_diagram.html`: ER-Diagramm mit 7 Tabellen (User, Listing,
+  ListingPhoto, Application, Favorite, Message, Appointment)
+- `BUILD_PLAN.md`: ER-Modell als erledigt markiert
+
+**Hinweis:** Das Diagramm ist als Browser-Artefakt abgelegt und wächst mit dem
+Projekt mit.
+
+## Schritt 4 — Profilbild-Upload als JPEG (2026-06-29)
+
+Der Profilbild-Eintrag im Bearbeitungsformular wurde von einer URL-Eingabe auf
+einen echten JPEG-Dateiupload umgestellt.
+
+**Neu:**
+- `app/forms.py`: Profilbild als `FileField` mit JPEG-Validierung
+- `app/routes/profile.py`: hochgeladene Bilder werden unter `app/static/uploads/` gespeichert
+- `app/templates/profile_edit.html`: `multipart/form-data` und Datei-Input
+- `app/templates/base.html`: Link „Profil bearbeiten“ aus dem Header entfernt
+- `.gitignore`: Upload-Ordner ignoriert
+
+**Getestet:** Syntax-/Import-Check der geänderten Flask-Dateien ohne Fehler.

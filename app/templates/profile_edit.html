@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Profil bearbeiten · FlateMate{% endblock %}
+
+{% block content %}
+<div class="card form-card">
+  <h1>Profil bearbeiten</h1>
+  <form method="post" enctype="multipart/form-data" novalidate>
+    {{ form.hidden_tag() }}
+
+    <label>{{ form.name.label }}</label>
+    {{ form.name(class="input") }}
+    {% for e in form.name.errors %}<span class="field-error">{{ e }}</span>{% endfor %}
+
+    <label>{{ form.alter.label }}</label>
+    {{ form.alter(class="input") }}
+
+    <label>{{ form.beruf.label }}</label>
+    {{ form.beruf(class="input") }}
+
+    <label>{{ form.budget_min.label }}</label>
+    {{ form.budget_min(class="input") }}
+
+    <label>{{ form.budget_max.label }}</label>
+    {{ form.budget_max(class="input") }}
+
+    <label>{{ form.raucher.label }}</label>
+    {{ form.raucher() }}
+
+    <label>{{ form.haustiere.label }}</label>
+    {{ form.haustiere() }}
+
+    <label>{{ form.sauberkeit.label }}</label>
+    {{ form.sauberkeit(class="input") }}
+
+    <label>{{ form.bio.label }}</label>
+    {{ form.bio(class="input", rows="5") }}
+
+    <label>{{ form.foto.label }}</label>
+    {{ form.foto(class="input", accept="image/jpeg") }}
+    <p class="muted">Nur JPEG-Dateien (.jpg / .jpeg).</p>
+
+    {{ form.submit(class="btn btn-primary") }}
+  </form>
+  <p class="muted"><a href="{{ url_for('profile.me') }}">Zurück zum Profil</a></p>
+</div>
+{% endblock %}
