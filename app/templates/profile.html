@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}{{ user.name }} · FlateMate{% endblock %}
+
+{% block content %}
+<div class="card profile">
+  <div class="profile-header">
+    {% if user.foto_url %}
+      <img class="avatar" src="{{ user.foto_url }}" alt="Foto von {{ user.name }}">
+    {% else %}
+      <div class="avatar avatar-placeholder">{{ user.name[0]|upper }}</div>
+    {% endif %}
+    <div>
+      <h1>{{ user.name }}{% if own %} <span class="badge">Du</span>{% endif %}</h1>
+      <p class="muted">
+        {% if user.beruf %}{{ user.beruf }}{% endif %}
+        {% if user.alter %} · {{ user.alter }} Jahre{% endif %}
+      </p>
+    </div>
+  </div>
+
+  <dl class="details">
+    <div><dt>Email</dt><dd>{{ user.email }}</dd></div>
+    <div><dt>Budget</dt>
+      <dd>
+        {% if user.budget_min or user.budget_max %}
+          {{ user.budget_min or '?' }}–{{ user.budget_max or '?' }} CHF
+        {% else %}–{% endif %}
+      </dd>
+    </div>
+    <div><dt>Raucher</dt><dd>{{ 'Ja' if user.raucher else 'Nein' }}</dd></div>
+    <div><dt>Haustiere</dt><dd>{{ 'Ja' if user.haustiere else 'Nein' }}</dd></div>
+    <div><dt>Sauberkeit</dt><dd>{{ user.sauberkeit ~ ' / 5' if user.sauberkeit else '–' }}</dd></div>
+    <div><dt>Mitglied seit</dt><dd>{{ user.created_at.strftime('%d.%m.%Y') if user.created_at else '–' }}</dd></div>
+  </dl>
+
+  {% if user.bio %}
+    <h2>Über mich</h2>
+    <p class="bio">{{ user.bio }}</p>
+  {% endif %}
+
+  {% if own %}
+    <p class="muted"><em>Profil bearbeiten folgt in einem späteren Schritt.</em></p>
+  {% endif %}
+</div>
+{% endblock %}

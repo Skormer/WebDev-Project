@@ -1,0 +1,82 @@
+:root {
+  --bg: #f5f6f8;
+  --card: #ffffff;
+  --text: #1f2430;
+  --muted: #6b7280;
+  --primary: #2f6fed;
+  --border: #e4e7ec;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.8rem 1.5rem;
+  background: var(--card);
+  border-bottom: 1px solid var(--border);
+}
+.brand { font-weight: 700; font-size: 1.2rem; text-decoration: none; color: var(--text); }
+.navbar nav a { margin-left: 1.2rem; text-decoration: none; color: var(--primary); }
+
+.container { max-width: 760px; margin: 2rem auto; padding: 0 1rem; }
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+.form-card { max-width: 420px; margin: 0 auto; }
+
+h1 { margin-top: 0; }
+
+label { display: block; margin: 0.8rem 0 0.3rem; font-weight: 600; font-size: 0.9rem; }
+.input {
+  width: 100%;
+  padding: 0.6rem 0.7rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 1rem;
+}
+.btn {
+  margin-top: 1.2rem;
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+.btn-primary { background: var(--primary); color: #fff; }
+
+.muted { color: var(--muted); }
+.field-error { color: #d23; font-size: 0.85rem; display: block; }
+
+.flashes { margin-bottom: 1rem; }
+.flash { padding: 0.7rem 1rem; border-radius: 8px; margin-bottom: 0.5rem; }
+.flash-success { background: #e7f6ec; color: #1b7a3d; }
+.flash-danger  { background: #fdeaea; color: #b32424; }
+.flash-warning { background: #fdf6e3; color: #8a6d1b; }
+.flash-info    { background: #e8f0fe; color: #1a4fb4; }
+
+/* Profil */
+.profile-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; }
+.avatar { width: 72px; height: 72px; border-radius: 50%; object-fit: cover; }
+.avatar-placeholder {
+  display: flex; align-items: center; justify-content: center;
+  background: var(--primary); color: #fff; font-size: 1.8rem; font-weight: 700;
+}
+.badge { font-size: 0.7rem; background: var(--primary); color: #fff; padding: 0.1rem 0.5rem; border-radius: 6px; vertical-align: middle; }
+.details { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem 1.5rem; margin: 1rem 0; }
+.details dt { font-size: 0.8rem; color: var(--muted); }
+.details dd { margin: 0; font-weight: 600; }
+.bio { line-height: 1.5; }

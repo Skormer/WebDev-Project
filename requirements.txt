@@ -1,6 +1,8 @@
 blinker
 click
+email-validator
 Flask
+python-dotenv
 Flask-Login
 Flask-SQLAlchemy
 Flask-WTF

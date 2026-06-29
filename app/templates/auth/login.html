@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Login · FlateMate{% endblock %}
+
+{% block content %}
+<div class="card form-card">
+  <h1>Login</h1>
+  <form method="post" novalidate>
+    {{ form.hidden_tag() }}
+    <label>{{ form.email.label }}</label>
+    {{ form.email(class="input", placeholder="lena@example.com") }}
+    {% for e in form.email.errors %}<span class="field-error">{{ e }}</span>{% endfor %}
+
+    <label>{{ form.password.label }}</label>
+    {{ form.password(class="input") }}
+    {% for e in form.password.errors %}<span class="field-error">{{ e }}</span>{% endfor %}
+
+    {{ form.submit(class="btn btn-primary") }}
+  </form>
+  <p class="muted">Noch kein Konto? <a href="{{ url_for('auth.register') }}">Registrieren</a></p>
+</div>
+{% endblock %}

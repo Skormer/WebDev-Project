@@ -1,0 +1,133 @@
+
+<style>
+#erd svg.erDiagram .divider path { stroke-opacity: 0.5; }
+#erd svg.erDiagram .row-rect-odd path,
+#erd svg.erDiagram .row-rect-odd rect,
+#erd svg.erDiagram .row-rect-even path,
+#erd svg.erDiagram .row-rect-even rect { stroke: none !important; }
+#erd { padding: 1rem 0; }
+</style>
+<h2 class="sr-only">ER-Diagramm der FlateMate-Datenbank mit den Tabellen User, Listing, ListingPhoto, Application, Favorite, Message und Appointment</h2>
+<div id="erd"></div>
+<script type="module">
+import mermaid from 'https://esm.sh/mermaid@11/dist/mermaid.esm.min.mjs';
+const dark = matchMedia('(prefers-color-scheme: dark)').matches;
+await document.fonts.ready;
+mermaid.initialize({
+  startOnLoad: false,
+  theme: 'base',
+  fontFamily: '"Anthropic Sans", sans-serif',
+  themeVariables: {
+    darkMode: dark,
+    fontSize: '13px',
+    fontFamily: '"Anthropic Sans", sans-serif',
+    lineColor: dark ? '#9c9a92' : '#73726c',
+    textColor: dark ? '#c2c0b6' : '#3d3d3a',
+  },
+});
+const { svg } = await mermaid.render('erd-svg', `erDiagram
+  USER ||--o{ LISTING : "erstellt"
+  USER ||--o{ APPLICATION : "bewirbt sich"
+  USER ||--o{ FAVORITE : "merkt"
+  USER ||--o{ MESSAGE : "sendet"
+  USER ||--o{ APPOINTMENT : "vereinbart"
+  LISTING ||--o{ LISTING_PHOTO : "hat"
+  LISTING ||--o{ APPLICATION : "erhaelt"
+  LISTING ||--o{ FAVORITE : "ist in"
+  LISTING ||--o{ APPOINTMENT : "betrifft"
+  LISTING ||--o{ MESSAGE : "kontext"
+  USER {
+    int id PK
+    string email UK
+    string password_hash
+    string name
+    int alter
+    string beruf
+    int budget_min
+    int budget_max
+    bool raucher
+    bool haustiere
+    int sauberkeit
+    text bio
+    string foto_url
+    float lat
+    float lng
+    datetime created_at
+  }
+  LISTING {
+    int id PK
+    int owner_id FK
+    string titel
+    text beschreibung
+    string adresse
+    float lat
+    float lng
+    int preis
+    int zimmer
+    int groesse_m2
+    date verfuegbar_ab
+    datetime created_at
+  }
+  LISTING_PHOTO {
+    int id PK
+    int listing_id FK
+    string url
+  }
+  APPLICATION {
+    int id PK
+    int listing_id FK
+    int applicant_id FK
+    text nachricht
+    string status
+    datetime created_at
+  }
+  FAVORITE {
+    int id PK
+    int user_id FK
+    int listing_id FK
+    datetime created_at
+  }
+  MESSAGE {
+    int id PK
+    int sender_id FK
+    int receiver_id FK
+    int listing_id FK
+    text body
+    datetime sent_at
+    datetime read_at
+  }
+  APPOINTMENT {
+    int id PK
+    int listing_id FK
+    int applicant_id FK
+    int owner_id FK
+    datetime scheduled_at
+    string status
+    datetime created_at
+  }`);
+document.getElementById('erd').innerHTML = svg;
+
+document.querySelectorAll('#erd svg.erDiagram .node').forEach(node => {
+  const firstPath = node.querySelector('path[d]');
+  if (!firstPath) return;
+  const d = firstPath.getAttribute('d');
+  const nums = d.match(/-?[\d.]+/g)?.map(Number);
+  if (!nums || nums.length < 8) return;
+  const xs = [nums[0], nums[2], nums[4], nums[6]];
+  const ys = [nums[1], nums[3], nums[5], nums[7]];
+  const x = Math.min(...xs), y = Math.min(...ys);
+  const w = Math.max(...xs) - x, h = Math.max(...ys) - y;
+  const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+  rect.setAttribute('x', x); rect.setAttribute('y', y);
+  rect.setAttribute('width', w); rect.setAttribute('height', h);
+  rect.setAttribute('rx', '8');
+  for (const a of ['fill', 'stroke', 'stroke-width', 'class', 'style']) {
+    if (firstPath.hasAttribute(a)) rect.setAttribute(a, firstPath.getAttribute(a));
+  }
+  firstPath.replaceWith(rect);
+});
+
+document.querySelectorAll('#erd svg.erDiagram .row-rect-odd path, #erd svg.erDiagram .row-rect-even path').forEach(p => {
+  p.setAttribute('stroke', 'none');
+});
+</script>
