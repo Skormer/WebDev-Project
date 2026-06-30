@@ -212,6 +212,18 @@ label { display: block; margin: 0.8rem 0 0.3rem; font-weight: 600; font-size: 0.
   margin: 0 0 0.5rem;
 }
 .listing-details { margin-top: 1rem; }
+.listing-map-section {
+  margin: 1.5rem 0;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+}
+.listing-map {
+  display: block;
+  width: 100%;
+  height: 320px;
+  border: 0;
+  border-radius: 10px;
+}
 .owner-card h2 { margin: 0; }
 .back-link { margin-top: 1rem; }
 .checkbox-group { margin-top: 1rem; }
