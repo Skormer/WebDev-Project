@@ -119,3 +119,26 @@ Verbesserte Darstellung der Inserate-Übersicht und neue Startseite.
 Buttons; Profil zeigt Status-Badge, Stadt & Nationalität; Inserent-Karte ohne Badge/Budget;
 Bearbeiten-Formular wählt den aktuellen Status vor und speichert Änderungen. `lat`/`lng` aus
 dem Schema entfernt, `stadt`/`nationalitaet` vorhanden. DB neu geseedet (Schema-Änderung).
+## Schritt 6 — Inserate filtern und Adressmodell erweitert (2026-06-30)
+
+Die Inserate-Übersicht wurde um Filter erweitert und das Listing-Ortsmodell wurde präziser gemacht.
+
+**Neu / geändert:**
+- `Listing.location` wurde durch `kanton`, `ort` und `strasse` ersetzt.
+- `seed.py`: Dummy-Inserate enthalten Kanton, Ort, Strasse und wieder die ursprünglichen Unsplash-Bild-URLs.
+- `app/routes/listings.py`: Filter für Kanton, Ort, maximale Miete, minimale Zimmergrösse, Verfügbarkeit, Haustiere und Rauchen.
+- `app/templates/listings/index.html`: Kanton-Dropdown, Slider für maximale Miete und minimale Zimmergrösse, Checkboxen für Haustiere/Rauchen.
+- Max-Miete-Slider: 50 bis 3000 CHF; 3000 bedeutet `3000+` und setzt kein oberes Limit.
+- `app/templates/listings/new.html`: Eingabefelder für Kanton, Ort und Strasse.
+- `app/templates/listings/detail.html`: Anzeige von Kanton, Ort und Strasse, Umlaute bereinigt.
+- `app/static/css/style.css`: Styling für Filterpanel, Slider, Checkboxen und Reset-Button.
+
+**Getestet:** Syntax-/Import-Check, Datenbank neu geseedet und Test-Client-Checks für `/listings/`, Filter-URLs, `/listings/new` und `/listings/1`.
+
+## Schritt 7 — Projektgedächtnis aktualisiert (2026-06-30)
+
+Die lokale Arbeitsnotiz wurde erweitert, damit zukünftige Änderungen konsistenter dokumentiert werden.
+
+**Geändert:**
+- `workspace-summary.md`: Hinweis ergänzt, echte deutsche Umlaute (`ö`, `ä`, `ü`, `Ä`, `Ö`, `Ü`, `ß`) zu verwenden.
+- `workspace-summary.md`: Erinnerung ergänzt, nach abgeschlossenen Feature-/Schema-/UI-Änderungen den Changelog im gleichen Turn zu aktualisieren.
