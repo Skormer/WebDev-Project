@@ -15,6 +15,8 @@ class User(UserMixin, db.Model):
     name = db.Column(db.String(120), nullable=False)
     alter = db.Column(db.Integer)
     beruf = db.Column(db.String(120))
+    stadt = db.Column(db.String(120))
+    nationalitaet = db.Column(db.String(120))
     budget_min = db.Column(db.Integer)
     budget_max = db.Column(db.Integer)
     raucher = db.Column(db.Boolean, default=False)
@@ -22,8 +24,6 @@ class User(UserMixin, db.Model):
     sauberkeit = db.Column(db.Integer)  # 1-5
     bio = db.Column(db.Text)
     foto_url = db.Column(db.String(500))
-    lat = db.Column(db.Float)
-    lng = db.Column(db.Float)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     # "suchend" = sucht ein Zimmer/WG, "anbietend" = inseriert ein Zimmer/WG
     rolle = db.Column(db.String(20), nullable=False, default="suchend")

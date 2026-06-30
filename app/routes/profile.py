@@ -39,6 +39,8 @@ def edit():
         current_user.rolle = form.rolle.data
         current_user.alter = form.alter.data
         current_user.beruf = form.beruf.data.strip() if form.beruf.data else None
+        current_user.stadt = form.stadt.data.strip() if form.stadt.data else None
+        current_user.nationalitaet = form.nationalitaet.data.strip() if form.nationalitaet.data else None
         current_user.budget_min = form.budget_min.data
         current_user.budget_max = form.budget_max.data
         current_user.raucher = form.raucher.data

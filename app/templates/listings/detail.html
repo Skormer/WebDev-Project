@@ -39,15 +39,13 @@
           {% if owner.beruf %}{{ owner.beruf }}{% endif %}
           {% if owner.alter %} · {{ owner.alter }} Jahre{% endif %}
         </p>
-        <span class="role-badge role-{{ owner.rolle }}">
-          {{ 'Bietet ein Inserat an' if owner.rolle == 'anbietend' else 'Auf Wohnungssuche' }}
-        </span>
       </div>
     </div>
 
     <dl class="details listing-details">
       <div><dt>Email</dt><dd>{{ owner.email }}</dd></div>
-      <div><dt>Budget</dt><dd>{% if owner.budget_min or owner.budget_max %}{{ owner.budget_min or '?' }}–{{ owner.budget_max or '?' }} CHF{% else %}–{% endif %}</dd></div>
+      <div><dt>Stadt</dt><dd>{{ owner.stadt or '–' }}</dd></div>
+      <div><dt>Nationalität</dt><dd>{{ owner.nationalitaet or '–' }}</dd></div>
       <div><dt>Raucher</dt><dd>{{ 'Ja' if owner.raucher else 'Nein' }}</dd></div>
       <div><dt>Haustiere</dt><dd>{{ 'Ja' if owner.haustiere else 'Nein' }}</dd></div>
       <div><dt>Sauberkeit</dt><dd>{{ owner.sauberkeit ~ ' / 5' if owner.sauberkeit else '–' }}</dd></div>

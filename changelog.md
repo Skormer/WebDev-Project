@@ -107,6 +107,15 @@ Verbesserte Darstellung der Inserate-Übersicht und neue Startseite.
   - `app/templates/profile.html` + `listings/detail.html`: farbiges Status-Badge
   - `seed.py`: Inserenten → `anbietend`, restliche User → `suchend`
 
+**Aufräumen / Anpassungen:**
+- `app/models.py`: ungenutzte Felder `lat` / `lng` beim `User` entfernt (`Listing` hatte keine)
+- **Neue User-Felder `stadt` + `nationalitaet`** (Eingabe im Bearbeiten-Formular, Anzeige im Profil
+  und in der Inserent-Karte; Werte in `seed.py` ergänzt)
+- Inserat-Detail (Inserent-Karte): Status-Badge „Bietet ein Inserat an" entfernt (ohnehin klar)
+  und Budget ausgeblendet (Inserent sucht Mitbewohner, kein Zimmer) — stattdessen Stadt/Nationalität
+- `style.css`: doppelte `display: inline-block;` in `.btn` entfernt
+
 **Getestet:** App-Boot + Test-Client: `/` → `/listings/` (eingeloggt), Inserate-Grid mit
-Buttons; Profil zeigt Status-Badge; Bearbeiten-Formular wählt den aktuellen Status vor und
-speichert Änderungen. DB neu geseedet (Schema-Änderung).
+Buttons; Profil zeigt Status-Badge, Stadt & Nationalität; Inserent-Karte ohne Badge/Budget;
+Bearbeiten-Formular wählt den aktuellen Status vor und speichert Änderungen. `lat`/`lng` aus
+dem Schema entfernt, `stadt`/`nationalitaet` vorhanden. DB neu geseedet (Schema-Änderung).

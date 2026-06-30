@@ -61,7 +61,6 @@ Status: `[x]` fertig · `[ ]` offen
 - [ ] **Search**: alle Filter (Preis, Zimmer, Ort, Verfügbarkeit) + Template (`search.py`)
 - [ ] **Match**: `match_score()` ausbauen (Budget + Lifestyle gewichten) → Ergebnisse sortieren
 - [ ] **Chat**: 1:1 Inbox-Übersicht + Chat-Template fertigstellen (`chat.py`)
-- [ ] **Foto-Upload** zu Supabase Storage statt URL-Feld
 
 ### Sonderfunktionen (mind. 3 wählen — mehr/besser = bessere Note)
 
@@ -70,6 +69,7 @@ Status: `[x]` fertig · `[ ]` offen
 - [ ] **Email** an Inserent bei Bewerbung → Resend HTTP-API (nicht SMTP!)
 - [ ] **Geo-Suche** → Haversine-Distanz + Leaflet-Karte
 - [ ] **Besichtigungstermin** → `Appointment` + Buchungs-UI
+- [ ] **Foto-Upload** zu Supabase Storage statt URL-Feld
 
 ### Testing, Deployment & Abgabe
 

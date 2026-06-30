@@ -29,6 +29,8 @@ class ProfileEditForm(FlaskForm):
     )
     alter = IntegerField("Alter")
     beruf = StringField("Beruf", validators=[Length(max=120)])
+    stadt = StringField("Stadt", validators=[Length(max=120)])
+    nationalitaet = StringField("Nationalität", validators=[Length(max=120)])
     budget_min = IntegerField("Minimales Budget")
     budget_max = IntegerField("Maximales Budget")
     raucher = BooleanField("Raucher")
