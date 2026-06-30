@@ -13,6 +13,29 @@
   {% endif %}
 </div>
 
+<div class="map-cta">
+  <div>
+    <p class="eyebrow">Standorte</p>
+    <strong>Freie Zimmer auf der Karte entdecken</strong>
+  </div>
+  <a class="btn btn-map" href="{{ url_for('listings.map_view') }}">
+    <span class="btn-icon" aria-hidden="true">🗺️</span>
+    Karte öffnen
+  </a>
+</div>
+
+<div class="view-switch" aria-label="Ansicht wechseln">
+  <span class="view-switch-item is-active">Liste</span>
+  <a class="view-switch-item" href="{{ url_for('listings.map_view') }}">
+    <span aria-hidden="true">🗺️</span>
+    Karte
+  </a>
+</div>
+
+<a class="page-up-button" href="#" aria-label="Nach oben">
+  <span aria-hidden="true">↑</span>
+</a>
+
 <form class="card filter-panel" method="get">
   <div class="filter-grid">
     <div>
