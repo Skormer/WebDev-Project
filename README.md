@@ -50,13 +50,18 @@ python main.py                # http://127.0.0.1:5000
 - **No `.env` / no `DATABASE_URL`** → the app uses a local **SQLite file** (`flatemate.db`)
   in the project root. Zero setup, runs immediately. This file is **git-ignored** — it is
   *not* pushed, so each person rebuilds it with `python seed.py`.
-- **`DATABASE_URL` set in `.env`** (e.g. a Supabase Postgres URI) → the same code talks to
+- **`DATABASE_URL` set in `.env`** (a Supabase Postgres URI) → the same code talks to
   that cloud database instead, shared across everyone. The `.env` file is git-ignored, so
-  the connection secret never lands on GitHub.
-- ⚠️ `python seed.py` **drops and recreates all tables**. Fine for local SQLite; be careful
-  once it points at a shared database.
+  the connection secret never lands on GitHub. The Postgres driver `psycopg2-binary` is in
+  `requirements.txt`.
+- **Supabase setup**: Project → Settings → Database → Connection string → **Session pooler**
+  (port 5432, IPv4 — the direct `db.<ref>.supabase.co` host is IPv6-only). Put it in `.env`
+  as `DATABASE_URL` and URL-encode any special characters in the password.
+- ⚠️ `python seed.py` **drops and recreates all tables**. To protect the shared DB, the seeder
+  **refuses to run against a non-SQLite `DATABASE_URL` unless you pass `--force`**:
+  `python seed.py --force` (use deliberately — it wipes the shared data).
 - Schema changes: `db.create_all()` only creates *missing* tables, it does not migrate
-  changed columns. Re-run `python seed.py` (rebuilds) or add Flask-Migrate later.
+  changed columns. Re-run the seeder (rebuilds) or add Flask-Migrate later.
 
 ## 🖼️ Image Uploads
 

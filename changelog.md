@@ -303,3 +303,31 @@ E-Mail-Templates rendern weiterhin korrekt (Logo, Footer, CTA, Wunschtermin).
 **Getestet:** ungültige Eingabe (Miete 0 / Kanton leer) wird abgelehnt, kein Inserat angelegt;
 gültiges Erstellen setzt `rolle=anbietend`; leere Optionalfelder ok; Bearbeiten speichert,
 Nicht-Eigentümer erhält 403.
+
+## Schritt 14 — Datenbank auf Supabase (Postgres) umgestellt (2026-06-30)
+
+Die App kann jetzt eine gehostete **Supabase/Postgres**-DB nutzen (statt nur lokaler SQLite).
+Code war dafür schon vorbereitet (`config.py` liest `DATABASE_URL`); ergänzt wurde der Treiber
+und ein Schutz vor versehentlichem Überschreiben.
+
+**Neu / geändert:**
+- `requirements.txt`: **`psycopg2-binary`** (Postgres-Treiber) ergänzt — ohne ihn schlägt die
+  Verbindung mit `No module named psycopg2` fehl.
+- `config.py`: `SQLALCHEMY_ENGINE_OPTIONS = {"pool_pre_ping": True}` — Supabase schliesst inaktive
+  Verbindungen / pausiert Free-Projekte; pre_ping baut die Verbindung bei Bedarf neu auf.
+- `.env.example`: Hinweis auf **Session-Pooler**-Connection-String (Port 5432, IPv4).
+- `seed.py`: **`--force`-Schutz** — gegen eine externe DB (nicht-SQLite) bricht der Seeder ab,
+  ausser man ruft `python seed.py --force`. Verhindert, dass die geteilte Supabase-DB
+  versehentlich gelöscht/überschrieben wird.
+
+**Setup (Kurz):** Supabase-Projekt → Settings → Database → Connection string → **Session pooler**
+→ in `.env` als `DATABASE_URL` (Passwort einsetzen; Sonderzeichen URL-encoden). Einmalig mit
+`python seed.py --force` befüllen. Direct-Connection (`db.<ref>.supabase.co`) ist IPv6-only →
+Pooler nutzen. Free-Projekt pausiert nach ~7 Tagen Inaktivität.
+
+**Wichtig:** `seed.py --force` löscht & überschreibt ALLE Tabellen der geteilten DB — nur bewusst
+einsetzen. `DATABASE_URL`/Secrets nur via `.env` (gitignored), nie committen.
+
+**Getestet:** Verbindung erfolgreich (PostgreSQL 17.6); Seeder mit `--force` legt Tabellen +
+Dummy-Daten in Supabase an (10 User / 5 Inserate / 3 Bewerbungen / 2 Nachrichten); App-Login und
+Seiten laden gegen Supabase; `--force`-Schutz bricht ohne Flag korrekt ab, ohne Daten zu ändern.

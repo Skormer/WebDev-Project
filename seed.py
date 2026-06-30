@@ -1,11 +1,14 @@
 """Legt die Tabellen neu an und füllt 10 Dummy-User plus Dummy-Inserate ein.
 
-    python seed.py
+    python seed.py            # nur gegen lokale SQLite-DB erlaubt
+    python seed.py --force    # nötig, wenn DATABASE_URL auf eine externe DB zeigt (z. B. Supabase)
 
-ACHTUNG: drop_all() löscht bestehende Daten. Login zum Testen:
+ACHTUNG: drop_all() löscht ALLE Daten. Bei einer geteilten DB (Supabase) trifft das das
+ganze Team — deshalb der --force-Schutz unten. Login zum Testen:
     lena@example.com / test1234   (Passwort ist bei allen gleich)
 """
 
+import sys
 from datetime import date
 
 from app import create_app
@@ -197,4 +200,17 @@ def run():
 
 
 if __name__ == "__main__":
+    uri = app.config["SQLALCHEMY_DATABASE_URI"]
+    is_sqlite = uri.startswith("sqlite")
+    force = "--force" in sys.argv
+
+    if not is_sqlite and not force:
+        target = uri.split("@")[-1]  # ohne Zugangsdaten
+        print("ABBRUCH: DATABASE_URL zeigt auf eine externe DB:")
+        print(f"  {target}")
+        print("seed.py löscht & überschreibt ALLE Tabellen — bei einer geteilten DB (Supabase)")
+        print("verliert das ganze Team seine Daten.")
+        print("Wenn du das wirklich willst:  python seed.py --force")
+        sys.exit(1)
+
     run()

@@ -24,6 +24,9 @@ class Config:
         "sqlite:///" + os.path.join(basedir, "flatemate.db")
     )
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    # Supabase/Postgres schliesst inaktive Verbindungen (und pausiert Free-Projekte) ->
+    # pre_ping prüft die Verbindung vor jeder Nutzung und baut sie bei Bedarf neu auf.
+    SQLALCHEMY_ENGINE_OPTIONS = {"pool_pre_ping": True}
 
     # E-Mail (SendGrid HTTP-API, Single Sender Verification — keine eigene Domain nötig).
     # Ohne SENDGRID_API_KEY oder MAIL_FROM werden Mails nur ins Log geschrieben
