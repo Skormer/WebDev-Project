@@ -169,3 +169,56 @@ Zwei neue Funktionen: auf ein Inserat bewerben und 1:1-Chat mit gespeicherten Na
 **Getestet:** Test-Client end-to-end — bewerben, Doppel-/Eigenbewerbung blockiert, Inserent
 sieht Bewerber, Bewerber sieht Status; Chat: Inbox, Konversation beidseitig, Senden,
 Gelesen-Status, Self-Chat → 400. DB neu geseedet (Schema-Änderung: `application`, `message`).
+
+## Schritt 8 — Favoriten (2026-06-30)
+
+Inserate können jetzt pro User als Favorit gespeichert und wieder entfernt werden.
+Die gemerkten Inserate sind in einer eigenen Favoriten-Übersicht sichtbar.
+
+**Neu — Favorit (`Favorite`):**
+- `app/models.py`: Tabelle `Favorite` (user/listing/created_at), Unique-Constraint pro
+  (User, Inserat)
+- `app/routes/listings.py`: Favoriten-Liste (`/listings/favorites`) und Toggle-Route
+  (`/listings/<id>/favorite`) zum Speichern/Entfernen
+- `app/templates/listings/detail.html`: Stern-Button **„Als Favorit merken"** /
+  **„In Favoriten"** auf der Inserat-Detailseite
+- Neues Template `listings/favorites.html`: Übersicht aller gespeicherten Inserate mit
+  **Entfernen**-Button
+
+**Geändert:**
+- `app/templates/base.html`: Navigationseintrag **Favoriten**
+- `app/static/css/style.css`: Styling für Favoriten-Toggle und Karten-Aktionen
+- `BUILD_PLAN.md`: Favoriten als erledigt markiert
+- `CODEX.md`: Projektstatus und nächste Schritte aktualisiert
+
+**Getestet:** Test-Client end-to-end — Detailseite zeigt Favoriten-Button,
+POST auf `/listings/2/favorite` speichert das Inserat, `/listings/favorites` zeigt es an,
+zweiter POST entfernt es wieder; DB-Count ging `0 → 1 → 0`.
+
+## Schritt 9 — Besichtigungstermine (2026-06-30)
+
+Interessenten können auf einer Inserat-Detailseite einen Besichtigungstermin mit
+Datum und Uhrzeit anfragen. Inserenten sehen die Anfragen gesammelt und können
+sie annehmen oder ablehnen; alternative Zeiten laufen bewusst über den bestehenden Chat.
+
+**Neu — Besichtigung (`Appointment`):**
+- `app/models.py`: Tabelle `Appointment` (listing/applicant/owner/scheduled_at/nachricht/status/created_at)
+- `app/forms.py`: `AppointmentForm` mit `datetime-local`-Feld und optionaler Nachricht
+- `app/routes/listings.py`: Route zum Senden einer Anfrage
+  (`/listings/<id>/appointments/request`)
+- `app/routes/listings.py`: Owner-Übersicht (`/listings/<id>/appointments`) mit offenen und
+  bearbeiteten Anfragen
+- `app/routes/listings.py`: Annahme/Ablehnung über
+  `/listings/<id>/appointments/<appointment_id>/<decision>`
+- Neues Template `listings/appointments.html`: Verwaltung der Besichtigungsanfragen
+
+**Geändert:**
+- `app/templates/listings/detail.html`: Formular **Besichtigung anfragen**, eigene
+  Anfrage-Statusliste und Owner-Link **Besichtigungen (N)**
+- `app/static/css/style.css`: Styling für Owner-Aktionen, Terminliste und Status-Badges
+- `BUILD_PLAN.md`: Besichtigungstermin als erledigt markiert
+- `CODEX.md`: Projektstatus und nächste Schritte aktualisiert
+
+**Getestet:** Test-Client end-to-end — Anfrage über `/listings/2/appointments/request`
+gesendet, Owner-Seite `/listings/2/appointments` geöffnet, Anfrage angenommen und
+Status auf `angenommen` geprüft.

@@ -1,11 +1,15 @@
 {% extends "base.html" %}
 {% block title %}{{ listing.title }} · FlateMate{% endblock %}
+{% block main_class %}container-wide{% endblock %}
 
 {% block content %}
 {% if is_owner %}
   <div class="owner-bar card">
     <span class="muted">Das ist dein Inserat.</span>
-    <a class="btn btn-primary" href="{{ url_for('listings.applications', listing_id=listing.id) }}">Bewerbungen ({{ application_count }})</a>
+    <div class="owner-actions">
+      <a class="btn btn-primary" href="{{ url_for('listings.applications', listing_id=listing.id) }}">Bewerbungen ({{ application_count }})</a>
+      <a class="btn btn-secondary" href="{{ url_for('listings.appointments', listing_id=listing.id) }}">Besichtigungen ({{ appointment_count }})</a>
+    </div>
   </div>
 {% endif %}
 <div class="listing-detail-layout">
@@ -16,6 +20,16 @@
 
     <p class="eyebrow">Inserat</p>
     <h1>{{ listing.title }}</h1>
+    {% if not is_owner %}
+      <form class="favorite-form" method="post" action="{{ url_for('listings.toggle_favorite', listing_id=listing.id) }}">
+        {{ favorite_form.hidden_tag() }}
+        <input type="hidden" name="next" value="{{ request.full_path }}">
+        <button class="favorite-toggle {% if is_favorite %}is-active{% endif %}" type="submit" aria-pressed="{{ 'true' if is_favorite else 'false' }}">
+          <span class="favorite-icon" aria-hidden="true">&#9733;</span>
+          {{ 'In Favoriten' if is_favorite else 'Als Favorit merken' }}
+        </button>
+      </form>
+    {% endif %}
     <p class="muted">{{ listing.kanton }} · {{ listing.ort }}{% if listing.strasse %} · {{ listing.strasse }}{% endif %} · CHF {{ listing.rent }}{% if listing.deposit %} · Depot CHF {{ listing.deposit }}{% endif %}</p>
 
     <dl class="details listing-details">
@@ -32,6 +46,31 @@
     <p class="bio">{{ listing.description }}</p>
 
     {% if not is_owner %}
+      <div class="apply-box">
+        <h2>Besichtigung anfragen</h2>
+        <form method="post" action="{{ url_for('listings.request_appointment', listing_id=listing.id) }}">
+          {{ appointment_form.hidden_tag() }}
+          <label>{{ appointment_form.scheduled_at.label }}</label>
+          {{ appointment_form.scheduled_at(class="input", type="datetime-local") }}
+          {% for e in appointment_form.scheduled_at.errors %}<span class="field-error">{{ e }}</span>{% endfor %}
+          <label>{{ appointment_form.nachricht.label }}</label>
+          {{ appointment_form.nachricht(class="input", rows="3", placeholder="Optional: Was passt dir zeitlich?") }}
+          {{ appointment_form.submit(class="btn btn-primary") }}
+        </form>
+
+        {% if my_appointments %}
+          <h3>Deine Anfragen</h3>
+          <ul class="appointment-list">
+            {% for appointment in my_appointments %}
+              <li>
+                <strong>{{ appointment.scheduled_at.strftime('%d.%m.%Y %H:%M') }}</strong>
+                <span class="badge status-{{ appointment.status }}">{{ appointment.status }}</span>
+              </li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+      </div>
+
       <div class="apply-box">
         {% if my_application %}
           <div class="flash flash-info">Du hast dich beworben — Status: {{ my_application.status }}</div>

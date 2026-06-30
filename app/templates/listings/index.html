@@ -19,9 +19,9 @@
       <label for="kanton">Kanton</label>
       <select id="kanton" class="input" name="kanton">
         <option value="">Alle</option>
-        <option value="ZH" {% if filters.kanton == 'ZH' %}selected{% endif %}>ZH</option>
-        <option value="BE" {% if filters.kanton == 'BE' %}selected{% endif %}>BE</option>
-        <option value="BS" {% if filters.kanton == 'BS' %}selected{% endif %}>BS</option>
+        {% for kanton in available_kantons %}
+          <option value="{{ kanton }}" {% if filters.kanton == kanton %}selected{% endif %}>{{ kanton }}</option>
+        {% endfor %}
       </select>
     </div>
     <div>
@@ -37,8 +37,14 @@
       <input id="room_size_min" type="range" min="0" max="60" step="1" name="room_size_min" value="{{ filters.room_size_min or 0 }}" data-empty-label="Egal" data-suffix=" m²">
     </div>
     <div>
-      <label for="available_by">Verfügbar bis</label>
+      <label for="available_by">Verfügbar ab</label>
       <input id="available_by" class="input" type="date" name="available_by" value="{{ filters.available_by }}">
+    </div>
+    <div class="filter-checkbox">
+      <label for="furnished">
+        <input id="furnished" type="checkbox" name="furnished" value="yes" {% if filters.furnished == 'yes' %}checked{% endif %}>
+        Möbliert
+      </label>
     </div>
     <div class="filter-checkbox">
       <label for="pets_allowed">
