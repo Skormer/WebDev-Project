@@ -198,6 +198,43 @@ def favorites():
     )
 
 
+@listings_bp.route("/map")
+@login_required
+def map_view():
+    listings = Listing.query.order_by(Listing.created_at.desc()).all()
+    map_listings = [
+        {
+            "title": listing.title,
+            "description": listing.description,
+            "rent": listing.rent,
+            "deposit": listing.deposit,
+            "room_size": listing.room_size,
+            "available_from": listing.available_from.strftime("%d.%m.%Y") if listing.available_from else None,
+            "furnished": listing.furnished,
+            "pets_allowed": listing.pets_allowed,
+            "smoking_allowed": listing.smoking_allowed,
+            "photo_url": listing.photo_url,
+            "address": ", ".join(
+                part
+                for part in [
+                    listing.strasse,
+                    listing.ort,
+                    listing.kanton,
+                    "Switzerland",
+                ]
+                if part
+            ),
+            "detail_url": url_for("listings.detail", listing_id=listing.id),
+        }
+        for listing in listings
+    ]
+    return render_template(
+        "listings/map.html",
+        listings=listings,
+        map_listings=map_listings,
+    )
+
+
 @listings_bp.route("/<int:listing_id>")
 @login_required
 def detail(listing_id):

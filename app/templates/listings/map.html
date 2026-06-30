@@ -1,0 +1,185 @@
+{% extends "base.html" %}
+{% block title %}Inserate Karte · FlateMate{% endblock %}
+{% block main_class %}container-wide{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1>Inserate Karte</h1>
+    <p class="muted">{{ listings|length }} verfügbare Inserate auf der Karte.</p>
+  </div>
+  <div class="page-actions">
+    {% if not current_user.listings %}
+      <a class="btn btn-primary" href="{{ url_for('listings.new') }}">Neues Inserat</a>
+    {% endif %}
+  </div>
+</div>
+
+<div class="view-switch" aria-label="Ansicht wechseln">
+  <a class="view-switch-item" href="{{ url_for('listings.index') }}">
+    <span aria-hidden="true">☰</span>
+    Liste
+  </a>
+  <span class="view-switch-item is-active">
+    <span aria-hidden="true">🗺️</span>
+    Karte
+  </span>
+</div>
+
+<a class="page-up-button" href="#" aria-label="Nach oben">
+  <span aria-hidden="true">↑</span>
+</a>
+
+{% if listings %}
+  <div class="map-page-layout">
+    <section class="card map-card">
+      {% if config.GOOGLE_MAPS_API_KEY %}
+        <div id="listings-map" class="listings-map" aria-label="Karte mit Inseraten"></div>
+      {% else %}
+        <div class="map-empty">
+          <p class="muted">Google Maps API Key fehlt. Bitte GOOGLE_MAPS_API_KEY in .env setzen.</p>
+        </div>
+      {% endif %}
+    </section>
+
+    <aside class="card map-detail-card" id="map-detail-card">
+      <div class="map-detail-empty">
+        <p class="eyebrow">Karte</p>
+        <h2>Inserat auswählen</h2>
+        <p class="muted">Klicke auf einen Marker, um hier die Wohnungsdetails zu sehen.</p>
+      </div>
+    </aside>
+  </div>
+{% else %}
+  <div class="card">
+    <p>Noch keine Inserate gefunden.</p>
+    <a class="btn btn-primary" href="{{ url_for('listings.new') }}">Inserat erstellen</a>
+  </div>
+{% endif %}
+
+{% if config.GOOGLE_MAPS_API_KEY and listings %}
+  <script>
+    const listingsForMap = {{ map_listings|tojson }};
+
+    window.initListingsMap = () => {
+      const swissCenter = { lat: 46.8182, lng: 8.2275 };
+      const map = new google.maps.Map(document.getElementById('listings-map'), {
+        center: swissCenter,
+        zoom: 8,
+        mapTypeControl: false,
+        streetViewControl: false,
+        fullscreenControl: true,
+      });
+      const geocoder = new google.maps.Geocoder();
+      const bounds = new google.maps.LatLngBounds();
+      const infoWindow = new google.maps.InfoWindow();
+      const detailCard = document.getElementById('map-detail-card');
+      let markersPlaced = 0;
+
+      const createMetaItem = (label, value) => {
+        const item = document.createElement('div');
+        const term = document.createElement('dt');
+        const detail = document.createElement('dd');
+        term.textContent = label;
+        detail.textContent = value || '-';
+        item.append(term, detail);
+        return item;
+      };
+
+      const renderListingDetail = (listing) => {
+        detailCard.replaceChildren();
+
+        if (listing.photo_url) {
+          const image = document.createElement('img');
+          image.className = 'map-detail-image';
+          image.src = listing.photo_url;
+          image.alt = listing.title;
+          detailCard.append(image);
+        }
+
+        const eyebrow = document.createElement('p');
+        eyebrow.className = 'eyebrow';
+        eyebrow.textContent = 'Ausgewähltes Inserat';
+
+        const title = document.createElement('h2');
+        title.textContent = listing.title;
+
+        const address = document.createElement('p');
+        address.className = 'muted';
+        address.textContent = listing.address;
+
+        const details = document.createElement('dl');
+        details.className = 'details map-detail-list';
+        details.append(
+          createMetaItem('Miete', `CHF ${listing.rent}`),
+          createMetaItem('Depot', listing.deposit ? `CHF ${listing.deposit}` : null),
+          createMetaItem('Zimmergrösse', listing.room_size ? `${listing.room_size} m²` : null),
+          createMetaItem('Verfügbar ab', listing.available_from),
+          createMetaItem('Möbliert', listing.furnished ? 'Ja' : 'Nein'),
+          createMetaItem('Haustiere', listing.pets_allowed ? 'Ja' : 'Nein'),
+          createMetaItem('Rauchen', listing.smoking_allowed ? 'Ja' : 'Nein')
+        );
+
+        const description = document.createElement('p');
+        description.className = 'bio map-detail-description';
+        description.textContent = listing.description;
+
+        const link = document.createElement('a');
+        link.className = 'btn btn-primary';
+        link.href = listing.detail_url;
+        link.textContent = 'Details ansehen';
+
+        detailCard.append(eyebrow, title, address, details, description, link);
+      };
+
+      listingsForMap.forEach((listing) => {
+        geocoder.geocode({ address: listing.address }, (results, status) => {
+          if (status !== 'OK' || !results[0]) return;
+
+          const position = results[0].geometry.location;
+          const marker = new google.maps.Marker({
+            map,
+            position,
+            title: listing.title,
+          });
+
+          marker.addListener('click', () => {
+            renderListingDetail(listing);
+
+            const content = document.createElement('div');
+            content.className = 'map-info-window';
+
+            const title = document.createElement('strong');
+            title.textContent = listing.title;
+
+            const rent = document.createElement('span');
+            rent.textContent = `CHF ${listing.rent}`;
+
+            const link = document.createElement('a');
+            link.href = listing.detail_url;
+            link.textContent = 'Details ansehen';
+
+            content.append(title, rent, link);
+            infoWindow.setContent(content);
+            infoWindow.open(map, marker);
+          });
+
+          bounds.extend(position);
+          markersPlaced += 1;
+          if (markersPlaced === 1) {
+            map.setCenter(position);
+            map.setZoom(13);
+          } else {
+            map.fitBounds(bounds);
+          }
+        });
+      });
+    };
+  </script>
+  <script
+    src="https://maps.googleapis.com/maps/api/js?key={{ config.GOOGLE_MAPS_API_KEY|urlencode }}&callback=initListingsMap"
+    async
+    defer>
+  </script>
+{% endif %}
+{% endblock %}
