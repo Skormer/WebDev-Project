@@ -16,6 +16,7 @@ def _normalize_db_url(url):
 
 class Config:
     SECRET_KEY = os.environ.get("SECRET_KEY", "dev-secret-change-me")
+    GOOGLE_MAPS_API_KEY = os.environ.get("GOOGLE_MAPS_API_KEY", "")
 
     # Falls keine DATABASE_URL gesetzt ist -> lokale SQLite-Datei (läuft sofort ohne Setup).
     # Für Supabase/Postgres einfach DATABASE_URL in .env eintragen.

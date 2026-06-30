@@ -42,6 +42,26 @@
       <div><dt>Mitbewohner</dt><dd>{{ listing.flatmates if listing.flatmates is not none else '–' }}</dd></div>
     </dl>
 
+    {% set map_address = ((listing.strasse ~ ', ') if listing.strasse else '') ~ listing.ort ~ ', ' ~ listing.kanton ~ ', Switzerland' %}
+    <section class="listing-map-section" aria-label="Karte">
+      <h2>Lage</h2>
+      {% if config.GOOGLE_MAPS_API_KEY %}
+        <iframe
+          class="listing-map"
+          title="Karte fuer {{ listing.title }}"
+          loading="lazy"
+          allowfullscreen
+          referrerpolicy="no-referrer-when-downgrade"
+          src="https://www.google.com/maps/embed/v1/place?key={{ config.GOOGLE_MAPS_API_KEY|urlencode }}&q={{ map_address|urlencode }}">
+        </iframe>
+      {% else %}
+        <p class="muted">
+          Google Maps API Key fehlt. Adresse:
+          <a href="https://www.google.com/maps/search/?api=1&query={{ map_address|urlencode }}" target="_blank" rel="noopener">{{ map_address }}</a>
+        </p>
+      {% endif %}
+    </section>
+
     <h2>Beschreibung</h2>
     <p class="bio">{{ listing.description }}</p>
 
