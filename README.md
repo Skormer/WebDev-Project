@@ -73,17 +73,19 @@ seed.py                   # (re)create tables + 10 dummy users + 5 listings
 app/
 ├── __init__.py           # app factory: extensions + blueprints
 ├── extensions.py         # db, login_manager
-├── models.py             # User + Listing
-├── forms.py              # auth, profile, listing forms
-├── routes/               # auth.py, profile.py, listings.py
-├── templates/            # base, auth/, profile, listings/
+├── models.py             # User, Listing, Application, Message
+├── forms.py              # auth, profile, listing, application, message forms
+├── routes/               # auth.py, profile.py, listings.py, chat.py
+├── templates/            # base, auth/, profile, listings/, chat/
 └── static/css/           # base styles + responsive listing grid
 ```
 
 ## ✅ Current status
 
 **Current:** registration/login, viewing profiles, editing your own profile,
-profile status (`suchend` / `anbietend`), creating/listing/detail views, the
-ER model, responsive listing UI, and local JPEG uploads for profile and listing
-images are implemented. Search, matching, chat and the remaining special
-features follow in later steps per [`BUILD_PLAN.md`](BUILD_PLAN.md).
+profile status (`suchend` / `anbietend`), creating/listing/detail views with
+address split into Kanton/Ort/Strasse, **search filters** on the listings
+overview, the ER model, responsive listing UI, local JPEG uploads, applying to a
+listing (owner manages applicants and can reject), and 1:1 chat with persisted
+messages + read status are implemented. **Matching** follows in a later step per
+[`BUILD_PLAN.md`](BUILD_PLAN.md).

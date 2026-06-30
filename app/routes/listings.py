@@ -2,13 +2,13 @@ import os
 from datetime import date
 from uuid import uuid4
 
-from flask import Blueprint, flash, redirect, render_template, request, url_for
+from flask import Blueprint, abort, flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required
 from werkzeug.utils import secure_filename
 
 from ..extensions import db
-from ..forms import ListingForm
-from ..models import Listing
+from ..forms import ApplicationForm, ConfirmForm, ListingForm
+from ..models import Application, Listing
 
 listings_bp = Blueprint("listings", __name__, url_prefix="/listings")
 
@@ -88,6 +88,11 @@ def index():
 @listings_bp.route("/new", methods=["GET", "POST"])
 @login_required
 def new():
+    # Pro User nur ein Inserat (siehe BUILD_PLAN.md).
+    if current_user.listings:
+        flash("Du hast bereits ein Inserat – pro Person ist nur eines möglich.", "info")
+        return redirect(url_for("listings.detail", listing_id=current_user.listings[0].id))
+
     form = ListingForm()
     if form.validate_on_submit():
         photo_url = None
@@ -130,4 +135,97 @@ def new():
 @login_required
 def detail(listing_id):
     listing = Listing.query.get_or_404(listing_id)
-    return render_template("listings/detail.html", listing=listing, owner=listing.owner)
+    is_owner = listing.owner_id == current_user.id
+
+    application_count = 0
+    my_application = None
+    if is_owner:
+        # Nur offene (nicht abgelehnte) Bewerbungen zählen.
+        application_count = Application.query.filter(
+            Application.listing_id == listing.id, Application.status != "abgelehnt"
+        ).count()
+    else:
+        my_application = Application.query.filter_by(
+            listing_id=listing.id, applicant_id=current_user.id
+        ).first()
+
+    return render_template(
+        "listings/detail.html",
+        listing=listing,
+        owner=listing.owner,
+        is_owner=is_owner,
+        application_count=application_count,
+        my_application=my_application,
+        form=ApplicationForm(),
+    )
+
+
+@listings_bp.route("/<int:listing_id>/applications")
+@login_required
+def applications(listing_id):
+    listing = Listing.query.get_or_404(listing_id)
+    if listing.owner_id != current_user.id:
+        abort(403)
+
+    all_apps = (
+        Application.query.filter_by(listing_id=listing.id)
+        .order_by(Application.created_at.desc())
+        .all()
+    )
+    open_apps = [a for a in all_apps if a.status != "abgelehnt"]
+    rejected_apps = [a for a in all_apps if a.status == "abgelehnt"]
+
+    return render_template(
+        "listings/applications.html",
+        listing=listing,
+        open_apps=open_apps,
+        rejected_apps=rejected_apps,
+        reject_form=ConfirmForm(),
+    )
+
+
+@listings_bp.route("/<int:listing_id>/applications/<int:application_id>/reject", methods=["POST"])
+@login_required
+def reject_application(listing_id, application_id):
+    listing = Listing.query.get_or_404(listing_id)
+    if listing.owner_id != current_user.id:
+        abort(403)
+
+    application = Application.query.filter_by(
+        id=application_id, listing_id=listing.id
+    ).first_or_404()
+
+    if ConfirmForm().validate_on_submit():
+        application.status = "abgelehnt"
+        db.session.commit()
+        flash(f"Bewerbung von {application.applicant.name} abgelehnt.", "info")
+
+    return redirect(url_for("listings.applications", listing_id=listing.id))
+
+
+@listings_bp.route("/<int:listing_id>/apply", methods=["POST"])
+@login_required
+def apply(listing_id):
+    listing = Listing.query.get_or_404(listing_id)
+
+    if listing.owner_id == current_user.id:
+        flash("Du kannst dich nicht auf dein eigenes Inserat bewerben.", "warning")
+        return redirect(url_for("listings.detail", listing_id=listing.id))
+
+    if Application.query.filter_by(listing_id=listing.id, applicant_id=current_user.id).first():
+        flash("Du hast dich bereits auf dieses Inserat beworben.", "info")
+        return redirect(url_for("listings.detail", listing_id=listing.id))
+
+    form = ApplicationForm()
+    if form.validate_on_submit():
+        application = Application(
+            listing_id=listing.id,
+            applicant_id=current_user.id,
+            nachricht=form.nachricht.data.strip() if form.nachricht.data else None,
+            status="offen",
+        )
+        db.session.add(application)
+        db.session.commit()
+        flash("Bewerbung gesendet.", "success")
+
+    return redirect(url_for("listings.detail", listing_id=listing.id))

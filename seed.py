@@ -1,8 +1,8 @@
-"""Legt die Tabellen neu an und fuellt 10 Dummy-User plus Dummy-Inserate ein.
+"""Legt die Tabellen neu an und füllt 10 Dummy-User plus Dummy-Inserate ein.
 
     python seed.py
 
-ACHTUNG: drop_all() loescht bestehende Daten. Login zum Testen:
+ACHTUNG: drop_all() löscht bestehende Daten. Login zum Testen:
     lena@example.com / test1234   (Passwort ist bei allen gleich)
 """
 
@@ -10,7 +10,7 @@ from datetime import date
 
 from app import create_app
 from app.extensions import db
-from app.models import Listing, User
+from app.models import Application, Listing, Message, User
 
 app = create_app()
 
@@ -18,7 +18,7 @@ DUMMY_USERS = [
     {"name": "Lena Meier", "email": "lena@example.com", "alter": 24, "beruf": "Studentin",
      "stadt": "Zürich", "nationalitaet": "Schweiz",
      "budget_min": 600, "budget_max": 900, "raucher": False, "haustiere": False, "sauberkeit": 4,
-     "bio": "Suche eine WG in Zuerich, mag Kochen und Klettern."},
+     "bio": "Suche eine WG in Zürich, mag Kochen und Klettern."},
     {"name": "Tim Brunner", "email": "tim@example.com", "alter": 28, "beruf": "Software Engineer",
      "stadt": "Basel", "nationalitaet": "Schweiz",
      "budget_min": 800, "budget_max": 1200, "raucher": False, "haustiere": True, "sauberkeit": 3,
@@ -42,7 +42,7 @@ DUMMY_USERS = [
     {"name": "Elif Yilmaz", "email": "elif@example.com", "alter": 29, "beruf": "Krankenpflegerin",
      "stadt": "Basel", "nationalitaet": "Türkei",
      "budget_min": 700, "budget_max": 1100, "raucher": False, "haustiere": True, "sauberkeit": 3,
-     "bio": "Schichtarbeit, daher manchmal tagsueber zuhause. Habe einen Hund."},
+     "bio": "Schichtarbeit, daher manchmal tagsüber zuhause. Habe einen Hund."},
     {"name": "Jonas Weber", "email": "jonas@example.com", "alter": 27, "beruf": "Doktorand",
      "stadt": "Bern", "nationalitaet": "Deutschland",
      "budget_min": 600, "budget_max": 950, "raucher": False, "haustiere": False, "sauberkeit": 3,
@@ -60,12 +60,12 @@ DUMMY_USERS = [
 DUMMY_LISTINGS = [
     {
         "owner_email": "lena@example.com",
-        "title": "Helles WG-Zimmer nahe Zuerich HB",
-        "description": "Freies Zimmer in einer ruhigen 3er-WG mit grossem Balkon und gemeinsamer Kueche.",
+        "title": "Helles WG-Zimmer nahe Zürich HB",
+        "description": "Freies Zimmer in einer ruhigen 3er-WG mit grossem Balkon und gemeinsamer Küche.",
         "rent": 820,
         "deposit": 1600,
         "kanton": "ZH",
-        "ort": "Zuerich, Kreis 4",
+        "ort": "Zürich, Kreis 4",
         "strasse": "Langstrasse 12",
         "room_size": 18,
         "available_from": date(2026, 8, 1),
@@ -77,8 +77,8 @@ DUMMY_LISTINGS = [
     },
     {
         "owner_email": "tim@example.com",
-        "title": "Moeblierte Wohnung mit Homeoffice-Platz",
-        "description": "Modernes Apartment mit schnellem Internet, ideal fuer Homeoffice und ruhiges Arbeiten.",
+        "title": "Möblierte Wohnung mit Homeoffice-Platz",
+        "description": "Modernes Apartment mit schnellem Internet, ideal für Homeoffice und ruhiges Arbeiten.",
         "rent": 1240,
         "deposit": 2400,
         "kanton": "BS",
@@ -94,12 +94,12 @@ DUMMY_LISTINGS = [
     },
     {
         "owner_email": "sara@example.com",
-        "title": "Gemuetliches Zimmer in gepflegter WG",
-        "description": "Helles Zimmer mit Blick ins Gruene, ruhige Mitbewohner und gemeinsame Abendessen willkommen.",
+        "title": "Gemütliches Zimmer in gepflegter WG",
+        "description": "Helles Zimmer mit Blick ins Grüne, ruhige Mitbewohner und gemeinsame Abendessen willkommen.",
         "rent": 760,
         "deposit": 1500,
         "kanton": "BE",
-        "ort": "Bern, Laenggasse",
+        "ort": "Bern, Länggasse",
         "strasse": "Mittelstrasse 20",
         "room_size": 16,
         "available_from": date(2026, 9, 1),
@@ -111,12 +111,12 @@ DUMMY_LISTINGS = [
     },
     {
         "owner_email": "nina@example.com",
-        "title": "Studio fuer Studierende",
-        "description": "Kleines Studio in Uni-Naehe mit Kueche und Bad, perfekt fuer den Start in der Stadt.",
+        "title": "Studio für Studierende",
+        "description": "Kleines Studio in Uni-Nähe mit Küche und Bad, perfekt für den Start in der Stadt.",
         "rent": 690,
         "deposit": 1200,
         "kanton": "ZH",
-        "ort": "Zuerich, Oerlikon",
+        "ort": "Zürich, Oerlikon",
         "strasse": "Schaffhauserstrasse 310",
         "room_size": 24,
         "available_from": date(2026, 8, 15),
@@ -129,7 +129,7 @@ DUMMY_LISTINGS = [
     {
         "owner_email": "pascal@example.com",
         "title": "Grosse Wohnung mit Gemeinschaftsraum",
-        "description": "Helle Wohnung mit Platz fuer gemeinsame WG-Abende und guter Anbindung an den OEV.",
+        "description": "Helle Wohnung mit Platz für gemeinsame WG-Abende und guter Anbindung an den ÖV.",
         "rent": 1320,
         "deposit": 2600,
         "kanton": "ZH",
@@ -161,15 +161,38 @@ def run():
             users_by_email[user.email] = user
         db.session.commit()
 
+        listings_by_owner = {}
         for data in DUMMY_LISTINGS:
             owner = users_by_email[data.pop("owner_email")]
             listing = Listing(owner=owner, **data)
             db.session.add(listing)
+            listings_by_owner.setdefault(owner.email, listing)
+        db.session.commit()
+
+        # Ein paar Bewerbungen + Nachrichten zum Ausprobieren
+        lena_listing = listings_by_owner["lena@example.com"]
+        nina_listing = listings_by_owner["nina@example.com"]
+        db.session.add_all([
+            Application(listing_id=lena_listing.id, applicant_id=users_by_email["marco@example.com"].id,
+                        nachricht="Hoi Lena, ich hätte grosses Interesse am Zimmer!", status="offen"),
+            Application(listing_id=lena_listing.id, applicant_id=users_by_email["jonas@example.com"].id,
+                        nachricht="Wäre das Zimmer noch frei? Ich bin ruhig und unkompliziert.", status="offen"),
+            Application(listing_id=nina_listing.id, applicant_id=users_by_email["aline@example.com"].id,
+                        status="offen"),
+        ])
+        db.session.add_all([
+            Message(sender_id=users_by_email["marco@example.com"].id,
+                    receiver_id=users_by_email["lena@example.com"].id,
+                    listing_id=lena_listing.id, body="Hoi Lena, ist das Zimmer noch verfügbar?"),
+            Message(sender_id=users_by_email["lena@example.com"].id,
+                    receiver_id=users_by_email["marco@example.com"].id,
+                    listing_id=lena_listing.id, body="Hoi Marco, ja gerne! Wann möchtest du es anschauen?"),
+        ])
         db.session.commit()
 
         print(
-            f"{len(DUMMY_USERS)} Dummy-User und {len(DUMMY_LISTINGS)} Dummy-Inserate angelegt. "
-            "Login: lena@example.com / test1234"
+            f"{len(DUMMY_USERS)} Dummy-User, {len(DUMMY_LISTINGS)} Dummy-Inserate, "
+            "3 Bewerbungen und 2 Nachrichten angelegt. Login: lena@example.com / test1234"
         )
 
 

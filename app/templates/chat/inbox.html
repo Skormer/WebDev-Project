@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Chat · FlateMate{% endblock %}
+
+{% block content %}
+<h1>Chat</h1>
+{% if conversations %}
+  <div class="card">
+    <ul class="convo-list">
+      {% for c in conversations %}
+        <li>
+          <a href="{{ url_for('chat.conversation', user_id=c.partner.id) }}">
+            <strong>{{ c.partner.name }}</strong>
+            {% if c.unread %}<span class="badge">{{ c.unread }} neu</span>{% endif %}
+            <span class="muted convo-preview">
+              {{ c.last.body[:70] }}{% if c.last.body|length > 70 %}…{% endif %}
+            </span>
+          </a>
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+{% else %}
+  <div class="card">
+    <p class="muted">Noch keine Nachrichten. Öffne ein Profil oder ein Inserat und schreibe jemandem.</p>
+  </div>
+{% endif %}
+{% endblock %}

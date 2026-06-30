@@ -45,6 +45,8 @@
 
   {% if own %}
     <p class="muted"><a href="{{ url_for('profile.edit') }}">Profil bearbeiten</a></p>
+  {% else %}
+    <p><a class="btn btn-primary" href="{{ url_for('chat.conversation', user_id=user.id) }}">Nachricht senden</a></p>
   {% endif %}
 </div>
 {% endblock %}

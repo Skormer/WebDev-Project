@@ -57,3 +57,19 @@ class ListingForm(FlaskForm):
     flatmates = IntegerField("Anzahl Mitbewohner")
     foto = FileField("Bild (JPEG)", validators=[FileAllowed(["jpg", "jpeg"], "Nur JPEG-Bilder erlaubt.")])
     submit = SubmitField("Inserat speichern")
+
+
+class ApplicationForm(FlaskForm):
+    nachricht = TextAreaField("Nachricht (optional)", validators=[Length(max=2000)])
+    submit = SubmitField("Für Inserat bewerben")
+
+
+class MessageForm(FlaskForm):
+    body = TextAreaField("Nachricht", validators=[DataRequired(), Length(max=2000)])
+    submit = SubmitField("Senden")
+
+
+class ConfirmForm(FlaskForm):
+    """Leeres Formular nur für CSRF-geschützte POST-Aktionen (z. B. Ablehnen)."""
+
+    submit = SubmitField("OK")

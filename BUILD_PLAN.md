@@ -58,14 +58,14 @@ Status: `[x]` fertig · `[ ]` offen
 - [x] **Store**: Daten in DB persistieren (User, Listing)
 - [x] **ER-Modell** dokumentiert (Artefakt)
 - [x] **Inserate**: erstellen (`listings.py`) + Detail-View mit Fotos
-- [ ] **Search**: alle Filter (Preis, Zimmer, Ort, Verfügbarkeit) + Template (`search.py`)
+- [x] **Search**: Filter (Kanton, Ort, max. Miete, min. Zimmergrösse, Verfügbarkeit, Haustiere/Rauchen) in der Inserate-Übersicht (`listings.index`)
 - [ ] **Match**: `match_score()` ausbauen (Budget + Lifestyle gewichten) → Ergebnisse sortieren
-- [ ] **Chat**: 1:1 Inbox-Übersicht + Chat-Template fertigstellen (`chat.py`)
+- [x] **Chat**: 1:1 Inbox-Übersicht + Konversation mit gespeicherten Nachrichten + Gelesen-Status (`chat.py`)
 
 ### Sonderfunktionen (mind. 3 wählen — mehr/besser = bessere Note)
 
 - [ ] **Favoriten** speichern/entfernen + Favoriten-Liste
-- [ ] **Bewerbung** auf Inserat → `Application` + Status-Handling
+- [x] **Bewerbung** auf Inserat → `Application` + Status (Inserent sieht Bewerber)
 - [ ] **Email** an Inserent bei Bewerbung → Resend HTTP-API (nicht SMTP!)
 - [ ] **Geo-Suche** → Haversine-Distanz + Leaflet-Karte
 - [ ] **Besichtigungstermin** → `Appointment` + Buchungs-UI
@@ -84,3 +84,4 @@ Status: `[x]` fertig · `[ ]` offen
 - **Email**: Render-Free blockiert SMTP-Ports → Resend/SendGrid HTTP-API nutzen.
 - **DB-Schema-Änderung**: `models.py` anpassen → bei `db.create_all()` werden neue Tabellen erstellt, aber **bestehende nicht migriert**. Im Zweifel `python seed.py` neu laufen lassen (löscht & baut neu) oder Flask-Migrate einführen.
 - **Match-Score** muss kein ML sein — gewichteter Vergleich strukturierter Daten reicht laut Anforderung.
+- **Ein Inserat pro User** (bewusste Vereinfachung): jeder User kann genau ein eigenes Inserat haben. „Neues Inserat" ist nur sichtbar, solange keines existiert; sonst führt „Mein Inserat" direkt dorthin.

@@ -216,3 +216,43 @@ label { display: block; margin: 0.8rem 0 0.3rem; font-weight: 600; font-size: 0.
 @media (max-width: 520px) {
   .filter-grid { grid-template-columns: 1fr; }
 }
+
+/* Bewerbungen */
+.apply-box { margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border); }
+.applicant-list { list-style: none; padding: 0; margin: 0; }
+.applicant-list li { padding: 0.7rem 0; border-bottom: 1px solid var(--border); }
+.applicant-list li:last-child { border-bottom: none; }
+.applicant-actions { display: flex; align-items: center; gap: 1rem; margin-top: 0.5rem; }
+.applicant-actions .btn { margin-top: 0; }
+.applicant-actions form { margin: 0; }
+.applicant-list li.rejected a { color: var(--muted); }
+.owner-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+.owner-bar .btn { margin-top: 0; }
+.btn-danger { background: #b32424; color: #fff; }
+
+/* Chat */
+.convo-list { list-style: none; padding: 0; margin: 0; }
+.convo-list li { border-bottom: 1px solid var(--border); }
+.convo-list li:last-child { border-bottom: none; }
+.convo-list li a { display: block; padding: 0.7rem 0; color: var(--text); }
+.convo-list li a:hover { text-decoration: none; }
+.convo-preview { display: block; }
+.chat-thread {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+.msg { max-width: 75%; padding: 0.5rem 0.8rem; border-radius: 12px; }
+.msg-in { align-self: flex-start; background: #eef1f5; }
+.msg-out { align-self: flex-end; background: #e8f0fe; }
+.msg-body { margin: 0; }
+.msg-meta { font-size: 0.7rem; margin: 0.25rem 0 0; }
+.chat-form { margin-top: 1rem; }

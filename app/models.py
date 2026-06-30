@@ -65,8 +65,45 @@ class Listing(db.Model):
         return f"<Listing {self.title}>"
 
 
+class Application(db.Model):
+    """Bewerbung eines Users auf ein Inserat."""
+
+    __tablename__ = "application"
+
+    id = db.Column(db.Integer, primary_key=True)
+    listing_id = db.Column(db.Integer, db.ForeignKey("listing.id"), nullable=False)
+    applicant_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    nachricht = db.Column(db.Text)
+    status = db.Column(db.String(30), default="offen")  # offen / angenommen / abgelehnt
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    listing = db.relationship("Listing", backref="applications")
+    applicant = db.relationship("User", backref="applications")
+
+    __table_args__ = (
+        db.UniqueConstraint("listing_id", "applicant_id", name="uq_application_listing_applicant"),
+    )
+
+
+class Message(db.Model):
+    """1:1-Nachricht zwischen zwei Usern (optional im Kontext eines Inserats)."""
+
+    __tablename__ = "message"
+
+    id = db.Column(db.Integer, primary_key=True)
+    sender_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    receiver_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    listing_id = db.Column(db.Integer, db.ForeignKey("listing.id"))
+    body = db.Column(db.Text, nullable=False)
+    sent_at = db.Column(db.DateTime, default=datetime.utcnow)
+    read_at = db.Column(db.DateTime)
+
+    sender = db.relationship("User", foreign_keys=[sender_id])
+    receiver = db.relationship("User", foreign_keys=[receiver_id])
+
+
 @login_manager.user_loader
 def load_user(user_id):
     return db.session.get(User, int(user_id))
 
-# Weitere Tabellen (Message, Favorite, Application, ...) folgen in spÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¤teren Schritten.
+# Weitere Tabellen (Favorite, Appointment, ...) folgen in späteren Schritten.

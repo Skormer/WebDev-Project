@@ -14,10 +14,12 @@ def create_app(config_class=Config):
     login_manager.init_app(app)
 
     from .routes.auth import auth_bp
+    from .routes.chat import chat_bp
     from .routes.listings import listings_bp
     from .routes.profile import profile_bp
 
     app.register_blueprint(auth_bp)
+    app.register_blueprint(chat_bp)
     app.register_blueprint(listings_bp)
     app.register_blueprint(profile_bp)
 

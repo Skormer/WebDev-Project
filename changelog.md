@@ -135,10 +135,37 @@ Die Inserate-Übersicht wurde um Filter erweitert und das Listing-Ortsmodell wur
 
 **Getestet:** Syntax-/Import-Check, Datenbank neu geseedet und Test-Client-Checks für `/listings/`, Filter-URLs, `/listings/new` und `/listings/1`.
 
-## Schritt 7 — Projektgedächtnis aktualisiert (2026-06-30)
 
-Die lokale Arbeitsnotiz wurde erweitert, damit zukünftige Änderungen konsistenter dokumentiert werden.
+## Schritt 7 — Bewerbungen & Chat (2026-06-30)
 
-**Geändert:**
-- `workspace-summary.md`: Hinweis ergänzt, echte deutsche Umlaute (`ö`, `ä`, `ü`, `Ä`, `Ö`, `Ü`, `ß`) zu verwenden.
-- `workspace-summary.md`: Erinnerung ergänzt, nach abgeschlossenen Feature-/Schema-/UI-Änderungen den Changelog im gleichen Turn zu aktualisieren.
+Zwei neue Funktionen: auf ein Inserat bewerben und 1:1-Chat mit gespeicherten Nachrichten.
+
+**Neu — Bewerbung (`Application`):**
+- `app/models.py`: Tabelle `Application` (listing/applicant/nachricht/status/created_at),
+  Unique-Constraint pro (Inserat, Bewerber)
+- `app/forms.py`: `ApplicationForm` (optionale Nachricht)
+- `app/routes/listings.py`: Button **„Für Inserat bewerben"** (`/listings/<id>/apply`),
+  verhindert Doppel- und Eigenbewerbung; Bewerber sieht seinen Status im Detail
+- **Ein Inserat pro User**: „Neues Inserat" nur ohne eigenes Inserat sichtbar, sonst
+  Nav-Link **„Mein Inserat"** direkt zum eigenen Inserat
+- Eigenes Inserat: oben Button **„Bewerbungen (N)"** → eigene Seite
+  (`/listings/<id>/applications`) mit offenen Bewerbungen (Profil, Nachricht, **Ablehnen**)
+  und einer Liste der **abgelehnten** Bewerbungen unten
+- `app/forms.py`: `ConfirmForm` (CSRF-geschütztes Ablehnen)
+- Templates: `listings/detail.html` (Owner-Leiste), neue `listings/applications.html`
+
+**Neu — Chat (`Message`):**
+- `app/models.py`: Tabelle `Message` (sender/receiver/listing/body/sent_at/read_at) —
+  Nachrichten werden **dauerhaft in der DB gespeichert** (lokal SQLite)
+- `app/forms.py`: `MessageForm`
+- `app/routes/chat.py`: `chat`-Blueprint — Inbox (Konversationen + Anzahl ungelesen) und
+  Konversation (`/chat/<user_id>`); eingehende Nachrichten werden beim Öffnen als gelesen
+  markiert (Gelesen/Gesendet-Anzeige)
+- Templates `chat/inbox.html`, `chat/conversation.html`; „Nachricht senden" auf Profil &
+  Inserent-Karte; „Chat" in der Navigation
+- `app/__init__.py`: `chat_bp` registriert
+- `seed.py`: 3 Beispiel-Bewerbungen + 2 Beispiel-Nachrichten
+
+**Getestet:** Test-Client end-to-end — bewerben, Doppel-/Eigenbewerbung blockiert, Inserent
+sieht Bewerber, Bewerber sieht Status; Chat: Inbox, Konversation beidseitig, Senden,
+Gelesen-Status, Self-Chat → 400. DB neu geseedet (Schema-Änderung: `application`, `message`).

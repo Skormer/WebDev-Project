@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Inserat erstellen &middot; FlateMate{% endblock %}
+{% block title %}Inserat erstellen · FlateMate{% endblock %}
 
 {% block content %}
 <div class="card form-card">
@@ -27,7 +27,7 @@
     {% for e in form.kanton.errors %}<span class="field-error">{{ e }}</span>{% endfor %}
 
     <label>{{ form.ort.label }}</label>
-    {{ form.ort(class="input", placeholder="Z&uuml;rich") }}
+    {{ form.ort(class="input", placeholder="Zürich") }}
     {% for e in form.ort.errors %}<span class="field-error">{{ e }}</span>{% endfor %}
 
     <label>{{ form.strasse.label }}</label>
@@ -56,6 +56,6 @@
 
     {{ form.submit(class="btn btn-primary") }}
   </form>
-  <p class="muted"><a href="{{ url_for('listings.index') }}">Zur&uuml;ck zu den Inseraten</a></p>
+  <p class="muted"><a href="{{ url_for('listings.index') }}">Zurück zu den Inseraten</a></p>
 </div>
 {% endblock %}

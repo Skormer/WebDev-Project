@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Bewerbungen · {{ listing.title }}{% endblock %}
+
+{% block content %}
+<p class="muted back-link"><a href="{{ url_for('listings.detail', listing_id=listing.id) }}">← Zum Inserat</a></p>
+<h1>Bewerbungen für „{{ listing.title }}"</h1>
+
+<div class="card">
+  <h2>Offene Bewerbungen ({{ open_apps|length }})</h2>
+  {% if open_apps %}
+    <ul class="applicant-list">
+      {% for a in open_apps %}
+        <li>
+          <strong><a href="{{ url_for('profile.view', user_id=a.applicant.id) }}">{{ a.applicant.name }}</a></strong>
+          <span class="muted">
+            · {{ a.created_at.strftime('%d.%m.%Y') }}
+            {% if a.applicant.stadt %} · {{ a.applicant.stadt }}{% endif %}
+            {% if a.applicant.alter %} · {{ a.applicant.alter }} Jahre{% endif %}
+          </span>
+          {% if a.nachricht %}<p class="bio">„{{ a.nachricht }}"</p>{% endif %}
+          <div class="applicant-actions">
+            <a href="{{ url_for('chat.conversation', user_id=a.applicant.id) }}">Nachricht senden</a>
+            <form method="post" action="{{ url_for('listings.reject_application', listing_id=listing.id, application_id=a.id) }}">
+              {{ reject_form.hidden_tag() }}
+              <button class="btn btn-danger" type="submit">Ablehnen</button>
+            </form>
+          </div>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p class="muted">Noch keine offenen Bewerbungen.</p>
+  {% endif %}
+</div>
+
+{% if rejected_apps %}
+  <div class="card">
+    <h2>Abgelehnte Bewerbungen ({{ rejected_apps|length }})</h2>
+    <ul class="applicant-list">
+      {% for a in rejected_apps %}
+        <li class="rejected">
+          <a href="{{ url_for('profile.view', user_id=a.applicant.id) }}">{{ a.applicant.name }}</a>
+          <span class="muted">· abgelehnt am {{ a.created_at.strftime('%d.%m.%Y') }}</span>
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+{% endif %}
+{% endblock %}

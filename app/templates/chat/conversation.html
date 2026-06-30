@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Chat mit {{ partner.name }} · FlateMate{% endblock %}
+
+{% block content %}
+<p class="muted back-link"><a href="{{ url_for('chat.inbox') }}">← Alle Chats</a></p>
+<h1>Chat mit <a href="{{ url_for('profile.view', user_id=partner.id) }}">{{ partner.name }}</a></h1>
+
+<div class="card chat-thread">
+  {% for m in messages %}
+    <div class="msg {{ 'msg-out' if m.sender_id == current_user.id else 'msg-in' }}">
+      <p class="msg-body">{{ m.body }}</p>
+      <p class="msg-meta muted">
+        {{ m.sent_at.strftime('%d.%m.%Y %H:%M') }}
+        {% if m.sender_id == current_user.id %} · {{ 'Gelesen' if m.read_at else 'Gesendet' }}{% endif %}
+      </p>
+    </div>
+  {% else %}
+    <p class="muted">Noch keine Nachrichten — schreib die erste.</p>
+  {% endfor %}
+</div>
+
+<form method="post" class="chat-form">
+  {{ form.hidden_tag() }}
+  {{ form.body(class="input", rows="3", placeholder="Nachricht schreiben…") }}
+  {% for e in form.body.errors %}<span class="field-error">{{ e }}</span>{% endfor %}
+  {{ form.submit(class="btn btn-primary") }}
+</form>
+{% endblock %}
