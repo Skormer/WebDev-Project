@@ -331,3 +331,87 @@ einsetzen. `DATABASE_URL`/Secrets nur via `.env` (gitignored), nie committen.
 **Getestet:** Verbindung erfolgreich (PostgreSQL 17.6); Seeder mit `--force` legt Tabellen +
 Dummy-Daten in Supabase an (10 User / 5 Inserate / 3 Bewerbungen / 2 Nachrichten); App-Login und
 Seiten laden gegen Supabase; `--force`-Schutz bricht ohne Flag korrekt ab, ohne Daten zu ändern.
+## Schritt 15 - Google Maps fuer Inserate (2026-06-30)
+
+Inserate haben jetzt eine Kartenintegration auf der Detailseite und eine eigene Kartenansicht
+fuer alle verfuegbaren Inserate.
+
+**Neu:**
+- `config.py` + `.env.example`: `GOOGLE_MAPS_API_KEY` als Konfigurationswert ergaenzt
+  (`.env` bleibt lokal und wird nicht committet).
+- `app/templates/listings/detail.html`: Google-Maps-Embed im Abschnitt **Lage**, basierend auf
+  `strasse`, `ort`, `kanton` und `Switzerland`; ohne Key erscheint ein Google-Maps-Suchlink.
+- `app/routes/listings.py`: neue Route `/listings/map`, die alle Inserate mit Adresse,
+  Detail-Link und den wichtigsten Wohnungsdaten als JSON fuer die Karte vorbereitet.
+- Neues Template `app/templates/listings/map.html`: Google Maps JavaScript API mit Markern fuer
+  alle Inserate; Klick auf einen Marker zeigt rechts die Details des ausgewaehlten Inserats
+  statt einer Gesamtliste.
+- `app/templates/listings/index.html` und `app/templates/listings/map.html`: Umschalter
+  **Liste / Karte** sowie fixer **Nach oben**-Button unten rechts.
+- `app/static/css/style.css`: Styling fuer Karten, Marker-Detailpanel, View-Switch und
+  Page-Up-Button.
+
+**Getestet:** Syntax-/Import-Check; Test-Client-Checks fuer `/listings/`, `/listings/map` und
+`/listings/1` mit Status 200 sowie Vorhandensein von Karten-Embed, View-Switch, Marker-Detailpanel
+und Page-Up-Button.
+
+## Schritt 16 - Umkreissuche fuer Inserate (2026-06-30)
+
+Die Inserate-Uebersicht kann jetzt nach Entfernung gefiltert werden.
+
+**Neu / geaendert:**
+- `app/models.py`: `Listing` hat optionale Felder `latitude` und `longitude`.
+- `app/__init__.py`: kleiner SQLite-Schema-Guard ergaenzt, damit bestehende lokale DBs die neuen
+  Geo-Spalten automatisch bekommen.
+- `seed.py`: Demo-Inserate enthalten Koordinaten fuer Zuerich, Basel, Bern und Winterthur.
+- `app/routes/listings.py`: Umkreissuche mit `near` + `radius_km`, Geocoding-Helfer und
+  Haversine-Distanzfilter. Treffer werden nach Entfernung sortiert.
+- Neue/aktualisierte Inserate speichern Koordinaten, wenn die Adresse per Google Geocoding oder
+  lokalem Swiss-City-Fallback aufloesbar ist.
+- `app/templates/listings/index.html`: Filterfelder **Suche in der Naehe von** und **Radius**.
+- `app/templates/listings/map.html`: Marker nutzen gespeicherte Koordinaten, wenn vorhanden,
+  und fallen sonst auf Browser-Geocoding per Google Maps zurueck.
+- `BUILD_PLAN.md`: Geo-Suche als erledigt markiert.
+
+**Getestet:** Syntax-/Import-Check; Test-Client-Checks fuer `/listings/`,
+`/listings/?near=Zuerich&radius_km=20` und `/listings/map` mit Status 200.
+
+## Schritt 17 - Adresseingabe fuer Google Maps verbessert (2026-06-30)
+
+Die Inserat-Erstellung/-Bearbeitung erklaert jetzt klarer, welche Adressdaten fuer Google Maps
+benoetigt werden.
+
+**Geaendert:**
+- `app/templates/listings/form.html`: Adressbereich neu strukturiert in Strasse, Ort und Kanton
+  mit Beispielen und Hilfetexten.
+- Live-Vorschau **Google sucht nach:** zeigt die zusammengesetzte Adresse, die an Google Maps
+  bzw. den Geocoding-Helfer geht.
+- `app/static/css/style.css`: Styling fuer Adresshinweise und Vorschau.
+- `app/routes/listings.py`: Nach Erstellen/Bearbeiten erscheint eine Warnung, wenn die Adresse
+  nicht eindeutig in Koordinaten umgewandelt werden konnte.
+
+**Getestet:** Syntax-/Import-Check; Test-Client-Checks fuer `/listings/new`, `/listings/1/edit`
+und `/listings/`.
+
+## Schritt 18 - Radiusfilter als Slider (2026-06-30)
+
+**Geaendert:**
+- `app/templates/listings/index.html`: Radius-Auswahl in der Umkreissuche ist jetzt ein Slider
+  von 1 bis 100 km; Maximum wird als **100+ km** angezeigt.
+- `app/routes/listings.py`: `100+ km` begrenzt die Entfernung nicht hart, sortiert aber weiter
+  nach Entfernung, wenn ein Suchort eingegeben ist.
+- `app/static/css/style.css`: Filterpanel kompakter gemacht; Felder und Checkboxen sitzen enger
+  zusammen.
+
+**Getestet:** Syntax-/Import-Check ohne Datenbank-Test.
+
+## Schritt 19 - Radiusfilter nutzt Ort als Zentrum (2026-06-30)
+
+**Geaendert:**
+- `app/routes/listings.py`: Wenn ein Radius aktiv ist, wird `near` als Zentrum genutzt; falls
+  `near` leer ist, wird `ort` als Zentrum genutzt. `Ort=Zuerich` + `100+ km` schliesst damit
+  Orte wie Winterthur nicht mehr vorab durch den Textfilter aus.
+- `app/templates/listings/index.html`: Labels angepasst zu **Ort / Radius-Zentrum** und
+  **Genauer Standort**, damit klarer ist, was die Felder tun.
+
+**Getestet:** Syntax-/Import-Check ohne Datenbank-Test.

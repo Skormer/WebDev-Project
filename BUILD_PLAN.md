@@ -68,7 +68,8 @@ Status: `[x]` fertig · `[ ]` offen
 - [x] **Besichtigungstermin** → `Appointment` + Buchungs-UI
 - [x] **Bewerbung** auf Inserat → `Application` + Status (Inserent sieht Bewerber)
 - [x] **Email** an Inserent bei Bewerbung → SendGrid HTTP-API, Single Sender (kein SMTP, keine Domain; Dev: Log-Fallback ohne Key)
-- [ ] **Geo-Suche** → Haversine-Distanz + Leaflet-Karte
+- [x] **Kartenansicht**: Google Maps Detailkarte + `/listings/map` mit Markern und Detailpanel
+- [x] **Geo-Suche**: Umkreissuche in km mit Haversine-Distanz und gespeicherten Koordinaten
 - [ ] **Foto-Upload** zu Supabase Storage statt URL-Feld
 
 ### Testing, Deployment & Abgabe
@@ -82,6 +83,7 @@ Status: `[x]` fertig · `[ ]` offen
 
 - **Secrets**: nur via `.env` / Env-Vars, nie committen (`.env` ist in `.gitignore`).
 - **Email**: Render-Free blockiert SMTP-Ports → Resend/SendGrid HTTP-API nutzen.
+- **Google Maps**: API-Key nur via `.env` / Env-Var `GOOGLE_MAPS_API_KEY`; in Google Cloud auf erlaubte Domains und benoetigte APIs beschraenken.
 - **DB-Schema-Änderung**: `models.py` anpassen → bei `db.create_all()` werden neue Tabellen erstellt, aber **bestehende nicht migriert**. Im Zweifel `python seed.py` neu laufen lassen (löscht & baut neu) oder Flask-Migrate einführen.
 - **Match-Score** muss kein ML sein — gewichteter Vergleich strukturierter Daten reicht laut Anforderung.
 - **Ein Inserat pro User** (bewusste Vereinfachung): jeder User kann genau ein eigenes Inserat haben. „Neues Inserat" ist nur sichtbar, solange keines existiert; sonst führt „Mein Inserat" direkt dorthin.

@@ -48,8 +48,16 @@
       </select>
     </div>
     <div>
-      <label for="ort">Ort</label>
+      <label for="ort">Ort / Radius-Zentrum</label>
       <input id="ort" class="input" type="search" name="ort" value="{{ filters.ort }}" placeholder="Zürich, Basel, Bern">
+    </div>
+    <div>
+      <label for="near">Genauer Standort</label>
+      <input id="near" class="input" type="search" name="near" value="{{ filters.near }}" placeholder="Optional: Zuerich HB, Langstrasse 12">
+    </div>
+    <div class="range-filter">
+      <label for="radius_km">Radius: <span id="radius_km_value">{% if filters.radius_km and filters.radius_km != '100' %}{{ filters.radius_km }} km{% else %}100+ km{% endif %}</span></label>
+      <input id="radius_km" type="range" min="1" max="100" step="1" name="radius_km" value="{{ filters.radius_km or 100 }}" data-suffix=" km" data-max-label="100+ km">
     </div>
     <div class="range-filter">
       <label for="rent_max">Max. Miete: <span id="rent_max_value">{% if filters.rent_max and filters.rent_max != '3000' %}CHF {{ filters.rent_max }}{% else %}CHF 3000+{% endif %}</span></label>

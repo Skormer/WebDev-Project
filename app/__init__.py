@@ -1,5 +1,6 @@
 from flask import Flask, redirect, url_for
 from flask_login import current_user
+from sqlalchemy import inspect, text
 
 from config import Config
 
@@ -28,6 +29,7 @@ def create_app(config_class=Config):
         from . import models  # noqa: F401  (Modelle registrieren)
 
         db.create_all()
+        _ensure_listing_geo_columns()
 
     @app.route("/")
     def index():
@@ -36,3 +38,17 @@ def create_app(config_class=Config):
         return redirect(url_for("auth.login"))
 
     return app
+
+
+def _ensure_listing_geo_columns():
+    """Add optional geo columns to older local SQLite DBs without a full migration setup."""
+    inspector = inspect(db.engine)
+    if "listing" not in inspector.get_table_names():
+        return
+
+    columns = {column["name"] for column in inspector.get_columns("listing")}
+    with db.engine.begin() as connection:
+        if "latitude" not in columns:
+            connection.execute(text("ALTER TABLE listing ADD COLUMN latitude FLOAT"))
+        if "longitude" not in columns:
+            connection.execute(text("ALTER TABLE listing ADD COLUMN longitude FLOAT"))
