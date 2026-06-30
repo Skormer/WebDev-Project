@@ -15,6 +15,7 @@
         {% if current_user.listings %}
           <a href="{{ url_for('listings.detail', listing_id=current_user.listings[0].id) }}">Mein Inserat</a>
         {% endif %}
+        <a href="{{ url_for('listings.favorites') }}">Favoriten</a>
         <a href="{{ url_for('chat.inbox') }}">Chat</a>
         <a href="{{ url_for('profile.me') }}">Mein Profil</a>
         <a href="{{ url_for('auth.logout') }}">Logout</a>

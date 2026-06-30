@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Favoriten · FlateMate{% endblock %}
+{% block main_class %}container-wide{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1>Favoriten</h1>
+    <p class="muted">Alle Inserate, die du dir gemerkt hast.</p>
+  </div>
+  <a class="btn btn-secondary" href="{{ url_for('listings.index') }}">Inserate ansehen</a>
+</div>
+
+{% if favorites %}
+  <div class="listing-grid">
+    {% for favorite in favorites %}
+      {% set listing = favorite.listing %}
+      <article class="card listing-card">
+        {% if listing.photo_url %}
+          <img class="listing-image" src="{{ listing.photo_url }}" alt="{{ listing.title }}">
+        {% endif %}
+        <h2>{{ listing.title }}</h2>
+        <p class="muted">{{ listing.kanton }} · {{ listing.ort }}{% if listing.strasse %} · {{ listing.strasse }}{% endif %} · CHF {{ listing.rent }}</p>
+        <p>{{ listing.description }}</p>
+        <div class="listing-card-actions">
+          <a class="btn btn-primary listing-btn" href="{{ url_for('listings.detail', listing_id=listing.id) }}">Details ansehen</a>
+          <form method="post" action="{{ url_for('listings.toggle_favorite', listing_id=listing.id) }}">
+            {{ favorite_form.hidden_tag() }}
+            <input type="hidden" name="next" value="{{ url_for('listings.favorites') }}">
+            <button class="btn btn-secondary" type="submit">Entfernen</button>
+          </form>
+        </div>
+      </article>
+    {% endfor %}
+  </div>
+{% else %}
+  <div class="card">
+    <p>Noch keine Favoriten gespeichert.</p>
+    <a class="btn btn-primary" href="{{ url_for('listings.index') }}">Inserate entdecken</a>
+  </div>
+{% endif %}
+{% endblock %}

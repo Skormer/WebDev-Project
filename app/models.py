@@ -85,6 +85,43 @@ class Application(db.Model):
     )
 
 
+class Favorite(db.Model):
+    """Gemerkte Inserate eines Users."""
+
+    __tablename__ = "favorite"
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    listing_id = db.Column(db.Integer, db.ForeignKey("listing.id"), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    user = db.relationship("User", backref="favorites")
+    listing = db.relationship("Listing", backref="favorites")
+
+    __table_args__ = (
+        db.UniqueConstraint("user_id", "listing_id", name="uq_favorite_user_listing"),
+    )
+
+
+class Appointment(db.Model):
+    """Besichtigungsanfrage fuer ein Inserat."""
+
+    __tablename__ = "appointment"
+
+    id = db.Column(db.Integer, primary_key=True)
+    listing_id = db.Column(db.Integer, db.ForeignKey("listing.id"), nullable=False)
+    applicant_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    owner_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    scheduled_at = db.Column(db.DateTime, nullable=False)
+    nachricht = db.Column(db.Text)
+    status = db.Column(db.String(30), default="offen")  # offen / angenommen / abgelehnt
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    listing = db.relationship("Listing", backref="appointments")
+    applicant = db.relationship("User", foreign_keys=[applicant_id], backref="appointment_requests")
+    owner = db.relationship("User", foreign_keys=[owner_id], backref="appointment_offers")
+
+
 class Message(db.Model):
     """1:1-Nachricht zwischen zwei Usern (optional im Kontext eines Inserats)."""
 
@@ -106,4 +143,4 @@ class Message(db.Model):
 def load_user(user_id):
     return db.session.get(User, int(user_id))
 
-# Weitere Tabellen (Favorite, Appointment, ...) folgen in späteren Schritten.
+# Weitere Tabellen folgen in späteren Schritten.

@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}Besichtigungen · {{ listing.title }}{% endblock %}
+
+{% block content %}
+<p class="muted back-link"><a href="{{ url_for('listings.detail', listing_id=listing.id) }}">← Zum Inserat</a></p>
+<h1>Besichtigungen für „{{ listing.title }}"</h1>
+
+<div class="card">
+  <h2>Offene Anfragen ({{ open_appointments|length }})</h2>
+  {% if open_appointments %}
+    <ul class="applicant-list">
+      {% for appointment in open_appointments %}
+        <li>
+          <strong><a href="{{ url_for('profile.view', user_id=appointment.applicant.id) }}">{{ appointment.applicant.name }}</a></strong>
+          <span class="muted">
+            · Wunsch: {{ appointment.scheduled_at.strftime('%d.%m.%Y %H:%M') }}
+            {% if appointment.applicant.stadt %} · {{ appointment.applicant.stadt }}{% endif %}
+            {% if appointment.applicant.alter %} · {{ appointment.applicant.alter }} Jahre{% endif %}
+          </span>
+          {% if appointment.nachricht %}<p class="bio">„{{ appointment.nachricht }}"</p>{% endif %}
+          <div class="applicant-actions">
+            <a href="{{ url_for('chat.conversation', user_id=appointment.applicant.id) }}">Andere Zeit vorschlagen</a>
+            <form method="post" action="{{ url_for('listings.decide_appointment', listing_id=listing.id, appointment_id=appointment.id, decision='accept') }}">
+              {{ confirm_form.hidden_tag() }}
+              <button class="btn btn-primary" type="submit">Annehmen</button>
+            </form>
+            <form method="post" action="{{ url_for('listings.decide_appointment', listing_id=listing.id, appointment_id=appointment.id, decision='reject') }}">
+              {{ confirm_form.hidden_tag() }}
+              <button class="btn btn-danger" type="submit">Ablehnen</button>
+            </form>
+          </div>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p class="muted">Noch keine offenen Besichtigungsanfragen.</p>
+  {% endif %}
+</div>
+
+{% if handled_appointments %}
+  <div class="card">
+    <h2>Bearbeitete Anfragen ({{ handled_appointments|length }})</h2>
+    <ul class="applicant-list">
+      {% for appointment in handled_appointments %}
+        <li>
+          <strong><a href="{{ url_for('profile.view', user_id=appointment.applicant.id) }}">{{ appointment.applicant.name }}</a></strong>
+          <span class="muted">
+            · {{ appointment.scheduled_at.strftime('%d.%m.%Y %H:%M') }}
+            · {{ appointment.status }}
+          </span>
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+{% endif %}
+{% endblock %}
