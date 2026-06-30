@@ -280,6 +280,31 @@ def request_appointment(listing_id):
         )
         db.session.add(appointment)
         db.session.commit()
+
+        # Inserent per E-Mail über die Besichtigungsanfrage informieren (Fehler bricht nichts ab).
+        appointments_url = url_for("listings.appointments", listing_id=listing.id, _external=True)
+        html = render_template(
+            "email/appointment_notification.html",
+            owner_name=listing.owner.name,
+            applicant_name=current_user.name,
+            listing_title=listing.title,
+            scheduled_at=appointment.scheduled_at,
+            applicant_message=appointment.nachricht,
+            appointments_url=appointments_url,
+        )
+        text = (
+            f"Hallo {listing.owner.name},\n\n"
+            f"{current_user.name} möchte dein Inserat „{listing.title}“ besichtigen.\n"
+            f"Wunschtermin: {appointment.scheduled_at.strftime('%d.%m.%Y %H:%M')} Uhr\n"
+            + (f"\nNachricht: {appointment.nachricht}\n" if appointment.nachricht else "")
+            + f"\nBesichtigungen verwalten: {appointments_url}\n"
+        )
+        send_email(
+            to=listing.owner.email,
+            subject=f"Neue Besichtigungsanfrage für „{listing.title}“",
+            html=html,
+            text=text,
+        )
         flash("Besichtigungsanfrage gesendet.", "success")
     else:
         flash("Bitte Datum und Uhrzeit fuer die Besichtigung auswaehlen.", "warning")

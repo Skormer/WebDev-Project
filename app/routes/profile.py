@@ -17,7 +17,7 @@ UPLOAD_FOLDER = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "s
 @profile_bp.route("/profile")
 @login_required
 def me():
-    return render_template("profile.html", user=current_user, own=True)
+    return render_template("profile/view.html", user=current_user, own=True)
 
 
 @profile_bp.route("/profile/edit", methods=["GET", "POST"])
@@ -51,11 +51,11 @@ def edit():
         flash("Profil gespeichert.", "success")
         return redirect(url_for("profile.me"))
 
-    return render_template("profile_edit.html", form=form, user=current_user)
+    return render_template("profile/edit.html", form=form, user=current_user)
 
 
 @profile_bp.route("/profile/<int:user_id>")
 @login_required
 def view(user_id):
     user = User.query.get_or_404(user_id)
-    return render_template("profile.html", user=user, own=(user.id == current_user.id))
+    return render_template("profile/view.html", user=user, own=(user.id == current_user.id))

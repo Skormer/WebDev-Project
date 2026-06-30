@@ -249,3 +249,34 @@ als Env-Vars setzen → echter Versand an alle.
 
 **Getestet:** Dev-Modus loggt Empfänger/Betreff und sendet nicht; Bewerbung wird trotzdem
 gespeichert; Versandpfad mit (Fake-)Key scheitert kontrolliert (keine Exception, nur Warnung).
+
+## Schritt 11 — E-Mail bei Besichtigungsanfrage (2026-06-30)
+
+Analog zur Bewerbung bekommt der Inserent jetzt auch eine E-Mail, wenn jemand einen
+**Besichtigungstermin** anfragt.
+
+**Neu:**
+- `app/routes/listings.py`: `request_appointment` sendet nach gespeicherter Anfrage eine Mail
+  an `listing.owner.email` (mit Name, **Wunschtermin** und optionaler Nachricht).
+- **Gestaltete HTML-Mail**: `app/templates/email/appointment_notification.html` — gleiches
+  FlateMate-Design wie die Bewerbungs-Mail, plus hervorgehobener Wunschtermin und Button
+  „Besichtigungen verwalten". Klartext-Variante für bessere Zustellbarkeit.
+- Nutzt denselben `send_email()`-Helfer (Log-Fallback ohne Key, Fehler werfen nie nach oben).
+
+**Getestet:** Template rendert mit formatiertem Datum; Anfrage-Flow loggt die Mail im Dev-Modus
+und speichert die Anfrage trotzdem.
+
+## Schritt 12 — Template-Struktur aufgeräumt (2026-06-30)
+
+Reine Aufräumarbeit, keine Funktionsänderung.
+
+**Geändert:**
+- Profil-Templates in eigenen Ordner verschoben: `profile.html` → `profile/view.html`,
+  `profile_edit.html` → `profile/edit.html` (jetzt ein Ordner pro Bereich; oberste
+  Template-Ebene enthält nur noch `base.html`). Referenzen in `app/routes/profile.py` angepasst.
+- Gemeinsames E-Mail-Layout `email/base_email.html` (Header/Logo + Footer); `application_`
+  und `appointment_notification.html` erben davon (`{% block body %}`) — keine doppelte
+  Tabellen-Struktur mehr.
+
+**Getestet:** App-Boot; `/profile`, `/profile/edit`, `/profile/<id>` liefern 200; beide
+E-Mail-Templates rendern weiterhin korrekt (Logo, Footer, CTA, Wunschtermin).

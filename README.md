@@ -88,11 +88,11 @@ seed.py                   # (re)create tables + 10 dummy users + 5 listings
 app/
 ├── __init__.py           # app factory: extensions + blueprints
 ├── extensions.py         # db, login_manager
-├── models.py             # User, Listing, Application, Message
-├── forms.py              # auth, profile, listing, application, message forms
+├── models.py             # User, Listing, Application, Message, Favorite, Appointment
+├── forms.py              # auth, profile, listing, application, message, appointment forms
 ├── email.py              # send_email() via SendGrid HTTP-API (logs in dev)
 ├── routes/               # auth.py, profile.py, listings.py, chat.py
-├── templates/            # base, auth/, profile, listings/, chat/, email/
+├── templates/            # base.html + auth/ profile/ listings/ chat/ email/ (one folder per area)
 └── static/css/           # base styles + responsive listing grid
 ```
 
