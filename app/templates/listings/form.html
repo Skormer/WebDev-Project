@@ -1,9 +1,9 @@
 {% extends "base.html" %}
-{% block title %}Inserat erstellen · FlateMate{% endblock %}
+{% block title %}{{ heading }} · FlateMate{% endblock %}
 
 {% block content %}
 <div class="card form-card">
-  <h1>Inserat erstellen</h1>
+  <h1>{{ heading }}</h1>
   <form method="post" enctype="multipart/form-data" novalidate>
     {{ form.hidden_tag() }}
 
@@ -44,9 +44,12 @@
     {{ form.flatmates(class="input") }}
 
     <label>{{ form.foto.label }}</label>
+    {% if listing and listing.photo_url %}
+      <img class="listing-image" src="{{ listing.photo_url }}" alt="Aktuelles Bild" style="max-height:160px; width:auto;">
+    {% endif %}
     {{ form.foto(class="input", accept="image/jpeg") }}
     {% for e in form.foto.errors %}<span class="field-error">{{ e }}</span>{% endfor %}
-    <p class="muted">Nur JPEG-Dateien (.jpg / .jpeg).</p>
+    <p class="muted">Nur JPEG-Dateien (.jpg / .jpeg).{% if listing %} Leer lassen, um das aktuelle Bild zu behalten.{% endif %}</p>
 
     <div class="checkbox-group">
       <label>{{ form.furnished() }} {{ form.furnished.label.text }}</label>

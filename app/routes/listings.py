@@ -34,6 +34,18 @@ def _parse_date(value):
         return None
 
 
+def _save_listing_photo(uploaded_file):
+    """Speichert ein hochgeladenes JPEG und gibt dessen statische URL zurück (sonst None)."""
+    if uploaded_file and uploaded_file.filename:
+        os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+        original_name = secure_filename(uploaded_file.filename)
+        _, extension = os.path.splitext(original_name)
+        filename = f"{uuid4().hex}{extension.lower()}"
+        uploaded_file.save(os.path.join(UPLOAD_FOLDER, filename))
+        return url_for("static", filename=f"uploads/listings/{filename}")
+    return None
+
+
 @listings_bp.route("/")
 @login_required
 def index():
@@ -112,17 +124,6 @@ def new():
 
     form = ListingForm()
     if form.validate_on_submit():
-        photo_url = None
-        uploaded_file = form.foto.data
-        if uploaded_file and uploaded_file.filename:
-            os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-            original_name = secure_filename(uploaded_file.filename)
-            _, extension = os.path.splitext(original_name)
-            filename = f"{uuid4().hex}{extension.lower()}"
-            file_path = os.path.join(UPLOAD_FOLDER, filename)
-            uploaded_file.save(file_path)
-            photo_url = url_for("static", filename=f"uploads/listings/{filename}")
-
         listing = Listing(
             owner=current_user,
             title=form.title.data.strip(),
@@ -138,14 +139,48 @@ def new():
             pets_allowed=form.pets_allowed.data,
             smoking_allowed=form.smoking_allowed.data,
             flatmates=form.flatmates.data,
-            photo_url=photo_url,
+            photo_url=_save_listing_photo(form.foto.data),
         )
         db.session.add(listing)
+        # Wer ein Inserat anbietet, ist nicht mehr "Auf Wohnungssuche".
+        current_user.rolle = "anbietend"
         db.session.commit()
         flash("Inserat erstellt.", "success")
         return redirect(url_for("listings.detail", listing_id=listing.id))
 
-    return render_template("listings/new.html", form=form)
+    return render_template("listings/form.html", form=form, heading="Inserat erstellen")
+
+
+@listings_bp.route("/<int:listing_id>/edit", methods=["GET", "POST"])
+@login_required
+def edit(listing_id):
+    listing = Listing.query.get_or_404(listing_id)
+    if listing.owner_id != current_user.id:
+        abort(403)
+
+    form = ListingForm(obj=listing)
+    if form.validate_on_submit():
+        listing.title = form.title.data.strip()
+        listing.description = form.description.data.strip()
+        listing.rent = form.rent.data
+        listing.deposit = form.deposit.data
+        listing.kanton = form.kanton.data.strip()
+        listing.ort = form.ort.data.strip()
+        listing.strasse = form.strasse.data.strip() if form.strasse.data else None
+        listing.room_size = form.room_size.data
+        listing.available_from = form.available_from.data
+        listing.furnished = form.furnished.data
+        listing.pets_allowed = form.pets_allowed.data
+        listing.smoking_allowed = form.smoking_allowed.data
+        listing.flatmates = form.flatmates.data
+        new_photo = _save_listing_photo(form.foto.data)
+        if new_photo:
+            listing.photo_url = new_photo
+        db.session.commit()
+        flash("Inserat aktualisiert.", "success")
+        return redirect(url_for("listings.detail", listing_id=listing.id))
+
+    return render_template("listings/form.html", form=form, heading="Inserat bearbeiten", listing=listing)
 
 
 @listings_bp.route("/favorites")

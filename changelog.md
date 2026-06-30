@@ -280,3 +280,26 @@ Reine Aufräumarbeit, keine Funktionsänderung.
 
 **Getestet:** App-Boot; `/profile`, `/profile/edit`, `/profile/<id>` liefern 200; beide
 E-Mail-Templates rendern weiterhin korrekt (Logo, Footer, CTA, Wunschtermin).
+
+## Schritt 13 — Inserat: Validierung, Status-Wechsel & Bearbeiten (2026-06-30)
+
+**Validierung bei Inserat erstellen:**
+- `app/forms.py` `ListingForm`: `rent` mit `NumberRange` (1–100000), optionale Zahlenfelder
+  (`deposit`, `room_size`, `flatmates`) als `Optional()` + `NumberRange` — leere Felder erzeugen
+  keinen Fehler mehr, ungültige/negative Werte werden abgelehnt. `available_from`/`strasse` optional.
+
+**Status-Wechsel:**
+- `app/routes/listings.py` `new`: beim Erstellen eines Inserats wird `current_user.rolle` auf
+  `anbietend` gesetzt — das Profil zeigt dann nicht mehr „Auf Wohnungssuche".
+
+**Inserat bearbeiten (neu):**
+- `app/routes/listings.py` `edit` (`/listings/<id>/edit`, nur Eigentümer, sonst 403): Formular
+  vorbefüllt; vorhandenes Bild bleibt, wenn kein neues hochgeladen wird.
+- Upload-Logik in Helper `_save_listing_photo()` ausgelagert (von `new` und `edit` genutzt).
+- `new.html` → **gemeinsames `listings/form.html`** für Erstellen und Bearbeiten (Überschrift via
+  `heading`, aktuelles Bild bei Bearbeiten sichtbar).
+- `listings/detail.html`: Owner-Leiste hat jetzt Button **„Inserat bearbeiten"**.
+
+**Getestet:** ungültige Eingabe (Miete 0 / Kanton leer) wird abgelehnt, kein Inserat angelegt;
+gültiges Erstellen setzt `rolle=anbietend`; leere Optionalfelder ok; Bearbeiten speichert,
+Nicht-Eigentümer erhält 403.

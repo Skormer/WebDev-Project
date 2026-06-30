@@ -9,6 +9,7 @@
     <div class="owner-actions">
       <a class="btn btn-primary" href="{{ url_for('listings.applications', listing_id=listing.id) }}">Bewerbungen ({{ application_count }})</a>
       <a class="btn btn-secondary" href="{{ url_for('listings.appointments', listing_id=listing.id) }}">Besichtigungen ({{ appointment_count }})</a>
+      <a class="btn btn-secondary" href="{{ url_for('listings.edit', listing_id=listing.id) }}">Inserat bearbeiten</a>
     </div>
   </div>
 {% endif %}

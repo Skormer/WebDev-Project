@@ -1,7 +1,7 @@
 from flask_wtf.file import FileAllowed, FileField
 from flask_wtf import FlaskForm
 from wtforms import BooleanField, DateField, DateTimeLocalField, IntegerField, PasswordField, SelectField, StringField, SubmitField, TextAreaField
-from wtforms.validators import DataRequired, Email, EqualTo, Length
+from wtforms.validators import DataRequired, Email, EqualTo, Length, NumberRange, Optional
 
 
 class LoginForm(FlaskForm):
@@ -43,18 +43,21 @@ class ProfileEditForm(FlaskForm):
 
 class ListingForm(FlaskForm):
     title = StringField("Titel", validators=[DataRequired(), Length(max=200)])
-    description = TextAreaField("Beschreibung", validators=[DataRequired()])
-    rent = IntegerField("Miete (CHF)", validators=[DataRequired()])
-    deposit = IntegerField("Depot")
+    description = TextAreaField("Beschreibung", validators=[DataRequired(), Length(max=5000)])
+    rent = IntegerField(
+        "Miete (CHF)",
+        validators=[DataRequired(), NumberRange(min=1, max=100000, message="Bitte eine gültige Miete (1–100000) angeben.")],
+    )
+    deposit = IntegerField("Depot", validators=[Optional(), NumberRange(min=0, max=100000)])
     kanton = StringField("Kanton", validators=[DataRequired(), Length(max=50)])
     ort = StringField("Ort", validators=[DataRequired(), Length(max=200)])
-    strasse = StringField("Strasse", validators=[Length(max=200)])
-    room_size = IntegerField("Zimmergroesse (m2)")
-    available_from = DateField("Verfuegbar ab", format="%Y-%m-%d")
+    strasse = StringField("Strasse", validators=[Optional(), Length(max=200)])
+    room_size = IntegerField("Zimmergroesse (m2)", validators=[Optional(), NumberRange(min=1, max=1000)])
+    available_from = DateField("Verfuegbar ab", format="%Y-%m-%d", validators=[Optional()])
     furnished = BooleanField("Moebliert")
     pets_allowed = BooleanField("Haustiere erlaubt")
     smoking_allowed = BooleanField("Rauchen erlaubt")
-    flatmates = IntegerField("Anzahl Mitbewohner")
+    flatmates = IntegerField("Anzahl Mitbewohner", validators=[Optional(), NumberRange(min=0, max=20)])
     foto = FileField("Bild (JPEG)", validators=[FileAllowed(["jpg", "jpeg"], "Nur JPEG-Bilder erlaubt.")])
     submit = SubmitField("Inserat speichern")
 
