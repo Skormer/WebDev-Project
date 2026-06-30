@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}{{ listing.title }} · FlateMate{% endblock %}
+{% block title %}{{ listing.title }} &middot; FlateMate{% endblock %}
 
 {% block content %}
 <div class="listing-detail-layout">
@@ -10,15 +10,16 @@
 
     <p class="eyebrow">Inserat</p>
     <h1>{{ listing.title }}</h1>
-    <p class="muted">{{ listing.location }} · CHF {{ listing.rent }}{% if listing.deposit %} · Depot CHF {{ listing.deposit }}{% endif %}</p>
+    <p class="muted">{{ listing.kanton }} &middot; {{ listing.ort }}{% if listing.strasse %} &middot; {{ listing.strasse }}{% endif %} &middot; CHF {{ listing.rent }}{% if listing.deposit %} &middot; Depot CHF {{ listing.deposit }}{% endif %}</p>
 
     <dl class="details listing-details">
-      <div><dt>Zimmergröße</dt><dd>{{ listing.room_size or '–' }} m²</dd></div>
-      <div><dt>Verfügbar ab</dt><dd>{{ listing.available_from.strftime('%d.%m.%Y') if listing.available_from else '–' }}</dd></div>
-      <div><dt>Möbliert</dt><dd>{{ 'Ja' if listing.furnished else 'Nein' }}</dd></div>
+      <div><dt>Adresse</dt><dd>{{ listing.strasse or '&ndash;' }}</dd></div>
+      <div><dt>Zimmergroesse</dt><dd>{{ listing.room_size or '&ndash;' }} m2</dd></div>
+      <div><dt>Verf&uuml;gbar ab</dt><dd>{{ listing.available_from.strftime('%d.%m.%Y') if listing.available_from else '&ndash;' }}</dd></div>
+      <div><dt>Moebliert</dt><dd>{{ 'Ja' if listing.furnished else 'Nein' }}</dd></div>
       <div><dt>Haustiere erlaubt</dt><dd>{{ 'Ja' if listing.pets_allowed else 'Nein' }}</dd></div>
       <div><dt>Rauchen erlaubt</dt><dd>{{ 'Ja' if listing.smoking_allowed else 'Nein' }}</dd></div>
-      <div><dt>Mitbewohner</dt><dd>{{ listing.flatmates if listing.flatmates is not none else '–' }}</dd></div>
+      <div><dt>Mitbewohner</dt><dd>{{ listing.flatmates if listing.flatmates is not none else '&ndash;' }}</dd></div>
     </dl>
 
     <h2>Beschreibung</h2>
@@ -37,7 +38,7 @@
         <h2>{{ owner.name }}</h2>
         <p class="muted">
           {% if owner.beruf %}{{ owner.beruf }}{% endif %}
-          {% if owner.alter %} · {{ owner.alter }} Jahre{% endif %}
+          {% if owner.alter %} &middot; {{ owner.alter }} Jahre{% endif %}
         </p>
       </div>
     </div>
@@ -48,17 +49,17 @@
       <div><dt>Nationalität</dt><dd>{{ owner.nationalitaet or '–' }}</dd></div>
       <div><dt>Raucher</dt><dd>{{ 'Ja' if owner.raucher else 'Nein' }}</dd></div>
       <div><dt>Haustiere</dt><dd>{{ 'Ja' if owner.haustiere else 'Nein' }}</dd></div>
-      <div><dt>Sauberkeit</dt><dd>{{ owner.sauberkeit ~ ' / 5' if owner.sauberkeit else '–' }}</dd></div>
+      <div><dt>Sauberkeit</dt><dd>{{ owner.sauberkeit ~ ' / 5' if owner.sauberkeit else '&ndash;' }}</dd></div>
     </dl>
 
     {% if owner.bio %}
-      <h3>Über den Inserenten</h3>
+      <h3>&Uuml;ber den Inserenten</h3>
       <p class="bio">{{ owner.bio }}</p>
     {% endif %}
 
-    <p class="muted"><a href="{{ url_for('profile.view', user_id=owner.id) }}">Vollständiges Profil öffnen</a></p>
+    <p class="muted"><a href="{{ url_for('profile.view', user_id=owner.id) }}">Vollst&auml;ndiges Profil &ouml;ffnen</a></p>
   </aside>
 </div>
 
-<p class="muted back-link"><a href="{{ url_for('listings.index') }}">Zurück zu den Inseraten</a></p>
+<p class="muted back-link"><a href="{{ url_for('listings.index') }}">Zur&uuml;ck zu den Inseraten</a></p>
 {% endblock %}

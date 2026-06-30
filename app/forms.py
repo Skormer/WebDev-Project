@@ -15,8 +15,8 @@ class RegisterForm(FlaskForm):
     email = StringField("Email", validators=[DataRequired(), Email()])
     password = PasswordField("Passwort", validators=[DataRequired(), Length(min=6)])
     confirm = PasswordField(
-        "Passwort bestätigen",
-        validators=[DataRequired(), EqualTo("password", message="Passwörter stimmen nicht überein.")],
+        "Passwort bestaetigen",
+        validators=[DataRequired(), EqualTo("password", message="Passwoerter stimmen nicht ueberein.")],
     )
     submit = SubmitField("Registrieren")
 
@@ -46,10 +46,12 @@ class ListingForm(FlaskForm):
     description = TextAreaField("Beschreibung", validators=[DataRequired()])
     rent = IntegerField("Miete (CHF)", validators=[DataRequired()])
     deposit = IntegerField("Depot")
-    location = StringField("Ort / Adresse", validators=[DataRequired(), Length(max=200)])
-    room_size = IntegerField("Zimmergröße (m²)")
-    available_from = DateField("Verfügbar ab", format="%Y-%m-%d")
-    furnished = BooleanField("Möbliert")
+    kanton = StringField("Kanton", validators=[DataRequired(), Length(max=50)])
+    ort = StringField("Ort", validators=[DataRequired(), Length(max=200)])
+    strasse = StringField("Strasse", validators=[Length(max=200)])
+    room_size = IntegerField("Zimmergroesse (m2)")
+    available_from = DateField("Verfuegbar ab", format="%Y-%m-%d")
+    furnished = BooleanField("Moebliert")
     pets_allowed = BooleanField("Haustiere erlaubt")
     smoking_allowed = BooleanField("Rauchen erlaubt")
     flatmates = IntegerField("Anzahl Mitbewohner")

@@ -1,8 +1,8 @@
-"""Legt die Tabellen neu an und füllt 10 Dummy-User plus Dummy-Inserate ein.
+"""Legt die Tabellen neu an und fuellt 10 Dummy-User plus Dummy-Inserate ein.
 
     python seed.py
 
-ACHTUNG: drop_all() löscht bestehende Daten. Login zum Testen:
+ACHTUNG: drop_all() loescht bestehende Daten. Login zum Testen:
     lena@example.com / test1234   (Passwort ist bei allen gleich)
 """
 
@@ -18,7 +18,7 @@ DUMMY_USERS = [
     {"name": "Lena Meier", "email": "lena@example.com", "alter": 24, "beruf": "Studentin",
      "stadt": "Zürich", "nationalitaet": "Schweiz",
      "budget_min": 600, "budget_max": 900, "raucher": False, "haustiere": False, "sauberkeit": 4,
-     "bio": "Suche eine WG in Zürich, mag Kochen und Klettern."},
+     "bio": "Suche eine WG in Zuerich, mag Kochen und Klettern."},
     {"name": "Tim Brunner", "email": "tim@example.com", "alter": 28, "beruf": "Software Engineer",
      "stadt": "Basel", "nationalitaet": "Schweiz",
      "budget_min": 800, "budget_max": 1200, "raucher": False, "haustiere": True, "sauberkeit": 3,
@@ -42,7 +42,7 @@ DUMMY_USERS = [
     {"name": "Elif Yilmaz", "email": "elif@example.com", "alter": 29, "beruf": "Krankenpflegerin",
      "stadt": "Basel", "nationalitaet": "Türkei",
      "budget_min": 700, "budget_max": 1100, "raucher": False, "haustiere": True, "sauberkeit": 3,
-     "bio": "Schichtarbeit, daher manchmal tagsüber zuhause. Habe einen Hund."},
+     "bio": "Schichtarbeit, daher manchmal tagsueber zuhause. Habe einen Hund."},
     {"name": "Jonas Weber", "email": "jonas@example.com", "alter": 27, "beruf": "Doktorand",
      "stadt": "Bern", "nationalitaet": "Deutschland",
      "budget_min": 600, "budget_max": 950, "raucher": False, "haustiere": False, "sauberkeit": 3,
@@ -60,11 +60,13 @@ DUMMY_USERS = [
 DUMMY_LISTINGS = [
     {
         "owner_email": "lena@example.com",
-        "title": "Helles WG-Zimmer nahe Zürich HB",
-        "description": "Freies Zimmer in einer ruhigen 3er-WG mit großem Balkon und gemeinsamer Küche.",
+        "title": "Helles WG-Zimmer nahe Zuerich HB",
+        "description": "Freies Zimmer in einer ruhigen 3er-WG mit grossem Balkon und gemeinsamer Kueche.",
         "rent": 820,
         "deposit": 1600,
-        "location": "Zürich, Kreis 4",
+        "kanton": "ZH",
+        "ort": "Zuerich, Kreis 4",
+        "strasse": "Langstrasse 12",
         "room_size": 18,
         "available_from": date(2026, 8, 1),
         "furnished": True,
@@ -75,11 +77,13 @@ DUMMY_LISTINGS = [
     },
     {
         "owner_email": "tim@example.com",
-        "title": "Möblierte Wohnung mit Homeoffice-Platz",
-        "description": "Modernes Apartment mit schnellem Internet, ideal für Homeoffice und ruhiges Arbeiten.",
+        "title": "Moeblierte Wohnung mit Homeoffice-Platz",
+        "description": "Modernes Apartment mit schnellem Internet, ideal fuer Homeoffice und ruhiges Arbeiten.",
         "rent": 1240,
         "deposit": 2400,
-        "location": "Basel, Gundeldingen",
+        "kanton": "BS",
+        "ort": "Basel, Gundeldingen",
+        "strasse": "Gueterstrasse 88",
         "room_size": 32,
         "available_from": date(2026, 7, 15),
         "furnished": True,
@@ -90,11 +94,13 @@ DUMMY_LISTINGS = [
     },
     {
         "owner_email": "sara@example.com",
-        "title": "Gemütliches Zimmer in gepflegter WG",
-        "description": "Helles Zimmer mit Blick ins Grüne, ruhige Mitbewohner und gemeinsame Abendessen willkommen.",
+        "title": "Gemuetliches Zimmer in gepflegter WG",
+        "description": "Helles Zimmer mit Blick ins Gruene, ruhige Mitbewohner und gemeinsame Abendessen willkommen.",
         "rent": 760,
         "deposit": 1500,
-        "location": "Bern, Länggasse",
+        "kanton": "BE",
+        "ort": "Bern, Laenggasse",
+        "strasse": "Mittelstrasse 20",
         "room_size": 16,
         "available_from": date(2026, 9, 1),
         "furnished": False,
@@ -105,11 +111,13 @@ DUMMY_LISTINGS = [
     },
     {
         "owner_email": "nina@example.com",
-        "title": "Studio für Studierende",
-        "description": "Kleines Studio in Uni-Nähe mit Küche und Bad, perfekt für den Start in der Stadt.",
+        "title": "Studio fuer Studierende",
+        "description": "Kleines Studio in Uni-Naehe mit Kueche und Bad, perfekt fuer den Start in der Stadt.",
         "rent": 690,
         "deposit": 1200,
-        "location": "Zürich, Oerlikon",
+        "kanton": "ZH",
+        "ort": "Zuerich, Oerlikon",
+        "strasse": "Schaffhauserstrasse 310",
         "room_size": 24,
         "available_from": date(2026, 8, 15),
         "furnished": True,
@@ -120,11 +128,13 @@ DUMMY_LISTINGS = [
     },
     {
         "owner_email": "pascal@example.com",
-        "title": "Große Wohnung mit Gemeinschaftsraum",
-        "description": "Helle Wohnung mit Platz für gemeinsame WG-Abende und guter Anbindung an den ÖV.",
+        "title": "Grosse Wohnung mit Gemeinschaftsraum",
+        "description": "Helle Wohnung mit Platz fuer gemeinsame WG-Abende und guter Anbindung an den OEV.",
         "rent": 1320,
         "deposit": 2600,
-        "location": "Winterthur, Seen",
+        "kanton": "ZH",
+        "ort": "Winterthur, Seen",
+        "strasse": "Tosstalstrasse 45",
         "room_size": 48,
         "available_from": date(2026, 10, 1),
         "furnished": False,

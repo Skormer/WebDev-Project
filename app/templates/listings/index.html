@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Inserate · FlateMate{% endblock %}
+{% block title %}Inserate &middot; FlateMate{% endblock %}
 {% block main_class %}container-wide{% endblock %}
 
 {% block content %}
@@ -11,6 +11,58 @@
   <a class="btn btn-primary" href="{{ url_for('listings.new') }}">Neues Inserat</a>
 </div>
 
+<form class="card filter-panel" method="get">
+  <div class="filter-grid">
+    <div>
+      <label for="kanton">Kanton</label>
+      <select id="kanton" class="input" name="kanton">
+        <option value="">Alle</option>
+        <option value="ZH" {% if filters.kanton == 'ZH' %}selected{% endif %}>ZH</option>
+        <option value="BE" {% if filters.kanton == 'BE' %}selected{% endif %}>BE</option>
+        <option value="BS" {% if filters.kanton == 'BS' %}selected{% endif %}>BS</option>
+      </select>
+    </div>
+    <div>
+      <label for="ort">Ort</label>
+      <input id="ort" class="input" type="search" name="ort" value="{{ filters.ort }}" placeholder="Z&uuml;rich, Basel, Bern">
+    </div>
+    <div class="range-filter">
+      <label for="rent_max">Max. Miete: <span id="rent_max_value">{% if filters.rent_max and filters.rent_max != '3000' %}CHF {{ filters.rent_max }}{% else %}CHF 3000+{% endif %}</span></label>
+      <input id="rent_max" type="range" min="50" max="3000" step="50" name="rent_max" value="{{ filters.rent_max or 3000 }}" data-prefix="CHF " data-max-label="CHF 3000+">
+    </div>
+    <div class="range-filter">
+      <label for="room_size_min">Min. Zimmergr&ouml;sse: <span id="room_size_min_value">{% if filters.room_size_min %}{{ filters.room_size_min }} m2{% else %}Egal{% endif %}</span></label>
+      <input id="room_size_min" type="range" min="0" max="60" step="1" name="room_size_min" value="{{ filters.room_size_min or 0 }}" data-empty-label="Egal" data-suffix=" m2">
+    </div>
+    <div>
+      <label for="available_by">Verf&uuml;gbar bis</label>
+      <input id="available_by" class="input" type="date" name="available_by" value="{{ filters.available_by }}">
+    </div>
+    <div class="filter-checkbox">
+      <label for="pets_allowed">
+        <input id="pets_allowed" type="checkbox" name="pets_allowed" value="yes" {% if filters.pets_allowed == 'yes' %}checked{% endif %}>
+        Haustiere erlaubt
+      </label>
+    </div>
+    <div class="filter-checkbox">
+      <label for="smoking_allowed">
+        <input id="smoking_allowed" type="checkbox" name="smoking_allowed" value="yes" {% if filters.smoking_allowed == 'yes' %}checked{% endif %}>
+        Rauchen erlaubt
+      </label>
+    </div>
+  </div>
+  <div class="filter-actions">
+    <button class="btn btn-primary" type="submit">Filtern</button>
+    {% if active_filters %}
+      <a class="btn btn-secondary" href="{{ url_for('listings.index') }}">Zur&uuml;cksetzen</a>
+    {% endif %}
+  </div>
+</form>
+
+{% if active_filters %}
+  <p class="muted result-count">{{ listings|length }} passende Inserate gefunden.</p>
+{% endif %}
+
 {% if listings %}
   <div class="listing-grid">
     {% for listing in listings %}
@@ -19,7 +71,7 @@
           <img class="listing-image" src="{{ listing.photo_url }}" alt="{{ listing.title }}">
         {% endif %}
         <h2>{{ listing.title }}</h2>
-        <p class="muted">{{ listing.location }} · CHF {{ listing.rent }}</p>
+        <p class="muted">{{ listing.kanton }} &middot; {{ listing.ort }}{% if listing.strasse %} &middot; {{ listing.strasse }}{% endif %} &middot; CHF {{ listing.rent }}</p>
         <p>{{ listing.description }}</p>
         <a class="btn btn-primary listing-btn" href="{{ url_for('listings.detail', listing_id=listing.id) }}">Details ansehen</a>
       </article>
@@ -27,8 +79,26 @@
   </div>
 {% else %}
   <div class="card">
-    <p>Noch keine Inserate vorhanden. Leg das erste an.</p>
-    <a class="btn btn-primary" href="{{ url_for('listings.new') }}">Inserat erstellen</a>
+    <p>Noch keine Inserate gefunden.</p>
+    {% if active_filters %}
+      <a class="btn btn-secondary" href="{{ url_for('listings.index') }}">Alle Inserate anzeigen</a>
+    {% else %}
+      <a class="btn btn-primary" href="{{ url_for('listings.new') }}">Inserat erstellen</a>
+    {% endif %}
   </div>
 {% endif %}
+
+<script>
+  for (const slider of document.querySelectorAll('.range-filter input[type="range"]')) {
+    const output = document.getElementById(`${slider.id}_value`);
+    const render = () => {
+      const value = Number(slider.value);
+      output.textContent = slider.dataset.maxLabel && value === Number(slider.max)
+        ? slider.dataset.maxLabel
+        : `${slider.dataset.prefix || ''}${slider.value}${slider.dataset.suffix || ''}`;
+    };
+    slider.addEventListener('input', render);
+    render();
+  }
+</script>
 {% endblock %}

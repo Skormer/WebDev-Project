@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Inserat erstellen · FlateMate{% endblock %}
+{% block title %}Inserat erstellen &middot; FlateMate{% endblock %}
 
 {% block content %}
 <div class="card form-card">
@@ -22,9 +22,17 @@
     <label>{{ form.deposit.label }}</label>
     {{ form.deposit(class="input") }}
 
-    <label>{{ form.location.label }}</label>
-    {{ form.location(class="input") }}
-    {% for e in form.location.errors %}<span class="field-error">{{ e }}</span>{% endfor %}
+    <label>{{ form.kanton.label }}</label>
+    {{ form.kanton(class="input", placeholder="ZH") }}
+    {% for e in form.kanton.errors %}<span class="field-error">{{ e }}</span>{% endfor %}
+
+    <label>{{ form.ort.label }}</label>
+    {{ form.ort(class="input", placeholder="Z&uuml;rich") }}
+    {% for e in form.ort.errors %}<span class="field-error">{{ e }}</span>{% endfor %}
+
+    <label>{{ form.strasse.label }}</label>
+    {{ form.strasse(class="input", placeholder="Langstrasse 12") }}
+    {% for e in form.strasse.errors %}<span class="field-error">{{ e }}</span>{% endfor %}
 
     <label>{{ form.room_size.label }}</label>
     {{ form.room_size(class="input") }}
@@ -48,6 +56,6 @@
 
     {{ form.submit(class="btn btn-primary") }}
   </form>
-  <p class="muted"><a href="{{ url_for('listings.index') }}">Zurück zu den Inseraten</a></p>
+  <p class="muted"><a href="{{ url_for('listings.index') }}">Zur&uuml;ck zu den Inseraten</a></p>
 </div>
 {% endblock %}

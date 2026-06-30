@@ -49,7 +49,9 @@ class Listing(db.Model):
     description = db.Column(db.Text, nullable=False)
     rent = db.Column(db.Integer, nullable=False)
     deposit = db.Column(db.Integer)
-    location = db.Column(db.String(200), nullable=False)
+    kanton = db.Column(db.String(50), nullable=False)
+    ort = db.Column(db.String(200), nullable=False)
+    strasse = db.Column(db.String(200))
     room_size = db.Column(db.Integer)
     available_from = db.Column(db.Date)
     furnished = db.Column(db.Boolean, default=False)
@@ -67,4 +69,4 @@ class Listing(db.Model):
 def load_user(user_id):
     return db.session.get(User, int(user_id))
 
-# Weitere Tabellen (Message, Favorite, Application, ...) folgen in späteren Schritten.
+# Weitere Tabellen (Message, Favorite, Application, ...) folgen in spÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¤teren Schritten.
