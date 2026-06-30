@@ -64,6 +64,21 @@ Profile pictures and listing photos are uploaded as JPEG files and saved into
 `app/static/uploads/`. The folder is ignored by Git, so uploaded images stay local to
 your workspace. Listing creation uses a file upload, not a public image URL field.
 
+## 📧 Email notifications
+
+When someone applies to a listing, the owner gets an email — sent via the **SendGrid**
+HTTP API (not SMTP, since Render's free tier blocks SMTP ports).
+
+- **No `SENDGRID_API_KEY` / `MAIL_FROM`** (local default) → the email is just written to the
+  app log, so development needs no setup.
+- **Both set** (in `.env` locally, or as Render env vars) → the email is sent to anyone.
+
+Setup (no domain needed): create a free SendGrid account → **Settings → Sender Authentication
+→ Single Sender** and verify one address (e.g. a Gmail) via the confirmation link → **Settings
+→ API Keys** → put the key in `SENDGRID_API_KEY` and the verified address in `MAIL_FROM`.
+
+Sending never breaks the request: if it fails, it's logged and the application is still saved.
+
 ## 📁 Structure
 
 ```
@@ -75,8 +90,9 @@ app/
 ├── extensions.py         # db, login_manager
 ├── models.py             # User, Listing, Application, Message
 ├── forms.py              # auth, profile, listing, application, message forms
+├── email.py              # send_email() via SendGrid HTTP-API (logs in dev)
 ├── routes/               # auth.py, profile.py, listings.py, chat.py
-├── templates/            # base, auth/, profile, listings/, chat/
+├── templates/            # base, auth/, profile, listings/, chat/, email/
 └── static/css/           # base styles + responsive listing grid
 ```
 
@@ -86,6 +102,7 @@ app/
 profile status (`suchend` / `anbietend`), creating/listing/detail views with
 address split into Kanton/Ort/Strasse, **search filters** on the listings
 overview, the ER model, responsive listing UI, local JPEG uploads, applying to a
-listing (owner manages applicants and can reject), and 1:1 chat with persisted
-messages + read status are implemented. **Matching** follows in a later step per
-[`BUILD_PLAN.md`](BUILD_PLAN.md).
+listing (owner manages applicants and can reject), email notification to the
+owner on a new application (Resend HTTP-API; logs locally without a key), and 1:1
+chat with persisted messages + read status are implemented. **Matching** follows
+in a later step per [`BUILD_PLAN.md`](BUILD_PLAN.md).

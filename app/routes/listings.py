@@ -6,6 +6,7 @@ from flask import Blueprint, abort, flash, redirect, render_template, request, u
 from flask_login import current_user, login_required
 from werkzeug.utils import secure_filename
 
+from ..email import send_email
 from ..extensions import db
 from ..forms import ApplicationForm, ConfirmForm, ListingForm
 from ..models import Application, Listing
@@ -226,6 +227,29 @@ def apply(listing_id):
         )
         db.session.add(application)
         db.session.commit()
+
+        # Inserent per E-Mail benachrichtigen (schlägt der Versand fehl, bleibt die Bewerbung trotzdem).
+        applications_url = url_for("listings.applications", listing_id=listing.id, _external=True)
+        html = render_template(
+            "email/application_notification.html",
+            owner_name=listing.owner.name,
+            applicant_name=current_user.name,
+            listing_title=listing.title,
+            applicant_message=application.nachricht,
+            applications_url=applications_url,
+        )
+        text = (
+            f"Hallo {listing.owner.name},\n\n"
+            f"{current_user.name} hat sich auf dein Inserat „{listing.title}“ beworben.\n"
+            + (f"\nNachricht: {application.nachricht}\n" if application.nachricht else "")
+            + f"\nBewerbungen ansehen: {applications_url}\n"
+        )
+        send_email(
+            to=listing.owner.email,
+            subject=f"Neue Bewerbung für „{listing.title}“",
+            html=html,
+            text=text,
+        )
         flash("Bewerbung gesendet.", "success")
 
     return redirect(url_for("listings.detail", listing_id=listing.id))

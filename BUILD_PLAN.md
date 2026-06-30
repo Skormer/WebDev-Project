@@ -65,10 +65,10 @@ Status: `[x]` fertig · `[ ]` offen
 ### Sonderfunktionen (mind. 3 wählen — mehr/besser = bessere Note)
 
 - [ ] **Favoriten** speichern/entfernen + Favoriten-Liste
-- [x] **Bewerbung** auf Inserat → `Application` + Status (Inserent sieht Bewerber)
-- [ ] **Email** an Inserent bei Bewerbung → Resend HTTP-API (nicht SMTP!)
-- [ ] **Geo-Suche** → Haversine-Distanz + Leaflet-Karte
 - [ ] **Besichtigungstermin** → `Appointment` + Buchungs-UI
+- [x] **Bewerbung** auf Inserat → `Application` + Status (Inserent sieht Bewerber)
+- [x] **Email** an Inserent bei Bewerbung → SendGrid HTTP-API, Single Sender (kein SMTP, keine Domain; Dev: Log-Fallback ohne Key)
+- [ ] **Geo-Suche** → Haversine-Distanz + Leaflet-Karte
 - [ ] **Foto-Upload** zu Supabase Storage statt URL-Feld
 
 ### Testing, Deployment & Abgabe

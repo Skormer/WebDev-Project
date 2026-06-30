@@ -119,6 +119,7 @@ Verbesserte Darstellung der Inserate-Übersicht und neue Startseite.
 Buttons; Profil zeigt Status-Badge, Stadt & Nationalität; Inserent-Karte ohne Badge/Budget;
 Bearbeiten-Formular wählt den aktuellen Status vor und speichert Änderungen. `lat`/`lng` aus
 dem Schema entfernt, `stadt`/`nationalitaet` vorhanden. DB neu geseedet (Schema-Änderung).
+
 ## Schritt 6 — Inserate filtern und Adressmodell erweitert (2026-06-30)
 
 Die Inserate-Übersicht wurde um Filter erweitert und das Listing-Ortsmodell wurde präziser gemacht.
@@ -134,7 +135,6 @@ Die Inserate-Übersicht wurde um Filter erweitert und das Listing-Ortsmodell wur
 - `app/static/css/style.css`: Styling für Filterpanel, Slider, Checkboxen und Reset-Button.
 
 **Getestet:** Syntax-/Import-Check, Datenbank neu geseedet und Test-Client-Checks für `/listings/`, Filter-URLs, `/listings/new` und `/listings/1`.
-
 
 ## Schritt 7 — Bewerbungen & Chat (2026-06-30)
 
@@ -169,3 +169,30 @@ Zwei neue Funktionen: auf ein Inserat bewerben und 1:1-Chat mit gespeicherten Na
 **Getestet:** Test-Client end-to-end — bewerben, Doppel-/Eigenbewerbung blockiert, Inserent
 sieht Bewerber, Bewerber sieht Status; Chat: Inbox, Konversation beidseitig, Senden,
 Gelesen-Status, Self-Chat → 400. DB neu geseedet (Schema-Änderung: `application`, `message`).
+
+## Schritt 8 — E-Mail-Benachrichtigung bei Bewerbung (2026-06-30)
+
+Inserent bekommt eine E-Mail, wenn sich jemand auf sein Inserat bewirbt — über die
+**SendGrid HTTP-API** (kein SMTP, da Render-Free SMTP-Ports blockiert).
+
+**Neu:**
+- `app/email.py`: `send_email(to, subject, html, text=None)` über SendGrid (`urllib`, keine neue
+  Abhängigkeit). **Ohne `SENDGRID_API_KEY`/`MAIL_FROM`** wird die Mail nur ins Log geschrieben
+  (läuft lokal ohne Setup), **mit Key + verifiziertem Absender** wirklich versendet. Fehler beim
+  Versand werfen nie nach oben (nur Log, inkl. HTTP-Status/Body bei API-Fehlern). Optionaler
+  Klartext-Teil neben HTML (bessere Zustellbarkeit/Spam-Wertung).
+- `config.py` + `.env.example`: `SENDGRID_API_KEY`, `MAIL_FROM`, `MAIL_FROM_NAME`.
+- `app/routes/listings.py`: nach gespeicherter Bewerbung Mail an `listing.owner.email`.
+- **Gestaltete HTML-Mail**: `app/templates/email/application_notification.html` — Tabellen-Layout
+  mit Inline-Styles, FlateMate-Logo/Header in Markenfarbe, Zitatbox für die Bewerber-Nachricht
+  und „Bewerbungen ansehen"-Button. Variablen werden durch Jinja escaped (kein HTML-Injection).
+
+**Warum SendGrid:** Single Sender Verification erlaubt das Verifizieren EINER Absender-Adresse
+(z. B. ein Gmail) per Bestätigungslink — ohne eigene Domain — und danach Versand an **beliebige**
+Empfänger. (Resend-Testabsender liefert nur an die eigene Account-Adresse.)
+
+**Lokal vs. deployed:** lokal ohne Key → Log-Ausgabe; auf Render `SENDGRID_API_KEY` + `MAIL_FROM`
+als Env-Vars setzen → echter Versand an alle.
+
+**Getestet:** Dev-Modus loggt Empfänger/Betreff und sendet nicht; Bewerbung wird trotzdem
+gespeichert; Versandpfad mit (Fake-)Key scheitert kontrolliert (keine Exception, nur Warnung).

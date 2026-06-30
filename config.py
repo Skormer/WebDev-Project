@@ -23,3 +23,10 @@ class Config:
         "sqlite:///" + os.path.join(basedir, "flatemate.db")
     )
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+    # E-Mail (SendGrid HTTP-API, Single Sender Verification — keine eigene Domain nötig).
+    # Ohne SENDGRID_API_KEY oder MAIL_FROM werden Mails nur ins Log geschrieben
+    # (lokale Entwicklung) statt wirklich versendet.
+    SENDGRID_API_KEY = os.environ.get("SENDGRID_API_KEY")
+    MAIL_FROM = os.environ.get("MAIL_FROM")  # die in SendGrid verifizierte Absender-Adresse
+    MAIL_FROM_NAME = os.environ.get("MAIL_FROM_NAME", "FlateMate")
