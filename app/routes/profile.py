@@ -72,7 +72,7 @@ def edit():
 def delete():
     form = ConfirmForm()
     if not form.validate_on_submit():
-        flash("Profil konnte nicht geloescht werden.", "warning")
+        flash("Profil konnte nicht gelöscht werden.", "warning")
         return redirect(url_for("profile.edit"))
 
     user_id = current_user.id
@@ -98,7 +98,7 @@ def delete():
     db.session.delete(current_user)
     db.session.commit()
     logout_user()
-    flash(f"Dein Profil wurde geloescht, {user_name}.", "success")
+    flash(f"Dein Profil wurde gelöscht, {user_name}.", "success")
     return redirect(url_for("auth.login"))
 
 

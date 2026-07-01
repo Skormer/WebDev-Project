@@ -148,7 +148,7 @@ def _send_application_decision_email(application, decision):
     )
     text = (
         f"Hallo {applicant.name},\n\n"
-        f"deine Bewerbung fuer \"{listing.title}\" wurde {decision_label}.\n"
+        f"deine Bewerbung für \"{listing.title}\" wurde {decision_label}.\n"
         f"\nInserat ansehen: {listing_url}\n"
     )
     send_email(
@@ -174,7 +174,7 @@ def _send_appointment_decision_email(appointment, decision):
     )
     text = (
         f"Hallo {applicant.name},\n\n"
-        f"deine Besichtigungsanfrage fuer \"{listing.title}\" wurde {decision_label}.\n"
+        f"deine Besichtigungsanfrage für \"{listing.title}\" wurde {decision_label}.\n"
         f"Wunschtermin: {appointment.scheduled_at.strftime('%d.%m.%Y %H:%M')} Uhr\n"
         f"\nInserat ansehen: {listing_url}\n"
     )

@@ -50,7 +50,7 @@ def register():
             text = (
                 f"Hallo {user.name},\n\n"
                 "willkommen bei FlatMate. Dein Konto wurde erfolgreich erstellt.\n"
-                f"\nProfil vervollstaendigen: {profile_url}\n"
+                f"\nProfil vervollständigen: {profile_url}\n"
             )
             send_email(
                 to=user.email,

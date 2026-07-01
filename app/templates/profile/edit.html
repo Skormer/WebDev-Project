@@ -114,7 +114,7 @@
   </form>
 
   <div class="danger-zone card danger-zone-card">
-    <h2>Profil loeschen</h2>
+    <h2>Profil löschen</h2>
     <p class="muted">Das entfernt dein Konto samt deinen Inseraten, Favoriten, Bewerbungen, Besichtigungen und Chats.</p>
     <form method="post" action="{{ url_for('profile.delete') }}" class="danger-form">
       {{ delete_form.hidden_tag() }}
@@ -122,21 +122,21 @@
         class="btn btn-danger"
         type="submit"
         onclick="return confirmDeleteProfile(event);">
-        Profil endgueltig loeschen
+        Profil endgültig löschen
       </button>
     </form>
   </div>
-  <p class="muted"><a href="{{ url_for('profile.me') }}">Zurueck zum Profil</a></p>
+  <p class="muted"><a href="{{ url_for('profile.me') }}">Zurück zum Profil</a></p>
 </div>
 
 <script>
   function confirmDeleteProfile(event) {
-    if (!confirm('Bist du dir wirklich sicher, dass du dein Profil loeschen willst?')) {
+    if (!confirm('Bist du dir wirklich sicher, dass du dein Profil löschen willst?')) {
       event.preventDefault();
       return false;
     }
 
-    if (!confirm('Bist du zu 100% sicher, dass du gefunden hast, was du gesucht hast, und dein Konto jetzt loeschen willst?')) {
+    if (!confirm('Bist du zu 100% sicher, dass du gefunden hast, was du gesucht hast, und dein Konto jetzt löschen willst?')) {
       event.preventDefault();
       return false;
     }

@@ -700,3 +700,8 @@ Feld-/Code-Bezeichner (`nationalitaet` etc.) unverändert.
 
 **Getestet:** Formulare/Detail/Profil zeigen korrekte Umlaute; `soziales_level`-Wert `fuer_mich`
 wird gespeichert und als „Eher für mich" angezeigt; alle Seiten rendern (200/302).
+
+**Nachtrag (nach Merge):** Neu dazugekommene Texte des Kollegen ebenfalls normalisiert —
+Entscheidungs-/Willkommens-E-Mails und der „Profil löschen"-Bereich (`endgueltig`→`endgültig`,
+`erhaeltst`→`erhältst`, `vervollstaendigen`→`vervollständigen`, `loeschen`→`löschen`, `fuer`→`für`).
+`fuer_mich`-Wert und `zuerich`-Geocoding-Alias erneut geschützt.
