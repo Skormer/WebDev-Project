@@ -65,9 +65,19 @@ python main.py                # http://127.0.0.1:5000
 
 ## 🖼️ Image Uploads
 
-Profile pictures and listing photos are uploaded as JPEG files and saved into
-`app/static/uploads/`. The folder is ignored by Git, so uploaded images stay local to
-your workspace. Listing creation uses a file upload, not a public image URL field.
+Listing photos are uploaded as JPEG files. If Supabase Storage is configured, the app uploads
+listing photos to the configured bucket and stores the public URL in `Listing.photo_url`. If
+Storage is not configured, listing photos fall back to `app/static/uploads/listings/`, which is
+local-only and ignored by Git. Profile pictures still use the local `app/static/uploads/` folder.
+
+For durable listing photos, create a public Supabase Storage bucket such as `listing-photos` and
+set these env vars locally and on Render:
+
+```env
+SUPABASE_URL=https://xxxx.supabase.co
+SUPABASE_STORAGE_BUCKET=listing-photos
+SUPABASE_STORAGE_KEY=...
+```
 
 ## 📧 Email notifications
 
@@ -94,15 +104,16 @@ A `render.yaml` blueprint is included.
    (build `pip install -r requirements.txt`, start `gunicorn main:app`).
 3. Set the secret env vars (marked `sync: false`) in the Render dashboard:
    `DATABASE_URL` (Supabase Session-pooler URL), `SENDGRID_API_KEY`, `MAIL_FROM`,
-   `GOOGLE_MAPS_API_KEY`. `SECRET_KEY` is auto-generated; `MAIL_FROM_NAME` defaults to `FlatMate`.
+   `GOOGLE_MAPS_API_KEY`, `SUPABASE_URL`, `SUPABASE_STORAGE_BUCKET` and
+   `SUPABASE_STORAGE_KEY`. `SECRET_KEY` is auto-generated; `MAIL_FROM_NAME` defaults to `FlatMate`.
 4. Deploy — you get a public `https://…onrender.com` URL. It redeploys on every push.
 
 Notes:
 - **Cold start**: the free tier sleeps after ~15 min idle; the first request then takes ~30–60s.
   Open the URL a minute before a demo.
-- **Uploaded images are ephemeral** ⚠️ — Render's free disk is wiped on every restart/redeploy, so
-  user-uploaded profile/listing JPEGs (`app/static/uploads/`) disappear. Seeded listings use
-  external image URLs (unaffected). The durable fix is Supabase Storage (see `BUILD_PLAN.md`).
+- **Local uploaded images are ephemeral** ⚠️ — Render's free disk is wiped on every restart/redeploy.
+  Listing JPEGs are durable when Supabase Storage is configured; profile JPEGs still use the local
+  upload folder.
 
 ## 📁 Structure
 

@@ -48,6 +48,10 @@
       </select>
     </div>
     <div>
+      <label for="available_by">Verfügbar ab</label>
+      <input id="available_by" class="input" type="date" name="available_by" value="{{ filters.available_by }}">
+    </div>
+    <div>
       <label for="ort">Ort / Radius-Zentrum</label>
       <input id="ort" class="input" type="search" name="ort" value="{{ filters.ort }}" placeholder="Zürich, Basel, Bern">
     </div>
@@ -62,10 +66,6 @@
     <div class="range-filter">
       <label for="room_size_min">Min. Zimmergrösse: <span id="room_size_min_value">{% if filters.room_size_min %}{{ filters.room_size_min }} m²{% else %}Egal{% endif %}</span></label>
       <input id="room_size_min" type="range" min="0" max="60" step="1" name="room_size_min" value="{{ filters.room_size_min or 0 }}" data-empty-label="Egal" data-suffix=" m²">
-    </div>
-    <div>
-      <label for="available_by">Verfügbar ab</label>
-      <input id="available_by" class="input" type="date" name="available_by" value="{{ filters.available_by }}">
     </div>
     <div class="filter-checkbox-block">
       <p>Ausstattung</p>

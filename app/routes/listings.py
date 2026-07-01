@@ -14,6 +14,7 @@ from ..email import send_email
 from ..extensions import db
 from ..forms import ApplicationForm, AppointmentForm, ConfirmForm, ListingForm
 from ..models import Application, Appointment, Favorite, Listing
+from ..storage import upload_listing_photo
 
 listings_bp = Blueprint("listings", __name__, url_prefix="/listings")
 
@@ -117,7 +118,12 @@ def _save_listing_photo(uploaded_file):
         os.makedirs(UPLOAD_FOLDER, exist_ok=True)
         original_name = secure_filename(uploaded_file.filename)
         _, extension = os.path.splitext(original_name)
-        filename = f"{uuid4().hex}{extension.lower()}"
+        filename_stem = uuid4().hex
+        storage_url = upload_listing_photo(uploaded_file, filename_stem)
+        if storage_url:
+            return storage_url
+
+        filename = f"{filename_stem}{extension.lower()}"
         uploaded_file.save(os.path.join(UPLOAD_FOLDER, filename))
         return url_for("static", filename=f"uploads/listings/{filename}")
     return None

@@ -478,3 +478,17 @@ eigenes Inserat.
   und bleiben responsiv, ohne eine dritte Checkbox-Spalte zu erzeugen.
 
 **Getestet:** Syntax-/Import-Check; Test-Client-Check fuer die Inserate-Uebersicht.
+
+## Schritt 25 - Listing-Fotos optional in Supabase Storage speichern (2026-07-01)
+
+**Neu / geaendert:**
+- `app/storage.py`: Neuer Helper fuer Uploads in Supabase Storage per HTTP-API.
+- `app/routes/listings.py`: Listing-JPEGs werden zuerst in Supabase Storage hochgeladen,
+  wenn `SUPABASE_URL`, `SUPABASE_STORAGE_BUCKET` und `SUPABASE_STORAGE_KEY` gesetzt sind.
+  In der Datenbank bleibt wie bisher die Bild-URL in `Listing.photo_url`.
+- Ohne Storage-Konfiguration bleibt der lokale Fallback nach `app/static/uploads/listings/`
+  aktiv, damit lokale Entwicklung weiter ohne Cloud-Setup funktioniert.
+- `config.py`, `.env.example`, `render.yaml` und `README.md`: Storage-Konfiguration dokumentiert.
+
+**Getestet:** Syntax-/Import-Check; Test-Client-Check fuer die Inserate-Erstellung mit
+lokalem Fallback ohne Storage-Konfiguration.
