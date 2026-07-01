@@ -6,21 +6,22 @@ from flask import current_app
 from werkzeug.utils import secure_filename
 
 
-def upload_listing_photo(uploaded_file, filename):
-    """Upload a listing JPEG to Supabase Storage and return its public URL.
+def upload_photo(uploaded_file, filename_stem, folder="listings"):
+    """Upload a JPEG to Supabase Storage under ``<folder>/`` and return its public URL.
 
-    Returns None when storage is not configured or the upload fails, so callers can
-    keep using the local filesystem fallback.
+    Both profile pictures (folder="profiles") and listing photos (folder="listings")
+    use the same bucket. Returns None when storage is not configured or the upload
+    fails, so callers can fall back to the local filesystem.
     """
     supabase_url = current_app.config.get("SUPABASE_URL")
     storage_key = current_app.config.get("SUPABASE_STORAGE_KEY")
-    bucket = current_app.config.get("SUPABASE_STORAGE_BUCKET", "listing-photos")
+    bucket = current_app.config.get("SUPABASE_STORAGE_BUCKET", "images")
     if not supabase_url or not storage_key or not bucket:
         return None
 
     original_name = secure_filename(uploaded_file.filename)
     _, extension = os.path.splitext(original_name)
-    object_path = f"listings/{filename}{extension.lower()}"
+    object_path = f"{folder}/{filename_stem}{extension.lower()}"
     encoded_path = "/".join(quote(part, safe="") for part in object_path.split("/"))
     endpoint = f"{supabase_url}/storage/v1/object/{quote(bucket, safe='')}/{encoded_path}"
 
@@ -47,3 +48,8 @@ def upload_listing_photo(uploaded_file, filename):
         return None
 
     return f"{supabase_url}/storage/v1/object/public/{quote(bucket, safe='')}/{encoded_path}"
+
+
+def upload_listing_photo(uploaded_file, filename_stem):
+    """Backwards-compatible wrapper: listing photos go into the ``listings/`` folder."""
+    return upload_photo(uploaded_file, filename_stem, folder="listings")

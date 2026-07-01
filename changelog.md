@@ -492,3 +492,21 @@ eigenes Inserat.
 
 **Getestet:** Syntax-/Import-Check; Test-Client-Check fuer die Inserate-Erstellung mit
 lokalem Fallback ohne Storage-Konfiguration.
+
+## Schritt 26 — Profilbilder + Inserat-Fotos im selben Storage-Bucket (2026-07-01)
+
+Aufbauend auf Schritt 25: **Profilbilder werden jetzt ebenfalls in Supabase Storage** gespeichert
+(vorher nur Inserat-Fotos), und beide nutzen **einen gemeinsamen öffentlichen Bucket** `images`.
+
+**Geändert:**
+- `app/storage.py`: generische `upload_photo(file, stem, folder="listings")`; Ordner `listings/`
+  bzw. `profiles/` im selben Bucket. `upload_listing_photo` bleibt als Wrapper erhalten.
+- `app/routes/profile.py`: Profilbild-Upload nutzt zuerst Supabase Storage (`profiles/`),
+  sonst lokaler Fallback.
+- Bucket-Name auf **`images`** vereinheitlicht (`config.py`-Default, `render.yaml`, `.env`/`.env.example`).
+
+**Hinweis:** `SUPABASE_URL` = reines Projekt-URL (nicht der S3-Endpoint); `SUPABASE_STORAGE_KEY`
+= Service-/Secret-Key; Bucket muss **public** sein.
+
+**Getestet:** Echter Upload über `upload_photo` in beide Ordner (`listings/`, `profiles/`) des
+`images`-Buckets; öffentliche URLs liefern die Bytes zurück (HTTP 200); Testobjekte danach gelöscht.

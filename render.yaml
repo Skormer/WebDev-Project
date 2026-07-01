@@ -27,6 +27,6 @@ services:
       - key: SUPABASE_URL
         sync: false
       - key: SUPABASE_STORAGE_BUCKET
-        value: listing-photos
+        value: images
       - key: SUPABASE_STORAGE_KEY
         sync: false

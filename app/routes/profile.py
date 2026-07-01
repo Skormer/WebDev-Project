@@ -8,6 +8,7 @@ from werkzeug.utils import secure_filename
 from ..extensions import db
 from ..forms import ProfileEditForm
 from ..models import User
+from ..storage import upload_photo
 
 profile_bp = Blueprint("profile", __name__)
 
@@ -27,13 +28,18 @@ def edit():
     if form.validate_on_submit():
         uploaded_file = form.foto.data
         if uploaded_file and uploaded_file.filename:
-            os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-            original_name = secure_filename(uploaded_file.filename)
-            _, extension = os.path.splitext(original_name)
-            filename = f"{uuid4().hex}{extension.lower()}"
-            file_path = os.path.join(UPLOAD_FOLDER, filename)
-            uploaded_file.save(file_path)
-            current_user.foto_url = url_for("static", filename=f"uploads/{filename}")
+            filename_stem = uuid4().hex
+            # Zuerst Supabase Storage (dauerhaft), sonst lokaler Fallback (nur Dev/ephemer).
+            storage_url = upload_photo(uploaded_file, filename_stem, folder="profiles")
+            if storage_url:
+                current_user.foto_url = storage_url
+            else:
+                os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+                original_name = secure_filename(uploaded_file.filename)
+                _, extension = os.path.splitext(original_name)
+                filename = f"{filename_stem}{extension.lower()}"
+                uploaded_file.save(os.path.join(UPLOAD_FOLDER, filename))
+                current_user.foto_url = url_for("static", filename=f"uploads/{filename}")
 
         current_user.name = form.name.data.strip()
         current_user.rolle = form.rolle.data

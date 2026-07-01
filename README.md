@@ -65,18 +65,20 @@ python main.py                # http://127.0.0.1:5000
 
 ## 🖼️ Image Uploads
 
-Listing photos are uploaded as JPEG files. If Supabase Storage is configured, the app uploads
-listing photos to the configured bucket and stores the public URL in `Listing.photo_url`. If
-Storage is not configured, listing photos fall back to `app/static/uploads/listings/`, which is
-local-only and ignored by Git. Profile pictures still use the local `app/static/uploads/` folder.
+Profile pictures **and** listing photos are uploaded as JPEG. If Supabase Storage is configured,
+the app uploads them to one **public** bucket (default `images`) — listing photos under
+`listings/`, profile pictures under `profiles/` — and stores the public URL in the DB
+(`Listing.photo_url` / `User.foto_url`). If Storage isn't configured, uploads fall back to the
+local `app/static/uploads/` folder (dev-only; ephemeral on Render).
 
-For durable listing photos, create a public Supabase Storage bucket such as `listing-photos` and
-set these env vars locally and on Render:
+Setup: create a **public** Supabase Storage bucket named `images`, then set these env vars
+locally (`.env`) and on Render. `SUPABASE_URL` is the plain project URL (not the S3 endpoint),
+and `SUPABASE_STORAGE_KEY` is the **service (secret)** key:
 
 ```env
 SUPABASE_URL=https://xxxx.supabase.co
-SUPABASE_STORAGE_BUCKET=listing-photos
-SUPABASE_STORAGE_KEY=...
+SUPABASE_STORAGE_BUCKET=images
+SUPABASE_STORAGE_KEY=...   # service/secret key, never the publishable key
 ```
 
 ## 📧 Email notifications
@@ -111,9 +113,9 @@ A `render.yaml` blueprint is included.
 Notes:
 - **Cold start**: the free tier sleeps after ~15 min idle; the first request then takes ~30–60s.
   Open the URL a minute before a demo.
-- **Local uploaded images are ephemeral** ⚠️ — Render's free disk is wiped on every restart/redeploy.
-  Listing JPEGs are durable when Supabase Storage is configured; profile JPEGs still use the local
-  upload folder.
+- **Images**: with Supabase Storage configured, profile pictures and listing photos are durable
+  (stored in the `images` bucket). Without it, uploads fall back to Render's local disk, which is
+  **ephemeral** (wiped on every restart/redeploy) — so configure Storage for the deployed app.
 
 ## 📁 Structure
 
