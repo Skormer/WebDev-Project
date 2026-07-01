@@ -1,0 +1,24 @@
+{# HTML-E-Mail: Entscheidung zu einer Besichtigungsanfrage an den Interessenten. #}
+{% extends "email/base_email.html" %}
+{% block body %}
+  <h1 style="margin:0 0 14px; font-size:20px; color:#1f2430;">Deine Besichtigungsanfrage wurde {{ decision_label }}</h1>
+  <p style="margin:0 0 16px; font-size:15px; line-height:1.55; color:#3d3d3a;">
+    Hallo {{ applicant_name }},<br>
+    deine Besichtigungsanfrage für <strong>{{ listing_title }}</strong> wurde
+    <strong>{{ decision_label }}</strong>.
+  </p>
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 16px;">
+    <tr>
+      <td style="background:#e8f0fe; border-radius:8px; padding:14px 16px; font-size:15px; color:#1a4fb4;">
+        Wunschtermin: <strong>{{ scheduled_at.strftime('%d.%m.%Y %H:%M') }} Uhr</strong>
+      </td>
+    </tr>
+  </table>
+  <table role="presentation" cellpadding="0" cellspacing="0" style="margin:8px 0;">
+    <tr>
+      <td style="border-radius:8px; background:#2f6fed;">
+        <a href="{{ listing_url }}" style="display:inline-block; padding:12px 26px; font-size:15px; font-weight:600; color:#ffffff; text-decoration:none;">Inserat ansehen</a>
+      </td>
+    </tr>
+  </table>
+{% endblock %}

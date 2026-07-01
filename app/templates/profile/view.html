@@ -53,7 +53,6 @@
         {% else %}-{% endif %}
       </dd>
     </div>
-    <div><dt>Kocht gerne</dt><dd>{{ 'Ja' if user.kocht_gern else 'Nein' }}</dd></div>
     <div><dt>Sauberkeit</dt><dd>{{ user.sauberkeit ~ ' / 5' if user.sauberkeit else '–' }}</dd></div>
     <div><dt>Mitglied seit</dt><dd>{{ user.created_at.strftime('%d.%m.%Y') if user.created_at else '–' }}</dd></div>
   </dl>
