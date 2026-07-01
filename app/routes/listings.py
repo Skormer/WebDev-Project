@@ -1,8 +1,12 @@
 import os
+import json
+import math
 from datetime import date
+from urllib.parse import urlencode
+from urllib.request import urlopen
 from uuid import uuid4
 
-from flask import Blueprint, abort, flash, redirect, render_template, request, url_for
+from flask import Blueprint, abort, current_app, flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required
 from werkzeug.utils import secure_filename
 
@@ -14,6 +18,15 @@ from ..models import Application, Appointment, Favorite, Listing
 listings_bp = Blueprint("listings", __name__, url_prefix="/listings")
 
 UPLOAD_FOLDER = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "static", "uploads", "listings"))
+
+FALLBACK_GEO_POINTS = {
+    "zurich": (47.3769, 8.5417),
+    "zuerich": (47.3769, 8.5417),
+    "zürich": (47.3769, 8.5417),
+    "basel": (47.5596, 7.5886),
+    "bern": (46.9480, 7.4474),
+    "winterthur": (47.4988, 8.7237),
+}
 
 
 def _parse_int(value):
@@ -32,6 +45,70 @@ def _parse_date(value):
         return date.fromisoformat(value)
     except ValueError:
         return None
+
+
+def _listing_address(listing):
+    return ", ".join(
+        part
+        for part in [listing.strasse, listing.ort, listing.kanton, "Switzerland"]
+        if part
+    )
+
+
+def _fallback_geocode(address):
+    normalized = address.strip().lower()
+    for key, coords in FALLBACK_GEO_POINTS.items():
+        if key in normalized:
+            return coords
+    return None
+
+
+def _geocode_address(address):
+    if not address:
+        return None
+
+    api_key = current_app.config.get("GOOGLE_MAPS_API_KEY")
+    if api_key:
+        params = urlencode({"address": address, "key": api_key})
+        try:
+            with urlopen(f"https://maps.googleapis.com/maps/api/geocode/json?{params}", timeout=5) as response:
+                payload = json.loads(response.read().decode("utf-8"))
+        except Exception:
+            payload = None
+
+        if payload and payload.get("status") == "OK" and payload.get("results"):
+            location = payload["results"][0]["geometry"]["location"]
+            return location["lat"], location["lng"]
+
+    return _fallback_geocode(address)
+
+
+def _assign_listing_coordinates(listing):
+    coords = _geocode_address(_listing_address(listing))
+    if coords:
+        listing.latitude, listing.longitude = coords
+        return True
+    listing.latitude = None
+    listing.longitude = None
+    return False
+
+
+def _distance_km(origin, listing):
+    if listing.latitude is None or listing.longitude is None:
+        return None
+
+    lat1, lon1 = origin
+    lat2, lon2 = listing.latitude, listing.longitude
+    radius = 6371.0
+    d_lat = math.radians(lat2 - lat1)
+    d_lon = math.radians(lon2 - lon1)
+    a = (
+        math.sin(d_lat / 2) ** 2
+        + math.cos(math.radians(lat1))
+        * math.cos(math.radians(lat2))
+        * math.sin(d_lon / 2) ** 2
+    )
+    return radius * 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
 
 
 def _save_listing_photo(uploaded_file):
@@ -55,6 +132,8 @@ def index():
         "rent_max": request.args.get("rent_max", "").strip(),
         "room_size_min": request.args.get("room_size_min", "").strip(),
         "available_by": request.args.get("available_by", "").strip(),
+        "near": request.args.get("near", "").strip(),
+        "radius_km": request.args.get("radius_km", "").strip(),
         "furnished": request.args.get("furnished", "").strip(),
         "pets_allowed": request.args.get("pets_allowed", "").strip(),
         "smoking_allowed": request.args.get("smoking_allowed", "").strip(),
@@ -72,11 +151,14 @@ def index():
     ]
 
     query = Listing.query
+    radius_km = _parse_int(filters["radius_km"])
+    radius_origin_text = filters["near"] or filters["ort"]
+    use_radius_search = bool(radius_origin_text)
 
     if filters["kanton"]:
         query = query.filter(Listing.kanton == filters["kanton"])
 
-    if filters["ort"]:
+    if filters["ort"] and not use_radius_search:
         query = query.filter(Listing.ort.ilike(f"%{filters['ort']}%"))
 
     rent_max = _parse_int(filters["rent_max"])
@@ -101,9 +183,33 @@ def index():
         query = query.filter(Listing.smoking_allowed.is_(True))
 
     listings = query.order_by(Listing.created_at.desc()).all()
+
+    if use_radius_search:
+        radius_km = radius_km or 100
+        origin = _geocode_address(radius_origin_text)
+        if origin:
+            listings_with_distance = []
+            coordinates_updated = False
+            for listing in listings:
+                if listing.latitude is None or listing.longitude is None:
+                    _assign_listing_coordinates(listing)
+                    coordinates_updated = listing.latitude is not None and listing.longitude is not None or coordinates_updated
+                distance = _distance_km(origin, listing)
+                if distance is not None and (radius_km >= 100 or distance <= radius_km):
+                    listings_with_distance.append((distance, listing))
+            if coordinates_updated:
+                db.session.commit()
+            listings = [listing for _, listing in sorted(listings_with_distance, key=lambda item: item[0])]
+        else:
+            flash("Ort fuer Umkreissuche konnte nicht gefunden werden.", "warning")
+
     active_filters = any(
-        value for key, value in filters.items()
-        if not (key == "rent_max" and value == "3000")
+        value
+        for key, value in filters.items()
+        if not (
+            (key == "rent_max" and value == "3000")
+            or key == "radius_km"
+        )
     )
     return render_template(
         "listings/index.html",
@@ -141,11 +247,14 @@ def new():
             flatmates=form.flatmates.data,
             photo_url=_save_listing_photo(form.foto.data),
         )
+        coordinates_found = _assign_listing_coordinates(listing)
         db.session.add(listing)
         # Wer ein Inserat anbietet, ist nicht mehr "Auf Wohnungssuche".
         current_user.rolle = "anbietend"
         db.session.commit()
         flash("Inserat erstellt.", "success")
+        if not coordinates_found:
+            flash("Adresse konnte nicht eindeutig auf der Karte gefunden werden. Bitte Strasse, Hausnummer, Ort und Kanton pruefen.", "warning")
         return redirect(url_for("listings.detail", listing_id=listing.id))
 
     return render_template("listings/form.html", form=form, heading="Inserat erstellen")
@@ -173,11 +282,14 @@ def edit(listing_id):
         listing.pets_allowed = form.pets_allowed.data
         listing.smoking_allowed = form.smoking_allowed.data
         listing.flatmates = form.flatmates.data
+        coordinates_found = _assign_listing_coordinates(listing)
         new_photo = _save_listing_photo(form.foto.data)
         if new_photo:
             listing.photo_url = new_photo
         db.session.commit()
         flash("Inserat aktualisiert.", "success")
+        if not coordinates_found:
+            flash("Adresse konnte nicht eindeutig auf der Karte gefunden werden. Bitte Strasse, Hausnummer, Ort und Kanton pruefen.", "warning")
         return redirect(url_for("listings.detail", listing_id=listing.id))
 
     return render_template("listings/form.html", form=form, heading="Inserat bearbeiten", listing=listing)
@@ -214,16 +326,9 @@ def map_view():
             "pets_allowed": listing.pets_allowed,
             "smoking_allowed": listing.smoking_allowed,
             "photo_url": listing.photo_url,
-            "address": ", ".join(
-                part
-                for part in [
-                    listing.strasse,
-                    listing.ort,
-                    listing.kanton,
-                    "Switzerland",
-                ]
-                if part
-            ),
+            "latitude": listing.latitude,
+            "longitude": listing.longitude,
+            "address": _listing_address(listing),
             "detail_url": url_for("listings.detail", listing_id=listing.id),
         }
         for listing in listings

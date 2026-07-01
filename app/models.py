@@ -52,6 +52,8 @@ class Listing(db.Model):
     kanton = db.Column(db.String(50), nullable=False)
     ort = db.Column(db.String(200), nullable=False)
     strasse = db.Column(db.String(200))
+    latitude = db.Column(db.Float)
+    longitude = db.Column(db.Float)
     room_size = db.Column(db.Integer)
     available_from = db.Column(db.Date)
     furnished = db.Column(db.Boolean, default=False)

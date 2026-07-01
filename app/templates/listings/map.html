@@ -74,7 +74,25 @@
       const bounds = new google.maps.LatLngBounds();
       const infoWindow = new google.maps.InfoWindow();
       const detailCard = document.getElementById('map-detail-card');
+      const markerPositions = new Map();
       let markersPlaced = 0;
+
+      const offsetDuplicatePosition = (position) => {
+        const lat = typeof position.lat === 'function' ? position.lat() : position.lat;
+        const lng = typeof position.lng === 'function' ? position.lng() : position.lng;
+        const key = `${lat.toFixed(6)},${lng.toFixed(6)}`;
+        const count = markerPositions.get(key) || 0;
+        markerPositions.set(key, count + 1);
+
+        if (count === 0) return position;
+
+        const angle = count * 1.75;
+        const offset = 0.00035 * Math.ceil(count / 2);
+        return {
+          lat: lat + Math.sin(angle) * offset,
+          lng: lng + Math.cos(angle) * offset,
+        };
+      };
 
       const createMetaItem = (label, value) => {
         const item = document.createElement('div');
@@ -133,13 +151,11 @@
       };
 
       listingsForMap.forEach((listing) => {
-        geocoder.geocode({ address: listing.address }, (results, status) => {
-          if (status !== 'OK' || !results[0]) return;
-
-          const position = results[0].geometry.location;
+        const placeMarker = (position) => {
+          const markerPosition = offsetDuplicatePosition(position);
           const marker = new google.maps.Marker({
             map,
-            position,
+            position: markerPosition,
             title: listing.title,
           });
 
@@ -164,7 +180,7 @@
             infoWindow.open(map, marker);
           });
 
-          bounds.extend(position);
+          bounds.extend(markerPosition);
           markersPlaced += 1;
           if (markersPlaced === 1) {
             map.setCenter(position);
@@ -172,6 +188,16 @@
           } else {
             map.fitBounds(bounds);
           }
+        };
+
+        if (listing.latitude && listing.longitude) {
+          placeMarker({ lat: listing.latitude, lng: listing.longitude });
+          return;
+        }
+
+        geocoder.geocode({ address: listing.address }, (results, status) => {
+          if (status !== 'OK' || !results[0]) return;
+          placeMarker(results[0].geometry.location);
         });
       });
     };

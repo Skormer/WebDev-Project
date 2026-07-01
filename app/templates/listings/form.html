@@ -22,17 +22,30 @@
     <label>{{ form.deposit.label }}</label>
     {{ form.deposit(class="input") }}
 
-    <label>{{ form.kanton.label }}</label>
-    {{ form.kanton(class="input", placeholder="ZH") }}
-    {% for e in form.kanton.errors %}<span class="field-error">{{ e }}</span>{% endfor %}
-
-    <label>{{ form.ort.label }}</label>
-    {{ form.ort(class="input", placeholder="Zürich") }}
-    {% for e in form.ort.errors %}<span class="field-error">{{ e }}</span>{% endfor %}
+    <div class="address-help">
+      <p class="eyebrow">Adresse fuer die Karte</p>
+      <p class="muted">Bitte Adresse so eingeben, wie sie auch in Google Maps gefunden wird: Strasse + Hausnummer, Ort/Stadt, Kanton. Die Koordinaten werden automatisch gespeichert.</p>
+    </div>
 
     <label>{{ form.strasse.label }}</label>
-    {{ form.strasse(class="input", placeholder="Langstrasse 12") }}
+    {{ form.strasse(class="input address-part", placeholder="z.B. Langstrasse 12", autocomplete="street-address") }}
+    <p class="field-hint">Am besten mit Hausnummer. Ohne Strasse nutzt die Karte nur Ort und Kanton.</p>
     {% for e in form.strasse.errors %}<span class="field-error">{{ e }}</span>{% endfor %}
+
+    <label>{{ form.ort.label }}</label>
+    {{ form.ort(class="input address-part", placeholder="z.B. Zuerich oder Zuerich, Kreis 4", autocomplete="address-level2") }}
+    <p class="field-hint">Stadt oder Gemeinde. Quartier ist optional, z.B. "Zuerich, Oerlikon".</p>
+    {% for e in form.ort.errors %}<span class="field-error">{{ e }}</span>{% endfor %}
+
+    <label>{{ form.kanton.label }}</label>
+    {{ form.kanton(class="input address-part", placeholder="z.B. ZH, BE, BS", autocomplete="address-level1") }}
+    <p class="field-hint">Schweizer Kantonskuerzel oder Name, z.B. ZH oder Zuerich.</p>
+    {% for e in form.kanton.errors %}<span class="field-error">{{ e }}</span>{% endfor %}
+
+    <p class="address-preview">
+      Google sucht nach:
+      <strong id="address-preview-text">Strasse, Ort, Kanton, Switzerland</strong>
+    </p>
 
     <label>{{ form.room_size.label }}</label>
     {{ form.room_size(class="input") }}
@@ -59,6 +72,32 @@
 
     {{ form.submit(class="btn btn-primary") }}
   </form>
-  <p class="muted"><a href="{{ url_for('listings.index') }}">Zurück zu den Inseraten</a></p>
+  <p class="muted"><a href="{{ url_for('listings.index') }}">Zurueck zu den Inseraten</a></p>
 </div>
+
+<script>
+  const addressPreview = document.getElementById('address-preview-text');
+  const addressFields = {
+    strasse: document.getElementById('{{ form.strasse.id }}'),
+    ort: document.getElementById('{{ form.ort.id }}'),
+    kanton: document.getElementById('{{ form.kanton.id }}'),
+  };
+
+  const updateAddressPreview = () => {
+    const parts = [
+      addressFields.strasse.value.trim(),
+      addressFields.ort.value.trim(),
+      addressFields.kanton.value.trim(),
+      'Switzerland',
+    ].filter(Boolean);
+    addressPreview.textContent = parts.length > 1
+      ? parts.join(', ')
+      : 'Strasse, Ort, Kanton, Switzerland';
+  };
+
+  Object.values(addressFields).forEach((field) => {
+    field.addEventListener('input', updateAddressPreview);
+  });
+  updateAddressPreview();
+</script>
 {% endblock %}
