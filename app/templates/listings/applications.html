@@ -20,6 +20,10 @@
           {% if a.nachricht %}<p class="bio">„{{ a.nachricht }}"</p>{% endif %}
           <div class="applicant-actions">
             <a href="{{ url_for('chat.conversation', user_id=a.applicant.id) }}">Nachricht senden</a>
+            <form method="post" action="{{ url_for('listings.accept_application', listing_id=listing.id, application_id=a.id) }}">
+              {{ accept_form.hidden_tag() }}
+              <button class="btn btn-primary" type="submit">Annehmen</button>
+            </form>
             <form method="post" action="{{ url_for('listings.reject_application', listing_id=listing.id, application_id=a.id) }}">
               {{ reject_form.hidden_tag() }}
               <button class="btn btn-danger" type="submit">Ablehnen</button>
@@ -32,6 +36,23 @@
     <p class="muted">Noch keine offenen Bewerbungen.</p>
   {% endif %}
 </div>
+
+{% if accepted_apps %}
+  <div class="card">
+    <h2>Angenommene Bewerbungen ({{ accepted_apps|length }})</h2>
+    <ul class="applicant-list">
+      {% for a in accepted_apps %}
+        <li class="rejected">
+          <a href="{{ url_for('profile.view', user_id=a.applicant.id) }}">{{ a.applicant.name }}</a>
+          <span class="muted">Angenommen am {{ a.created_at.strftime('%d.%m.%Y') }}</span>
+          <div class="applicant-actions">
+            <a href="{{ url_for('chat.conversation', user_id=a.applicant.id) }}">Chat öffnen</a>
+          </div>
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+{% endif %}
 
 {% if rejected_apps %}
   <div class="card">
