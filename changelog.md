@@ -658,3 +658,14 @@ Das Formular zum Erstellen/Bearbeiten war eine schmale Ein-Spalten-Kolonne mit v
 
 **Getestet:** Erstellen- und Bearbeiten-Formular rendern mit Raster, allen Feldern,
 Löschen-Button und Adress-Vorschau (lokale SQLite).
+
+## Schritt 35 — Liste/Karte-Slider entfernt (2026-07-01)
+
+Der Liste/Karte-Umschalter war doppelt (die Navigation hat bereits Inserate- und Karte-Links).
+
+**Geändert:**
+- `app/templates/listings/index.html` + `map.html`: `.view-switch`-Umschalter entfernt.
+- `app/static/css/style.css`: zugehörige (nun ungenutzte) `.view-switch*`-Regeln entfernt.
+- Umschalten läuft weiterhin über die Navigation (Inserate ↔ Karte).
+
+**Getestet:** Beide Seiten rendern (200), kein `view-switch` mehr, Nav-Links vorhanden.

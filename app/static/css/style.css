@@ -271,36 +271,6 @@ label { display: block; margin: 0.8rem 0 0.3rem; font-weight: 600; font-size: 0.
   flex-wrap: wrap;
 }
 .page-actions .btn { margin-top: 0; }
-.view-switch {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.25rem;
-  margin: 0 0 1rem;
-  padding: 0.25rem;
-  background: #eef2f7;
-  border: 1px solid var(--border);
-  border-radius: 999px;
-}
-.view-switch-item {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.45rem;
-  min-height: 2.25rem;
-  padding: 0.45rem 0.9rem;
-  border-radius: 999px;
-  color: var(--muted);
-  font-weight: 700;
-  text-decoration: none;
-}
-.view-switch-item:hover {
-  text-decoration: none;
-  color: var(--primary);
-}
-.view-switch-item.is-active {
-  background: #fff;
-  color: var(--text);
-  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-}
 .page-up-button {
   position: fixed;
   right: 1.25rem;
