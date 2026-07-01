@@ -2,76 +2,107 @@
 {% block title %}Profil bearbeiten · FlatMate{% endblock %}
 
 {% block content %}
-<div class="card form-card">
+<div class="card listing-form-card">
   <h1>Profil bearbeiten</h1>
   <form method="post" enctype="multipart/form-data" novalidate>
     {{ form.hidden_tag() }}
+    <div class="form-grid">
 
-    <label>{{ form.name.label }}</label>
-    {{ form.name(class="input") }}
-    {% for e in form.name.errors %}<span class="field-error">{{ e }}</span>{% endfor %}
+      <div class="form-field">
+        <label>{{ form.name.label }}</label>
+        {{ form.name(class="input") }}
+        {% for e in form.name.errors %}<span class="field-error">{{ e }}</span>{% endfor %}
+      </div>
 
-    <label>{{ form.rolle.label }}</label>
-    {{ form.rolle(class="input") }}
+      <div class="form-field">
+        <label>{{ form.rolle.label }}</label>
+        {{ form.rolle(class="input") }}
+      </div>
 
-    <label>{{ form.alter.label }}</label>
-    {{ form.alter(class="input") }}
+      <div class="form-field">
+        <label>{{ form.alter.label }}</label>
+        {{ form.alter(class="input") }}
+      </div>
 
-    <label>{{ form.beruf.label }}</label>
-    {{ form.beruf(class="input") }}
+      <div class="form-field">
+        <label>{{ form.beruf.label }}</label>
+        {{ form.beruf(class="input") }}
+      </div>
 
-    <label>{{ form.stadt.label }}</label>
-    {{ form.stadt(class="input") }}
+      <div class="form-field">
+        <label>{{ form.stadt.label }}</label>
+        {{ form.stadt(class="input") }}
+      </div>
 
-    <label>{{ form.nationalitaet.label }}</label>
-    {{ form.nationalitaet(class="input") }}
+      <div class="form-field">
+        <label>{{ form.nationalitaet.label }}</label>
+        {{ form.nationalitaet(class="input") }}
+      </div>
 
-    <label>{{ form.budget_min.label }}</label>
-    {{ form.budget_min(class="input") }}
+      <div class="form-field">
+        <label>{{ form.budget_min.label }}</label>
+        {{ form.budget_min(class="input") }}
+      </div>
 
-    <label>{{ form.budget_max.label }}</label>
-    {{ form.budget_max(class="input") }}
+      <div class="form-field">
+        <label>{{ form.budget_max.label }}</label>
+        {{ form.budget_max(class="input") }}
+      </div>
 
-    <label>{{ form.raucher.label }}</label>
-    {{ form.raucher() }}
+      <div class="form-field">
+        <label>{{ form.sauberkeit.label }}</label>
+        {{ form.sauberkeit(class="input") }}
+      </div>
 
-    <label>{{ form.haustiere.label }}</label>
-    {{ form.haustiere() }}
+      <div class="form-field">
+        <label>{{ form.musikgeschmack.label }}</label>
+        {{ form.musikgeschmack(class="input", placeholder="z.B. Indie, Hip-Hop, Techno, Jazz") }}
+      </div>
 
-    <label>{{ form.sauberkeit.label }}</label>
-    {{ form.sauberkeit(class="input") }}
+      <div class="form-field">
+        <label>{{ form.wochenend_typ.label }}</label>
+        {{ form.wochenend_typ(class="input") }}
+      </div>
 
-    <label>{{ form.hobbies.label }}</label>
-    {{ form.hobbies(class="input", rows="3", placeholder="z.B. Kochen, Klettern, Gaming, Lesen") }}
+      <div class="form-field">
+        <label>{{ form.soziales_level.label }}</label>
+        {{ form.soziales_level(class="input") }}
+      </div>
 
-    <label>{{ form.musikgeschmack.label }}</label>
-    {{ form.musikgeschmack(class="input", placeholder="z.B. Indie, Hip-Hop, Techno, Jazz") }}
+      <div class="form-field checkbox-group span-2">
+        <label>{{ form.raucher() }} {{ form.raucher.label.text }}</label>
+        <label>{{ form.haustiere() }} {{ form.haustiere.label.text }}</label>
+        <label>{{ form.kocht_gern() }} {{ form.kocht_gern.label.text }}</label>
+      </div>
 
-    <label>{{ form.wochenend_typ.label }}</label>
-    {{ form.wochenend_typ(class="input") }}
+      <div class="form-field span-2">
+        <label>{{ form.hobbies.label }}</label>
+        {{ form.hobbies(class="input", rows="3", placeholder="z.B. Kochen, Klettern, Gaming, Lesen") }}
+      </div>
 
-    <label>{{ form.soziales_level.label }}</label>
-    {{ form.soziales_level(class="input") }}
+      <div class="form-field span-2">
+        <label>{{ form.bio.label }}</label>
+        {{ form.bio(class="input", rows="4") }}
+      </div>
 
-    <label>{{ form.kocht_gern.label }}</label>
-    {{ form.kocht_gern() }}
+      <div class="form-field">
+        <label>{{ form.foto.label }}</label>
+        {% if user.foto_url %}
+          <img class="avatar" src="{{ user.foto_url }}" alt="Aktuelles Bild">
+        {% endif %}
+        {{ form.foto(class="input", accept="image/jpeg") }}
+        {% for e in form.foto.errors %}<span class="field-error">{{ e }}</span>{% endfor %}
+        <p class="muted">Nur JPEG-Dateien (.jpg / .jpeg).</p>
+      </div>
 
-    <label>{{ form.bio.label }}</label>
-    {{ form.bio(class="input", rows="5") }}
+      <div class="form-field">
+        <label>{{ form.foto_url.label }}</label>
+        {{ form.foto_url(class="input", placeholder="https://…/bild.jpg") }}
+        {% for e in form.foto_url.errors %}<span class="field-error">{{ e }}</span>{% endfor %}
+        <p class="muted">Alternativ zum Upload: eine direkte Bild-URL. Upload hat Vorrang.</p>
+      </div>
 
-    {% if user.foto_url %}
-      <img class="avatar" src="{{ user.foto_url }}" alt="Aktuelles Bild">
-    {% endif %}
-    <label>{{ form.foto.label }}</label>
-    {{ form.foto(class="input", accept="image/jpeg") }}
-    {% for e in form.foto.errors %}<span class="field-error">{{ e }}</span>{% endfor %}
-    <p class="muted">Nur JPEG-Dateien (.jpg / .jpeg).</p>
-
-    <label>{{ form.foto_url.label }}</label>
-    {{ form.foto_url(class="input", placeholder="https://…/bild.jpg") }}
-    {% for e in form.foto_url.errors %}<span class="field-error">{{ e }}</span>{% endfor %}
-    <p class="muted">Alternativ zum Upload: eine direkte Bild-URL. Upload hat Vorrang.</p>
-
+    </div>
     {{ form.submit(class="btn btn-primary") }}
   </form>
   <p class="muted"><a href="{{ url_for('profile.me') }}">Zurück zum Profil</a></p>

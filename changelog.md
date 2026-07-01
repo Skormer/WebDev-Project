@@ -669,3 +669,16 @@ Der Liste/Karte-Umschalter war doppelt (die Navigation hat bereits Inserate- und
 - Umschalten läuft weiterhin über die Navigation (Inserate ↔ Karte).
 
 **Getestet:** Beide Seiten rendern (200), kein `view-switch` mehr, Nav-Links vorhanden.
+
+## Schritt 36 — Profil bearbeiten breiter & mehrspaltig (2026-07-01)
+
+Wie beim Inserat-Formular: „Profil bearbeiten" nutzt jetzt das breite 2-Spalten-Raster
+statt einer schmalen Kolonne — weniger Scrollen.
+
+**Geändert:**
+- `app/templates/profile/edit.html`: `.listing-form-card` + `.form-grid`; Felder gepaart
+  (Name|Status, Alter|Beruf, Stadt|Nationalität, Budget min|max, Sauberkeit|Musik,
+  Wochenende|Sozialleben, Checkboxen span-2, Hobbys/Bio span-2, Foto|Bild-URL).
+- Keine Logik-/Feld-Änderung, nur Layout.
+
+**Getestet:** Formular rendert (200) mit Raster und allen Feldern (lokale SQLite).
