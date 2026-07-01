@@ -84,6 +84,26 @@ Setup (no domain needed): create a free SendGrid account → **Settings → Send
 
 Sending never breaks the request: if it fails, it's logged and the application is still saved.
 
+## 🚀 Deployment (Render, free tier)
+
+The app runs as a normal Python web service (GitHub Pages can't host it — that's static only).
+A `render.yaml` blueprint is included.
+
+1. Push to GitHub (done).
+2. On **render.com** → **New + → Blueprint** → connect this repo. Render reads `render.yaml`
+   (build `pip install -r requirements.txt`, start `gunicorn main:app`).
+3. Set the secret env vars (marked `sync: false`) in the Render dashboard:
+   `DATABASE_URL` (Supabase Session-pooler URL), `SENDGRID_API_KEY`, `MAIL_FROM`,
+   `GOOGLE_MAPS_API_KEY`. `SECRET_KEY` is auto-generated; `MAIL_FROM_NAME` defaults to `FlatMate`.
+4. Deploy — you get a public `https://…onrender.com` URL. It redeploys on every push.
+
+Notes:
+- **Cold start**: the free tier sleeps after ~15 min idle; the first request then takes ~30–60s.
+  Open the URL a minute before a demo.
+- **Uploaded images are ephemeral** ⚠️ — Render's free disk is wiped on every restart/redeploy, so
+  user-uploaded profile/listing JPEGs (`app/static/uploads/`) disappear. Seeded listings use
+  external image URLs (unaffected). The durable fix is Supabase Storage (see `BUILD_PLAN.md`).
+
 ## 📁 Structure
 
 ```

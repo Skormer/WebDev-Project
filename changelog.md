@@ -430,3 +430,21 @@ Einheitliche Schreibweise des App-Namens: **FlatMate** (vorher fälschlich "Flat
   `flatmatesendgrid@gmail.com` blieb unverändert (korrekte Schreibweise, sonst bricht der Versand).
 
 **Getestet:** App-Boot; Navigation und Titel zeigen "FlatMate"; `MAIL_FROM_NAME=FlatMate`.
+
+## Schritt 21 — Deployment-Vorbereitung (Render) (2026-07-01)
+
+Die App wird für das Hosting auf **Render** (Free-Tier) vorbereitet.
+
+**Neu / geändert:**
+- `requirements.txt`: **`gunicorn`** (WSGI-Server für Produktion) ergänzt.
+- `render.yaml`: Blueprint für einen Free-Web-Service (Build `pip install -r requirements.txt`,
+  Start `gunicorn main:app`, Python 3.13). Secrets (`DATABASE_URL`, `SENDGRID_API_KEY`, `MAIL_FROM`,
+  `GOOGLE_MAPS_API_KEY`) als `sync: false` → nur im Render-Dashboard, nicht im Repo. `SECRET_KEY`
+  wird von Render generiert.
+- `README.md`: Abschnitt „Deployment (Render)" mit Schritten und Hinweisen.
+
+**Hinweise:** Free-Tier schläft nach ~15 Min Inaktivität (Kaltstart ~30–60 s). Hochgeladene Bilder
+(`app/static/uploads/`) sind auf Render flüchtig (Neustart löscht sie) — dauerhafte Lösung wäre
+Supabase Storage. WSGI-Einstiegspunkt ist `main:app` (`app = create_app()` in `main.py`).
+
+**Getestet:** `main:app` ist importierbar (WSGI-Entrypoint); App bootet gegen Supabase.

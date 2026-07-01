@@ -1,0 +1,26 @@
+# Render Blueprint — https://render.com/docs/blueprint-spec
+# Render erkennt diese Datei automatisch ("New +" → "Blueprint") und richtet den
+# Web-Service ein. Secrets (sync: false) werden NICHT hier gespeichert, sondern
+# einmalig im Render-Dashboard eingetragen.
+services:
+  - type: web
+    name: flatmate
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn main:app
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.13.2"
+      - key: SECRET_KEY
+        generateValue: true        # Render erzeugt einen sicheren Zufallswert
+      - key: DATABASE_URL
+        sync: false                # Supabase Session-Pooler-URL im Dashboard eintragen
+      - key: SENDGRID_API_KEY
+        sync: false
+      - key: MAIL_FROM
+        sync: false
+      - key: MAIL_FROM_NAME
+        value: FlatMate
+      - key: GOOGLE_MAPS_API_KEY
+        sync: false
