@@ -8,6 +8,7 @@ ganze Team — deshalb der --force-Schutz unten. Login zum Testen:
     lena@example.com / test1234   (Passwort ist bei allen gleich)
 """
 
+import random
 import sys
 from datetime import date
 
@@ -274,14 +275,137 @@ DUMMY_LISTINGS = [
 ]
 
 
+# ---------------------------------------------------------------------------
+# Zusätzliche, generierte Dummy-Daten (damit die App/Filter gefüllt sind).
+# Reproduzierbar dank festem Seed. Ziel: 40 User total, 20 Inserate total.
+# ---------------------------------------------------------------------------
+_rng = random.Random(42)
+
+_CITIES = [
+    {"stadt": "Zürich", "kanton": "ZH", "lat": 47.3769, "lng": 8.5417},
+    {"stadt": "Genf", "kanton": "GE", "lat": 46.2044, "lng": 6.1432},
+    {"stadt": "Basel", "kanton": "BS", "lat": 47.5596, "lng": 7.5886},
+    {"stadt": "Bern", "kanton": "BE", "lat": 46.9480, "lng": 7.4474},
+    {"stadt": "Lausanne", "kanton": "VD", "lat": 46.5197, "lng": 6.6323},
+    {"stadt": "Winterthur", "kanton": "ZH", "lat": 47.5000, "lng": 8.7241},
+    {"stadt": "Luzern", "kanton": "LU", "lat": 47.0502, "lng": 8.3093},
+    {"stadt": "St. Gallen", "kanton": "SG", "lat": 47.4245, "lng": 9.3767},
+    {"stadt": "Lugano", "kanton": "TI", "lat": 46.0037, "lng": 8.9511},
+    {"stadt": "Zug", "kanton": "ZG", "lat": 47.1662, "lng": 8.5155},
+    {"stadt": "Biel", "kanton": "BE", "lat": 47.1368, "lng": 7.2468},
+    {"stadt": "Chur", "kanton": "GR", "lat": 46.8499, "lng": 9.5329},
+    {"stadt": "Freiburg", "kanton": "FR", "lat": 46.8065, "lng": 7.1619},
+    {"stadt": "Luzern", "kanton": "LU", "lat": 47.0502, "lng": 8.3093},
+    {"stadt": "Aarau", "kanton": "AG", "lat": 47.3925, "lng": 8.0442},
+]
+_FIRST = ["Anna", "Ben", "Clara", "Dario", "Emma", "Fabio", "Gina", "Hannes", "Ivana", "Jan",
+          "Kira", "Luca", "Mia", "Noah", "Olivia", "Pablo", "Rahel", "Samuel", "Tessa", "Vera",
+          "Yves", "Zoe", "Leon", "Sophie", "Elias", "Lara", "Nico", "Julia", "Fynn", "Maya"]
+_LAST = ["Baumann", "Christen", "Dubois", "Egli", "Favre", "Gerber", "Hofer", "Iten", "Jost",
+         "Kunz", "Lehmann", "Moser", "Naef", "Odermatt", "Pfister", "Roth", "Suter", "Tanner",
+         "Vogel", "Widmer", "Zimmermann", "Amrein", "Blaser", "Caduff", "Steiner"]
+_BERUFE = ["Studentin", "Student", "Pflegefachmann", "Informatikerin", "Verkäufer", "Designerin",
+           "Elektriker", "Journalistin", "Koch", "Physiotherapeutin", "Bankangestellter",
+           "Lehrerin", "Mechaniker", "Biologin", "Musiker"]
+_NATIONEN = ["Schweiz", "Schweiz", "Schweiz", "Deutschland", "Italien", "Frankreich",
+             "Österreich", "Portugal", "Spanien"]
+_HOBBIES = ["Wandern, Fotografie", "Gaming, Kochen", "Yoga, Lesen", "Velo, Bouldern",
+            "Malen, Konzerte", "Joggen, Kaffee", "Fussball, Grillieren", "Tanzen, Sprachen",
+            "Gärtnern, Backen", "Schwimmen, Filme"]
+_MUSIK = ["Indie, Pop", "Hip-Hop, Techno", "Rock, Jazz", "Klassik, Soul", "Electronic, House",
+          "RnB, Afrobeats", "Metal, Punk", "Folk, Country"]
+_WOCHENEND = ["ruhig", "unterwegs", "party", "gemischt"]
+_SOZIAL = ["fuer_mich", "gelegentlich", "gesellig"]
+_QUARTIERE = ["Zentrum", "Altstadt", "West", "Nord", "Süd", "Ost", "Kreis 5", "Breite", "Vorstadt"]
+_STRASSEN = ["Bahnhofstrasse", "Hauptstrasse", "Seestrasse", "Bergweg", "Lindenweg", "Kirchgasse",
+             "Sonnenweg", "Feldstrasse", "Poststrasse", "Rosenweg"]
+_TITEL_ADJ = ["Helles", "Gemütliches", "Modernes", "Grosses", "Zentrales", "Ruhiges", "Sonniges", "Charmantes"]
+_PHOTOS = [
+    "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85",
+    "https://images.unsplash.com/photo-1494526585095-c41746248156",
+    "https://images.unsplash.com/photo-1484154218962-a197022b5858",
+    "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688",
+    "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2",
+    "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267",
+    "https://images.unsplash.com/photo-1513694203232-719a280e022f",
+]
+
+
+def _build_extra(existing_emails):
+    """Erzeugt zusätzliche User + Inserate, bis 40 User / 20 Inserate erreicht sind."""
+    extra_users = []
+    seen = set(existing_emails)
+    target_extra_users = 40 - len(DUMMY_USERS)
+    while len(extra_users) < target_extra_users:
+        first = _rng.choice(_FIRST)
+        last = _rng.choice(_LAST)
+        email = f"{first.lower()}.{last.lower()}{len(extra_users) + 11}@example.com"
+        if email in seen:
+            continue
+        seen.add(email)
+        city = _rng.choice(_CITIES)
+        budget_min = _rng.choice([400, 500, 600, 700, 800])
+        extra_users.append({
+            "name": f"{first} {last}",
+            "email": email,
+            "alter": _rng.randint(20, 45),
+            "beruf": _rng.choice(_BERUFE),
+            "stadt": city["stadt"],
+            "nationalitaet": _rng.choice(_NATIONEN),
+            "budget_min": budget_min,
+            "budget_max": budget_min + _rng.choice([200, 300, 400, 500]),
+            "raucher": _rng.random() < 0.25,
+            "haustiere": _rng.random() < 0.3,
+            "sauberkeit": _rng.randint(2, 5),
+            "hobbies": _rng.choice(_HOBBIES),
+            "musikgeschmack": _rng.choice(_MUSIK),
+            "wochenend_typ": _rng.choice(_WOCHENEND),
+            "soziales_level": _rng.choice(_SOZIAL),
+            "kocht_gern": _rng.random() < 0.6,
+            "bio": "Freue mich auf eine unkomplizierte, nette WG.",
+        })
+
+    # 10 zusätzliche Inserate → total 20; jeweils ein eigener Inserent (anbietend).
+    extra_listings = []
+    target_extra_listings = 20 - len(DUMMY_LISTINGS)
+    for i in range(target_extra_listings):
+        owner = extra_users[i]
+        city = _rng.choice(_CITIES)
+        rent = _rng.choice([550, 650, 700, 780, 850, 950, 1050, 1150, 1250, 1400])
+        extra_listings.append({
+            "owner_email": owner["email"],
+            "title": f"{_rng.choice(_TITEL_ADJ)} WG-Zimmer in {city['stadt']}",
+            "description": "Schönes Zimmer in einer freundlichen WG mit guter ÖV-Anbindung.",
+            "rent": rent,
+            "deposit": rent * 2,
+            "kanton": city["kanton"],
+            "ort": f"{city['stadt']}, {_rng.choice(_QUARTIERE)}",
+            "strasse": f"{_rng.choice(_STRASSEN)} {_rng.randint(1, 150)}",
+            "latitude": round(city["lat"] + _rng.uniform(-0.02, 0.02), 5),
+            "longitude": round(city["lng"] + _rng.uniform(-0.02, 0.02), 5),
+            "room_size": _rng.randint(12, 40),
+            "available_from": date(2026, _rng.randint(7, 12), _rng.randint(1, 28)),
+            "furnished": _rng.random() < 0.5,
+            "pets_allowed": _rng.random() < 0.4,
+            "smoking_allowed": _rng.random() < 0.3,
+            "flatmates": _rng.randint(0, 4),
+            "photo_url": _rng.choice(_PHOTOS),
+        })
+    return extra_users, extra_listings
+
+
 def run():
     with app.app_context():
         db.drop_all()
         db.create_all()
 
-        owner_emails = {listing["owner_email"] for listing in DUMMY_LISTINGS}
+        extra_users, extra_listings = _build_extra({u["email"] for u in DUMMY_USERS})
+        all_users = DUMMY_USERS + extra_users
+        all_listings = DUMMY_LISTINGS + extra_listings
+
+        owner_emails = {listing["owner_email"] for listing in all_listings}
         users_by_email = {}
-        for data in DUMMY_USERS:
+        for data in all_users:
             user = User(**data)
             user.rolle = "anbietend" if data["email"] in owner_emails else "suchend"
             user.set_password("test1234")
@@ -290,7 +414,7 @@ def run():
         db.session.commit()
 
         listings_by_owner = {}
-        for data in DUMMY_LISTINGS:
+        for data in all_listings:
             owner = users_by_email[data.pop("owner_email")]
             listing = Listing(owner=owner, **data)
             db.session.add(listing)
@@ -319,7 +443,7 @@ def run():
         db.session.commit()
 
         print(
-            f"{len(DUMMY_USERS)} Dummy-User, {len(DUMMY_LISTINGS)} Dummy-Inserate, "
+            f"{len(all_users)} Dummy-User, {len(all_listings)} Dummy-Inserate, "
             "3 Bewerbungen und 2 Nachrichten angelegt. Login: lena@example.com / test1234"
         )
 

@@ -553,3 +553,20 @@ und Anzeige der Lifestyle-Felder auf der Inserat-Detailseite.
   Mitbewohner-Anzahl.
 
 **Getestet:** Syntax-/Import-Check; Seed-Daten laufen gegen eine In-Memory-SQLite-DB durch.
+
+## Schritt 30 — Mehr Seed-Daten (40 User / 20 Inserate) (2026-07-01)
+
+Zum Testen und um die Filter „mit Leben zu füllen" wurde der Seed deutlich erweitert.
+
+**Geändert:**
+- `seed.py`: neben den bestehenden 10 handgepflegten Usern + 10 Inseraten werden jetzt
+  **zusätzliche Datensätze generiert** — total **40 User** und **20 Inserate** (reproduzierbar
+  über festen `random`-Seed). 20 User sind Inserenten (`anbietend`), 20 `suchend`.
+- Streuung für die Filter: 12 verschiedene Kantone, Mieten ~550–1400 CHF, unterschiedliche
+  Zimmergrössen, Verfügbarkeiten, möbliert/Haustiere/Rauchen, plus **Koordinaten** je Inserat
+  (für Karte + Umkreissuche) und Lifestyle-Felder (Hobbys, Musik, Wochenend-Typ …).
+- Bestehende bekannte Logins (`lena@example.com` …) und die Beispiel-Bewerbungen/-Nachrichten
+  bleiben erhalten.
+
+**Getestet:** Seed gegen lokale SQLite → 40 User / 20 Inserate; 20 anbietend / 20 suchend;
+12 Kantone; alle Inserate mit Koordinaten; `lena@example.com` weiterhin vorhanden.
