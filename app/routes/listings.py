@@ -22,8 +22,8 @@ UPLOAD_FOLDER = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "s
 
 FALLBACK_GEO_POINTS = {
     "zurich": (47.3769, 8.5417),
-    "zuerich": (47.3769, 8.5417),
     "zürich": (47.3769, 8.5417),
+    "zuerich": (47.3769, 8.5417),
     "basel": (47.5596, 7.5886),
     "bern": (46.9480, 7.4474),
     "winterthur": (47.4988, 8.7237),
@@ -207,7 +207,7 @@ def index():
                 db.session.commit()
             listings = [listing for _, listing in sorted(listings_with_distance, key=lambda item: item[0])]
         else:
-            flash("Ort fuer Umkreissuche konnte nicht gefunden werden.", "warning")
+            flash("Ort für Umkreissuche konnte nicht gefunden werden.", "warning")
 
     active_filters = any(
         value
@@ -264,7 +264,7 @@ def new():
         db.session.commit()
         flash("Inserat erstellt.", "success")
         if not coordinates_found:
-            flash("Adresse konnte nicht eindeutig auf der Karte gefunden werden. Bitte Strasse, Hausnummer, Ort und Kanton pruefen.", "warning")
+            flash("Adresse konnte nicht eindeutig auf der Karte gefunden werden. Bitte Strasse, Hausnummer, Ort und Kanton prüfen.", "warning")
         return redirect(url_for("listings.detail", listing_id=listing.id))
 
     return render_template("listings/form.html", form=form, heading="Inserat erstellen")
@@ -301,7 +301,7 @@ def edit(listing_id):
         db.session.commit()
         flash("Inserat aktualisiert.", "success")
         if not coordinates_found:
-            flash("Adresse konnte nicht eindeutig auf der Karte gefunden werden. Bitte Strasse, Hausnummer, Ort und Kanton pruefen.", "warning")
+            flash("Adresse konnte nicht eindeutig auf der Karte gefunden werden. Bitte Strasse, Hausnummer, Ort und Kanton prüfen.", "warning")
         return redirect(url_for("listings.detail", listing_id=listing.id))
 
     return render_template(
@@ -330,10 +330,10 @@ def delete(listing_id):
         db.session.delete(listing)
         current_user.rolle = "suchend"
         db.session.commit()
-        flash("Inserat geloescht.", "success")
+        flash("Inserat gelöscht.", "success")
         return redirect(url_for("listings.index"))
 
-    flash("Inserat konnte nicht geloescht werden.", "warning")
+    flash("Inserat konnte nicht gelöscht werden.", "warning")
     return redirect(url_for("listings.edit", listing_id=listing.id))
 
 
@@ -341,7 +341,7 @@ def delete(listing_id):
 @login_required
 def favorites():
     if current_user.listings:
-        flash("Favoriten sind nur fuer Wohnungssuchende verfuegbar.", "info")
+        flash("Favoriten sind nur für Wohnungssuchende verfügbar.", "info")
         return redirect(url_for("listings.detail", listing_id=current_user.listings[0].id))
 
     favorites = (
@@ -448,7 +448,7 @@ def toggle_favorite(listing_id):
         flash("Du kannst dein eigenes Inserat nicht favorisieren.", "info")
         return redirect(url_for("listings.detail", listing_id=listing.id))
     if current_user.listings:
-        flash("Favoriten sind nur fuer Wohnungssuchende verfuegbar.", "info")
+        flash("Favoriten sind nur für Wohnungssuchende verfügbar.", "info")
         return redirect(url_for("listings.detail", listing_id=listing.id))
 
     form = ConfirmForm()
@@ -461,7 +461,7 @@ def toggle_favorite(listing_id):
             flash("Aus Favoriten entfernt.", "info")
         else:
             db.session.add(Favorite(user_id=current_user.id, listing_id=listing.id))
-            flash("Zu Favoriten hinzugefuegt.", "success")
+            flash("Zu Favoriten hinzugefügt.", "success")
         db.session.commit()
 
     next_url = request.form.get("next") or url_for("listings.detail", listing_id=listing.id)
@@ -497,7 +497,7 @@ def appointments(listing_id):
 def request_appointment(listing_id):
     listing = Listing.query.get_or_404(listing_id)
     if listing.owner_id == current_user.id:
-        flash("Du kannst fuer dein eigenes Inserat keinen Besichtigungstermin anfragen.", "warning")
+        flash("Du kannst für dein eigenes Inserat keinen Besichtigungstermin anfragen.", "warning")
         return redirect(url_for("listings.detail", listing_id=listing.id))
 
     form = AppointmentForm()
@@ -539,7 +539,7 @@ def request_appointment(listing_id):
         )
         flash("Besichtigungsanfrage gesendet.", "success")
     else:
-        flash("Bitte Datum und Uhrzeit fuer die Besichtigung auswaehlen.", "warning")
+        flash("Bitte Datum und Uhrzeit für die Besichtigung auswählen.", "warning")
 
     return redirect(url_for("listings.detail", listing_id=listing.id))
 
@@ -611,8 +611,8 @@ def accept_application(listing_id, application_id):
                 receiver_id=application.applicant_id,
                 listing_id=listing.id,
                 body=(
-                    f"Deine Bewerbung fuer \"{listing.title}\" wurde angenommen. "
-                    "Melde dich gerne hier im Chat fuer die naechsten Schritte."
+                    f"Deine Bewerbung für \"{listing.title}\" wurde angenommen. "
+                    "Melde dich gerne hier im Chat für die nächsten Schritte."
                 ),
             )
         )

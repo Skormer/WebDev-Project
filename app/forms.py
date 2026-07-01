@@ -15,8 +15,8 @@ class RegisterForm(FlaskForm):
     email = StringField("Email", validators=[DataRequired(), Email()])
     password = PasswordField("Passwort", validators=[DataRequired(), Length(min=6)])
     confirm = PasswordField(
-        "Passwort bestaetigen",
-        validators=[DataRequired(), EqualTo("password", message="Passwoerter stimmen nicht ueberein.")],
+        "Passwort bestätigen",
+        validators=[DataRequired(), EqualTo("password", message="Passwörter stimmen nicht überein.")],
     )
     submit = SubmitField("Registrieren")
 
@@ -53,7 +53,7 @@ class ProfileEditForm(FlaskForm):
         "WG-Sozialleben",
         choices=[
             ("", "Keine Angabe"),
-            ("fuer_mich", "Eher fuer mich"),
+            ("fuer_mich", "Eher für mich"),
             ("gelegentlich", "Gelegentlich zusammen"),
             ("gesellig", "Sehr gesellig"),
         ],
@@ -77,9 +77,9 @@ class ListingForm(FlaskForm):
     kanton = StringField("Kanton", validators=[DataRequired(), Length(max=50)])
     ort = StringField("Ort", validators=[DataRequired(), Length(max=200)])
     strasse = StringField("Strasse", validators=[Optional(), Length(max=200)])
-    room_size = IntegerField("Zimmergroesse (m2)", validators=[Optional(), NumberRange(min=1, max=1000)])
-    available_from = DateField("Verfuegbar ab", format="%Y-%m-%d", validators=[Optional()])
-    furnished = BooleanField("Moebliert")
+    room_size = IntegerField("Zimmergrösse (m²)", validators=[Optional(), NumberRange(min=1, max=1000)])
+    available_from = DateField("Verfügbar ab", format="%Y-%m-%d", validators=[Optional()])
+    furnished = BooleanField("Möbliert")
     pets_allowed = BooleanField("Haustiere erlaubt")
     smoking_allowed = BooleanField("Rauchen erlaubt")
     flatmates = IntegerField("Anzahl Mitbewohner", validators=[Optional(), NumberRange(min=0, max=20)])

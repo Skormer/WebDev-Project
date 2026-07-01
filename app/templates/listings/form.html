@@ -41,7 +41,7 @@
 
       <div class="form-field">
         <label>{{ form.ort.label }}</label>
-        {{ form.ort(class="input address-part", placeholder="z.B. Zuerich oder Zuerich, Kreis 4", autocomplete="address-level2") }}
+        {{ form.ort(class="input address-part", placeholder="z.B. Zürich oder Zürich, Kreis 4", autocomplete="address-level2") }}
         <p class="field-hint">Stadt oder Gemeinde, Quartier optional.</p>
         {% for e in form.ort.errors %}<span class="field-error">{{ e }}</span>{% endfor %}
       </div>
@@ -49,7 +49,7 @@
       <div class="form-field">
         <label>{{ form.kanton.label }}</label>
         {{ form.kanton(class="input address-part", placeholder="z.B. ZH, BE, BS", autocomplete="address-level1") }}
-        <p class="field-hint">Kantonskuerzel oder Name.</p>
+        <p class="field-hint">Kantonskürzel oder Name.</p>
         {% for e in form.kanton.errors %}<span class="field-error">{{ e }}</span>{% endfor %}
       </div>
 
@@ -103,13 +103,13 @@
   <div class="form-actions">
     {{ form.submit(class="btn btn-primary", form="listing-form") }}
     {% if listing %}
-      <form method="post" action="{{ url_for('listings.delete', listing_id=listing.id) }}" onsubmit="return confirm('Inserat wirklich loeschen?');">
+      <form method="post" action="{{ url_for('listings.delete', listing_id=listing.id) }}" onsubmit="return confirm('Inserat wirklich löschen?');">
         {{ delete_form.hidden_tag() }}
-        <button class="btn btn-danger" type="submit">Inserat loeschen</button>
+        <button class="btn btn-danger" type="submit">Inserat löschen</button>
       </form>
     {% endif %}
   </div>
-  <p class="muted"><a href="{{ url_for('listings.index') }}">Zurueck zu den Inseraten</a></p>
+  <p class="muted"><a href="{{ url_for('listings.index') }}">Zurück zu den Inseraten</a></p>
 </div>
 
 <script>

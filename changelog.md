@@ -682,3 +682,21 @@ statt einer schmalen Kolonne — weniger Scrollen.
 - Keine Logik-/Feld-Änderung, nur Layout.
 
 **Getestet:** Formular rendert (200) mit Raster und allen Feldern (lokale SQLite).
+
+## Schritt 37 — Umlaute im UI: ae/oe/ue → ä/ö/ü (2026-07-01)
+
+Transliterierte deutsche Wörter in der UI auf echte Umlaute normalisiert.
+
+**Geändert:**
+- Templates + `app/forms.py` + `app/routes/*.py`: z.B. `fuer`→`für`, `Zuerich`→`Zürich`,
+  `Verfuegbar`→`Verfügbar`, `Zimmergroesse (m2)`→`Zimmergrösse (m²)`, `loeschen`→`löschen`,
+  `Zurueck`→`Zurück`, `Passwoerter`→`Passwörter`, `ueberein`→`überein`, `bestaetigen`→`bestätigen`,
+  `Kantonskuerzel`→`Kantonskürzel`, `Moebliert`→`Möbliert`, `auswaehlen`→`auswählen`, u.a.
+
+**Wichtig (bewusst NICHT geändert):** gespeicherte Enum-/Schlüsselwerte bleiben ASCII —
+`soziales_level="fuer_mich"` (nur das Anzeige-Label wurde „Eher für mich"), damit bestehende
+DB-Daten weiter matchen. Geocoding-Fallback behält alle Alias-Schlüssel (`zurich`/`zürich`/`zuerich`).
+Feld-/Code-Bezeichner (`nationalitaet` etc.) unverändert.
+
+**Getestet:** Formulare/Detail/Profil zeigen korrekte Umlaute; `soziales_level`-Wert `fuer_mich`
+wird gespeichert und als „Eher für mich" angezeigt; alle Seiten rendern (200/302).
