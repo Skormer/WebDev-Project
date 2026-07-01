@@ -2,74 +2,103 @@
 {% block title %}{{ heading }} · FlatMate{% endblock %}
 
 {% block content %}
-<div class="card form-card">
+<div class="card listing-form-card">
   <h1>{{ heading }}</h1>
   <form id="listing-form" method="post" enctype="multipart/form-data" novalidate>
     {{ form.hidden_tag() }}
+    <div class="form-grid">
 
-    <label>{{ form.title.label }}</label>
-    {{ form.title(class="input") }}
-    {% for e in form.title.errors %}<span class="field-error">{{ e }}</span>{% endfor %}
+      <div class="form-field span-2">
+        <label>{{ form.title.label }}</label>
+        {{ form.title(class="input") }}
+        {% for e in form.title.errors %}<span class="field-error">{{ e }}</span>{% endfor %}
+      </div>
 
-    <label>{{ form.description.label }}</label>
-    {{ form.description(class="input", rows="5") }}
-    {% for e in form.description.errors %}<span class="field-error">{{ e }}</span>{% endfor %}
+      <div class="form-field span-2">
+        <label>{{ form.description.label }}</label>
+        {{ form.description(class="input", rows="4") }}
+        {% for e in form.description.errors %}<span class="field-error">{{ e }}</span>{% endfor %}
+      </div>
 
-    <label>{{ form.rent.label }}</label>
-    {{ form.rent(class="input") }}
-    {% for e in form.rent.errors %}<span class="field-error">{{ e }}</span>{% endfor %}
+      <div class="form-field">
+        <label>{{ form.rent.label }}</label>
+        {{ form.rent(class="input") }}
+        {% for e in form.rent.errors %}<span class="field-error">{{ e }}</span>{% endfor %}
+      </div>
 
-    <label>{{ form.deposit.label }}</label>
-    {{ form.deposit(class="input") }}
+      <div class="form-field">
+        <label>{{ form.deposit.label }}</label>
+        {{ form.deposit(class="input") }}
+        {% for e in form.deposit.errors %}<span class="field-error">{{ e }}</span>{% endfor %}
+      </div>
 
-    <label>{{ form.strasse.label }}</label>
-    {{ form.strasse(class="input address-part", placeholder="z.B. Langstrasse 12", autocomplete="street-address") }}
-    <p class="field-hint">Am besten mit Hausnummer. Ohne Strasse nutzt die Karte nur Ort und Kanton.</p>
-    {% for e in form.strasse.errors %}<span class="field-error">{{ e }}</span>{% endfor %}
+      <div class="form-field span-2">
+        <label>{{ form.strasse.label }}</label>
+        {{ form.strasse(class="input address-part", placeholder="z.B. Langstrasse 12", autocomplete="street-address") }}
+        <p class="field-hint">Am besten mit Hausnummer. Ohne Strasse nutzt die Karte nur Ort und Kanton.</p>
+        {% for e in form.strasse.errors %}<span class="field-error">{{ e }}</span>{% endfor %}
+      </div>
 
-    <label>{{ form.ort.label }}</label>
-    {{ form.ort(class="input address-part", placeholder="z.B. Zuerich oder Zuerich, Kreis 4", autocomplete="address-level2") }}
-    <p class="field-hint">Stadt oder Gemeinde. Quartier ist optional, z.B. "Zuerich, Oerlikon".</p>
-    {% for e in form.ort.errors %}<span class="field-error">{{ e }}</span>{% endfor %}
+      <div class="form-field">
+        <label>{{ form.ort.label }}</label>
+        {{ form.ort(class="input address-part", placeholder="z.B. Zuerich oder Zuerich, Kreis 4", autocomplete="address-level2") }}
+        <p class="field-hint">Stadt oder Gemeinde, Quartier optional.</p>
+        {% for e in form.ort.errors %}<span class="field-error">{{ e }}</span>{% endfor %}
+      </div>
 
-    <label>{{ form.kanton.label }}</label>
-    {{ form.kanton(class="input address-part", placeholder="z.B. ZH, BE, BS", autocomplete="address-level1") }}
-    <p class="field-hint">Schweizer Kantonskuerzel oder Name, z.B. ZH oder Zuerich.</p>
-    {% for e in form.kanton.errors %}<span class="field-error">{{ e }}</span>{% endfor %}
+      <div class="form-field">
+        <label>{{ form.kanton.label }}</label>
+        {{ form.kanton(class="input address-part", placeholder="z.B. ZH, BE, BS", autocomplete="address-level1") }}
+        <p class="field-hint">Kantonskuerzel oder Name.</p>
+        {% for e in form.kanton.errors %}<span class="field-error">{{ e }}</span>{% endfor %}
+      </div>
 
-    <p class="address-preview">
-      Google sucht nach:
-      <strong id="address-preview-text">Strasse, Ort, Kanton, Switzerland</strong>
-    </p>
+      <div class="span-2">
+        <p class="address-preview">
+          Google sucht nach:
+          <strong id="address-preview-text">Strasse, Ort, Kanton, Switzerland</strong>
+        </p>
+      </div>
 
-    <label>{{ form.room_size.label }}</label>
-    {{ form.room_size(class="input") }}
+      <div class="form-field">
+        <label>{{ form.room_size.label }}</label>
+        {{ form.room_size(class="input") }}
+      </div>
 
-    <label>{{ form.available_from.label }}</label>
-    {{ form.available_from(class="input", type="date") }}
+      <div class="form-field">
+        <label>{{ form.available_from.label }}</label>
+        {{ form.available_from(class="input", type="date") }}
+      </div>
 
-    <label>{{ form.flatmates.label }}</label>
-    {{ form.flatmates(class="input") }}
+      <div class="form-field">
+        <label>{{ form.flatmates.label }}</label>
+        {{ form.flatmates(class="input") }}
+      </div>
 
-    <label>{{ form.foto.label }}</label>
-    {% if listing and listing.photo_url %}
-      <img class="listing-image" src="{{ listing.photo_url }}" alt="Aktuelles Bild" style="max-height:160px; width:auto;">
-    {% endif %}
-    {{ form.foto(class="input", accept="image/jpeg") }}
-    {% for e in form.foto.errors %}<span class="field-error">{{ e }}</span>{% endfor %}
-    <p class="muted">Nur JPEG-Dateien (.jpg / .jpeg).{% if listing %} Leer lassen, um das aktuelle Bild zu behalten.{% endif %}</p>
+      <div class="form-field checkbox-group">
+        <label>{{ form.furnished() }} {{ form.furnished.label.text }}</label>
+        <label>{{ form.pets_allowed() }} {{ form.pets_allowed.label.text }}</label>
+        <label>{{ form.smoking_allowed() }} {{ form.smoking_allowed.label.text }}</label>
+      </div>
 
-    <label>{{ form.photo_url.label }}</label>
-    {{ form.photo_url(class="input", placeholder="https://…/bild.jpg") }}
-    {% for e in form.photo_url.errors %}<span class="field-error">{{ e }}</span>{% endfor %}
-    <p class="muted">Alternativ zum Upload: eine direkte Bild-URL (z.B. Unsplash). Upload hat Vorrang.</p>
+      <div class="form-field">
+        <label>{{ form.foto.label }}</label>
+        {% if listing and listing.photo_url %}
+          <img class="listing-image" src="{{ listing.photo_url }}" alt="Aktuelles Bild" style="max-height:120px; width:auto;">
+        {% endif %}
+        {{ form.foto(class="input", accept="image/jpeg") }}
+        {% for e in form.foto.errors %}<span class="field-error">{{ e }}</span>{% endfor %}
+        <p class="muted">Nur JPEG (.jpg / .jpeg).{% if listing %} Leer lassen, um das Bild zu behalten.{% endif %}</p>
+      </div>
 
-    <div class="checkbox-group">
-      <label>{{ form.furnished() }} {{ form.furnished.label.text }}</label>
-      <label>{{ form.pets_allowed() }} {{ form.pets_allowed.label.text }}</label>
-      <label>{{ form.smoking_allowed() }} {{ form.smoking_allowed.label.text }}</label>
+      <div class="form-field">
+        <label>{{ form.photo_url.label }}</label>
+        {{ form.photo_url(class="input", placeholder="https://…/bild.jpg") }}
+        {% for e in form.photo_url.errors %}<span class="field-error">{{ e }}</span>{% endfor %}
+        <p class="muted">Alternativ zum Upload: eine direkte Bild-URL. Upload hat Vorrang.</p>
+      </div>
+
     </div>
-
   </form>
   <div class="form-actions">
     {{ form.submit(class="btn btn-primary", form="listing-form") }}

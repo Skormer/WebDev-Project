@@ -644,3 +644,17 @@ Der Context-Processor macht ~2–3 zusätzliche COUNT-Queries pro Request (auf S
 **Getestet:** Owner sieht Chat-Badge (2) + Aktivitäts-Badge (1); Poll-Endpoint gibt neue
 Nachrichten zurück und markiert gelesen → Badge verschwindet; `after`-Filter; Konversation
 rendert mit `data-id`, 5 s-Poll und gesperrtem Senden-Button.
+
+## Schritt 34 — Inserat-Formular breiter & mehrspaltig (2026-07-01)
+
+Das Formular zum Erstellen/Bearbeiten war eine schmale Ein-Spalten-Kolonne mit viel Scrollen.
+
+**Geändert:**
+- `app/templates/listings/form.html`: Felder in ein **responsives 2-Spalten-Raster** gruppiert
+  (Titel/Beschreibung/Adresse/Vorschau volle Breite via `span-2`; Miete|Depot, Ort|Kanton,
+  Zimmergrösse|Verfügbar ab, Mitbewohner|Ausstattung, Foto-Upload|Bild-URL nebeneinander).
+- `app/static/css/style.css`: `.listing-form-card` (max. 820px), `.form-grid`, `.span-2`,
+  `.form-field`; auf < 640px wieder einspaltig. Adress-Vorschau + JS unverändert.
+
+**Getestet:** Erstellen- und Bearbeiten-Formular rendern mit Raster, allen Feldern,
+Löschen-Button und Adress-Vorschau (lokale SQLite).
