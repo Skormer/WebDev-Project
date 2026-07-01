@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="de">
+{% from "_icons.html" import icon %}
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,23 +9,40 @@
 </head>
 <body>
   <header class="navbar">
-    <a class="brand" href="{{ url_for('index') }}">🏠 FlatMate</a>
-    <nav>
-      {% if current_user.is_authenticated %}
-        <a href="{{ url_for('listings.index') }}">Inserate</a>
-        {% if current_user.listings %}
-          <a href="{{ url_for('listings.detail', listing_id=current_user.listings[0].id) }}">Mein Inserat</a>
-        {% else %}
-          <a href="{{ url_for('listings.favorites') }}">Favoriten</a>
-        {% endif %}
-        <a href="{{ url_for('chat.inbox') }}">Chat</a>
-        <a href="{{ url_for('profile.me') }}">Mein Profil</a>
-        <a href="{{ url_for('auth.logout') }}">Logout</a>
-      {% else %}
+    <a class="brand" href="{{ url_for('index') }}">{{ icon('home') }} FlatMate</a>
+    {% if current_user.is_authenticated %}
+      <nav class="nav-links">
+        <a href="{{ url_for('listings.index') }}">{{ icon('grid') }}<span>Inserate</span></a>
+        <a href="{{ url_for('listings.map_view') }}">{{ icon('map') }}<span>Karte</span></a>
+        <a href="{{ url_for('listings.favorites') }}">{{ icon('heart') }}<span>Favoriten</span></a>
+        <a href="{{ url_for('chat.inbox') }}">{{ icon('chat') }}<span>Chat</span></a>
+      </nav>
+      <details class="profile-menu">
+        <summary>
+          {% if current_user.foto_url %}
+            <img class="nav-avatar" src="{{ current_user.foto_url }}" alt="">
+          {% else %}
+            <span class="nav-avatar-fallback">{{ current_user.name[0]|upper }}</span>
+          {% endif %}
+          <span class="profile-name">{{ current_user.name.split(' ')[0] }}</span>
+          {{ icon('chevron-down') }}
+        </summary>
+        <div class="menu">
+          <a href="{{ url_for('profile.me') }}">{{ icon('user') }} Mein Profil</a>
+          {% if current_user.listings %}
+            <a href="{{ url_for('listings.detail', listing_id=current_user.listings[0].id) }}">{{ icon('grid') }} Mein Inserat</a>
+          {% endif %}
+          <a href="{{ url_for('profile.edit') }}">{{ icon('edit') }} Profil bearbeiten</a>
+          <div class="menu-sep"></div>
+          <a class="logout" href="{{ url_for('auth.logout') }}">{{ icon('logout') }} Logout</a>
+        </div>
+      </details>
+    {% else %}
+      <nav class="nav-links">
         <a href="{{ url_for('auth.login') }}">Login</a>
-        <a href="{{ url_for('auth.register') }}">Registrieren</a>
-      {% endif %}
-    </nav>
+        <a class="btn btn-primary btn-sm" href="{{ url_for('auth.register') }}">Registrieren</a>
+      </nav>
+    {% endif %}
   </header>
 
   <main class="container {% block main_class %}{% endblock %}">
@@ -40,5 +58,13 @@
 
     {% block content %}{% endblock %}
   </main>
+  <script>
+    // Profil-Dropdown schliessen, wenn ausserhalb geklickt wird.
+    document.addEventListener('click', function (event) {
+      document.querySelectorAll('details.profile-menu[open]').forEach(function (menu) {
+        if (!menu.contains(event.target)) menu.removeAttribute('open');
+      });
+    });
+  </script>
 </body>
 </html>

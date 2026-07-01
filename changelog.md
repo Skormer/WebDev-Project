@@ -591,3 +591,29 @@ Reine Aufräumarbeit, keine funktionalen Änderungen.
 
 **Getestet:** Seed gegen lokale SQLite → 40 User / 20 Inserate, 20 anbietend / 20 suchend,
 `lena@example.com` mit Passwort und eigenem Inserat; App bootet.
+
+## Schritt 32 — UI-Überarbeitung: Navbar, Icons, Buttons (2026-07-01)
+
+Optischer Feinschliff des bestehenden CSS-Designsystems (kein neues Framework — Tailwind
+hätte einen Node-Buildstep + Rewrite aller Templates bedeutet; das vorhandene System wurde
+stattdessen aufgewertet).
+
+**Neu / geändert:**
+- `app/templates/_icons.html`: Inline-SVG-Icon-Set als Jinja-Makro `icon('name')` (Feather-Stil,
+  `currentColor`, keine Abhängigkeit / offline-fähig).
+- **Navigation** (`base.html`): sticky Navbar mit Marken-Icon und Icon-Links (Inserate, Karte,
+  Favoriten, Chat). **Logout aus der Navbar entfernt** → neues **Profil-Dropdown** (Avatar + Name)
+  mit *Mein Profil*, *Mein Inserat* (falls Inserent), *Profil bearbeiten* und *Logout*.
+  Auf kleinen Screens nur Icons (Labels ausgeblendet); Dropdown schliesst bei Aussenklick.
+- `style.css`: neue Design-Tokens (Schatten, Radien, `--primary-dark`), aufgewertete Buttons
+  (Icon-Ausrichtung, Hover-Lift, `.btn-sm`), Karten- und Navbar-Politur.
+- Icons an zentralen Buttons ergänzt (Neues Inserat, Bewerbungen/Besichtigungen/Bearbeiten,
+  Nachricht senden, Profil bearbeiten).
+
+**Fix:** „Registrieren"-Button in der Navbar war schlecht lesbar (dunkle Schrift auf Blau,
+weiss beim Hover), weil `.nav-links a` die `.btn-primary`-Farben überschrieb → Nav-Link-Styles
+auf `.nav-links a:not(.btn)` eingeschränkt, damit Buttons im Nav ihr Button-Styling behalten.
+
+**Getestet:** Alle Seiten rendern (Index, Detail, Profil, Bearbeiten, Chat, Favoriten, Karte,
+Bewerbungen) mit Status 200/302; Navbar mit Icons + Profil-Dropdown; Logout nur noch im Dropdown;
+Registrieren-Button weiss auf Blau (lesbar).

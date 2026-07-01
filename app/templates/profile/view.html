@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from "_icons.html" import icon %}
 {% block title %}{{ user.name }} · FlatMate{% endblock %}
 
 {% block content %}
@@ -68,9 +69,9 @@
   {% endif %}
 
   {% if own %}
-    <p class="muted"><a href="{{ url_for('profile.edit') }}">Profil bearbeiten</a></p>
+    <p><a class="btn btn-secondary" href="{{ url_for('profile.edit') }}">{{ icon('edit') }} Profil bearbeiten</a></p>
   {% else %}
-    <p><a class="btn btn-primary" href="{{ url_for('chat.conversation', user_id=user.id) }}">Nachricht senden</a></p>
+    <p><a class="btn btn-primary" href="{{ url_for('chat.conversation', user_id=user.id) }}">{{ icon('send') }} Nachricht senden</a></p>
   {% endif %}
 </div>
 {% endblock %}

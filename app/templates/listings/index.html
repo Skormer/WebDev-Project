@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from "_icons.html" import icon %}
 {% block title %}Inserate · FlatMate{% endblock %}
 {% block main_class %}container-wide{% endblock %}
 
@@ -9,7 +10,7 @@
     <p class="muted">Alle aktuell gespeicherten Rooms / Apartments.</p>
   </div>
   {% if not current_user.listings %}
-    <a class="btn btn-primary" href="{{ url_for('listings.new') }}">Neues Inserat</a>
+    <a class="btn btn-primary" href="{{ url_for('listings.new') }}">{{ icon('plus') }} Neues Inserat</a>
   {% endif %}
 </div>
 
@@ -118,7 +119,7 @@
     {% if active_filters %}
       <a class="btn btn-secondary" href="{{ url_for('listings.index') }}">Alle Inserate anzeigen</a>
     {% else %}
-      <a class="btn btn-primary" href="{{ url_for('listings.new') }}">Inserat erstellen</a>
+      <a class="btn btn-primary" href="{{ url_for('listings.new') }}">{{ icon('plus') }} Inserat erstellen</a>
     {% endif %}
   </div>
 {% endif %}
