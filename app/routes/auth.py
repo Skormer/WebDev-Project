@@ -11,7 +11,7 @@ auth_bp = Blueprint("auth", __name__)
 @auth_bp.route("/login", methods=["GET", "POST"])
 def login():
     if current_user.is_authenticated:
-        return redirect(url_for("profile.me"))
+        return redirect(url_for("listings.index"))
 
     form = LoginForm()
     if form.validate_on_submit():
@@ -19,7 +19,7 @@ def login():
         if user and user.check_password(form.password.data):
             login_user(user)
             next_page = request.args.get("next")
-            return redirect(next_page or url_for("profile.me"))
+            return redirect(next_page or url_for("listings.index"))
         flash("Email oder Passwort falsch.", "danger")
 
     return render_template("auth/login.html", form=form)

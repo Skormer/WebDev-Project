@@ -22,11 +22,6 @@
     <label>{{ form.deposit.label }}</label>
     {{ form.deposit(class="input") }}
 
-    <div class="address-help">
-      <p class="eyebrow">Adresse fuer die Karte</p>
-      <p class="muted">Bitte Adresse so eingeben, wie sie auch in Google Maps gefunden wird: Strasse + Hausnummer, Ort/Stadt, Kanton. Die Koordinaten werden automatisch gespeichert.</p>
-    </div>
-
     <label>{{ form.strasse.label }}</label>
     {{ form.strasse(class="input address-part", placeholder="z.B. Langstrasse 12", autocomplete="street-address") }}
     <p class="field-hint">Am besten mit Hausnummer. Ohne Strasse nutzt die Karte nur Ort und Kanton.</p>

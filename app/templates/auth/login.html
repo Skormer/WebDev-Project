@@ -7,7 +7,7 @@
   <form method="post" novalidate>
     {{ form.hidden_tag() }}
     <label>{{ form.email.label }}</label>
-    {{ form.email(class="input", placeholder="lena@example.com") }}
+    {{ form.email(class="input", placeholder="") }}
     {% for e in form.email.errors %}<span class="field-error">{{ e }}</span>{% endfor %}
 
     <label>{{ form.password.label }}</label>

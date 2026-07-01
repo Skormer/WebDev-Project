@@ -51,10 +51,6 @@
       <label for="ort">Ort / Radius-Zentrum</label>
       <input id="ort" class="input" type="search" name="ort" value="{{ filters.ort }}" placeholder="Zürich, Basel, Bern">
     </div>
-    <div>
-      <label for="near">Genauer Standort</label>
-      <input id="near" class="input" type="search" name="near" value="{{ filters.near }}" placeholder="Optional: Zuerich HB, Langstrasse 12">
-    </div>
     <div class="range-filter">
       <label for="radius_km">Radius: <span id="radius_km_value">{% if filters.radius_km and filters.radius_km != '100' %}{{ filters.radius_km }} km{% else %}100+ km{% endif %}</span></label>
       <input id="radius_km" type="range" min="1" max="100" step="1" name="radius_km" value="{{ filters.radius_km or 100 }}" data-suffix=" km" data-max-label="100+ km">
@@ -71,19 +67,19 @@
       <label for="available_by">Verfügbar ab</label>
       <input id="available_by" class="input" type="date" name="available_by" value="{{ filters.available_by }}">
     </div>
-    <div class="filter-checkbox">
+    <div class="filter-checkbox-block">
+      <p>Ausstattung</p>
       <label for="furnished">
         <input id="furnished" type="checkbox" name="furnished" value="yes" {% if filters.furnished == 'yes' %}checked{% endif %}>
         Möbliert
       </label>
     </div>
-    <div class="filter-checkbox">
+    <div class="filter-checkbox-block">
+      <p>Hausregeln</p>
       <label for="pets_allowed">
         <input id="pets_allowed" type="checkbox" name="pets_allowed" value="yes" {% if filters.pets_allowed == 'yes' %}checked{% endif %}>
         Haustiere erlaubt
       </label>
-    </div>
-    <div class="filter-checkbox">
       <label for="smoking_allowed">
         <input id="smoking_allowed" type="checkbox" name="smoking_allowed" value="yes" {% if filters.smoking_allowed == 'yes' %}checked{% endif %}>
         Rauchen erlaubt

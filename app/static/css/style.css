@@ -256,19 +256,31 @@ label { display: block; margin: 0.8rem 0 0.3rem; font-weight: 600; font-size: 0.
   width: 100%;
   accent-color: var(--primary);
 }
-.filter-checkbox {
-  display: flex;
-  align-items: center;
+.filter-checkbox-block {
+  min-height: 5.1rem;
+  padding: 0.7rem 0.8rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: #f8fafc;
 }
-.filter-checkbox label {
+.filter-checkbox-block p {
+  margin: 0 0 0.45rem;
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+.filter-checkbox-block label {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  min-height: 2.2rem;
-  margin: 1.25rem 0 0;
+  min-height: 1.6rem;
+  margin: 0;
   font-weight: 600;
 }
-.filter-checkbox input {
+.filter-checkbox-block label + label {
+  margin-top: 0.35rem;
+}
+.filter-checkbox-block input {
   width: 1rem;
   height: 1rem;
 }

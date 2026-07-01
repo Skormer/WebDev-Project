@@ -448,3 +448,33 @@ Die App wird für das Hosting auf **Render** (Free-Tier) vorbereitet.
 Supabase Storage. WSGI-Einstiegspunkt ist `main:app` (`app = create_app()` in `main.py`).
 
 **Getestet:** `main:app` ist importierbar (WSGI-Entrypoint); App bootet gegen Supabase.
+
+## Schritt 22 - Login fuehrt direkt zu Inseraten (2026-07-01)
+
+**Geaendert:**
+- `app/routes/auth.py`: Erfolgreicher Login leitet ohne `next`-Parameter direkt zur
+  Inserate-Uebersicht (`/listings/`) statt zum eigenen Profil.
+- Bereits eingeloggte Nutzer, die `/login` aufrufen, landen ebenfalls direkt auf der
+  Inserate-Uebersicht.
+
+**Getestet:** Syntax-/Import-Check; Test-Client-Check fuer Login-Redirect.
+
+## Schritt 23 - Favoriten-Tab fuer Inserenten ausblenden (2026-07-01)
+
+**Geaendert:**
+- `app/templates/base.html`: Nutzer mit eigenem Inserat sehen in der Navigation nur
+  **Mein Inserat** und keinen **Favoriten**-Tab mehr.
+- Nutzer ohne eigenes Inserat behalten den **Favoriten**-Tab.
+
+**Getestet:** Syntax-/Import-Check; Test-Client-Checks fuer Navigation mit und ohne
+eigenes Inserat.
+
+## Schritt 24 - Checkbox-Filter in zwei Bloecke aufgeteilt (2026-07-01)
+
+**Geaendert:**
+- `app/templates/listings/index.html`: Die Checkbox-Filter sind jetzt in zwei Bloecke
+  **Ausstattung** und **Hausregeln** aufgeteilt.
+- `app/static/css/style.css`: Die Checkbox-Bloecke fuellen die restlichen Filterspalten
+  und bleiben responsiv, ohne eine dritte Checkbox-Spalte zu erzeugen.
+
+**Getestet:** Syntax-/Import-Check; Test-Client-Check fuer die Inserate-Uebersicht.
