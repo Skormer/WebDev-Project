@@ -137,11 +137,10 @@ app/
 
 ## ✅ Current status
 
-**Current:** registration/login, viewing profiles, editing your own profile,
-profile status (`suchend` / `anbietend`), creating/listing/detail views with
-address split into Kanton/Ort/Strasse, **search filters** on the listings
-overview, the ER model, responsive listing UI, local JPEG uploads, applying to a
-listing (owner manages applicants and can reject), email notification to the
-owner on a new application (Resend HTTP-API; logs locally without a key), and 1:1
-chat with persisted messages + read status are implemented. **Matching** follows
-in a later step per [`BUILD_PLAN.md`](BUILD_PLAN.md).
+**Implemented:** registration/login; profiles (view/edit, status `suchend`/`anbietend`,
+lifestyle fields); listings with create/edit, Kanton/Ort/Strasse addresses, **search
+filters**, a **Google Maps view** and **radius (km) search**; applications (owner manages
++ reject) with **email notification** (SendGrid); **visitation requests** with email;
+**favorites**; 1:1 chat with read status; **image upload to Supabase Storage or a direct
+URL**. Runs on SQLite locally and **Supabase Postgres** when deployed (Render-ready). See
+[`BUILD_PLAN.md`](BUILD_PLAN.md) for the full feature list.
