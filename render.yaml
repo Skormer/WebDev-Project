@@ -26,7 +26,7 @@ services:
         sync: false
       - key: SUPABASE_URL
         sync: false
-      - key: SUPABASE_STORAGE_BUCKET
+      - key: SUPABASE_STORAGE_BUCKET2
         value: images
       - key: SUPABASE_STORAGE_KEY
         sync: false
