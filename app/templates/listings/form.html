@@ -4,7 +4,7 @@
 {% block content %}
 <div class="card form-card">
   <h1>{{ heading }}</h1>
-  <form method="post" enctype="multipart/form-data" novalidate>
+  <form id="listing-form" method="post" enctype="multipart/form-data" novalidate>
     {{ form.hidden_tag() }}
 
     <label>{{ form.title.label }}</label>
@@ -70,8 +70,16 @@
       <label>{{ form.smoking_allowed() }} {{ form.smoking_allowed.label.text }}</label>
     </div>
 
-    {{ form.submit(class="btn btn-primary") }}
   </form>
+  <div class="form-actions">
+    {{ form.submit(class="btn btn-primary", form="listing-form") }}
+    {% if listing %}
+      <form method="post" action="{{ url_for('listings.delete', listing_id=listing.id) }}" onsubmit="return confirm('Inserat wirklich loeschen?');">
+        {{ delete_form.hidden_tag() }}
+        <button class="btn btn-danger" type="submit">Inserat loeschen</button>
+      </form>
+    {% endif %}
+  </div>
   <p class="muted"><a href="{{ url_for('listings.index') }}">Zurueck zu den Inseraten</a></p>
 </div>
 

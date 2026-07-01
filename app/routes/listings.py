@@ -13,7 +13,7 @@ from werkzeug.utils import secure_filename
 from ..email import send_email
 from ..extensions import db
 from ..forms import ApplicationForm, AppointmentForm, ConfirmForm, ListingForm
-from ..models import Application, Appointment, Favorite, Listing
+from ..models import Application, Appointment, Favorite, Listing, Message
 from ..storage import upload_listing_photo
 
 listings_bp = Blueprint("listings", __name__, url_prefix="/listings")
@@ -191,7 +191,7 @@ def index():
     listings = query.order_by(Listing.created_at.desc()).all()
 
     if use_radius_search:
-        radius_km = radius_km or 100
+        radius_km = radius_km or 1
         origin = _geocode_address(radius_origin_text)
         if origin:
             listings_with_distance = []
@@ -304,12 +304,46 @@ def edit(listing_id):
             flash("Adresse konnte nicht eindeutig auf der Karte gefunden werden. Bitte Strasse, Hausnummer, Ort und Kanton pruefen.", "warning")
         return redirect(url_for("listings.detail", listing_id=listing.id))
 
-    return render_template("listings/form.html", form=form, heading="Inserat bearbeiten", listing=listing)
+    return render_template(
+        "listings/form.html",
+        form=form,
+        heading="Inserat bearbeiten",
+        listing=listing,
+        delete_form=ConfirmForm(),
+    )
+
+
+@listings_bp.route("/<int:listing_id>/delete", methods=["POST"])
+@login_required
+def delete(listing_id):
+    listing = Listing.query.get_or_404(listing_id)
+    if listing.owner_id != current_user.id:
+        abort(403)
+
+    if ConfirmForm().validate_on_submit():
+        Favorite.query.filter_by(listing_id=listing.id).delete(synchronize_session=False)
+        Application.query.filter_by(listing_id=listing.id).delete(synchronize_session=False)
+        Appointment.query.filter_by(listing_id=listing.id).delete(synchronize_session=False)
+        Message.query.filter_by(listing_id=listing.id).update(
+            {"listing_id": None}, synchronize_session=False
+        )
+        db.session.delete(listing)
+        current_user.rolle = "suchend"
+        db.session.commit()
+        flash("Inserat geloescht.", "success")
+        return redirect(url_for("listings.index"))
+
+    flash("Inserat konnte nicht geloescht werden.", "warning")
+    return redirect(url_for("listings.edit", listing_id=listing.id))
 
 
 @listings_bp.route("/favorites")
 @login_required
 def favorites():
+    if current_user.listings:
+        flash("Favoriten sind nur fuer Wohnungssuchende verfuegbar.", "info")
+        return redirect(url_for("listings.detail", listing_id=current_user.listings[0].id))
+
     favorites = (
         Favorite.query.filter_by(user_id=current_user.id)
         .order_by(Favorite.created_at.desc())
@@ -359,6 +393,7 @@ def detail(listing_id):
     is_owner = listing.owner_id == current_user.id
 
     application_count = 0
+    accepted_application_count = 0
     appointment_count = 0
     my_application = None
     my_appointments = []
@@ -366,7 +401,10 @@ def detail(listing_id):
     if is_owner:
         # Nur offene (nicht abgelehnte) Bewerbungen zählen.
         application_count = Application.query.filter(
-            Application.listing_id == listing.id, Application.status != "abgelehnt"
+            Application.listing_id == listing.id, Application.status == "offen"
+        ).count()
+        accepted_application_count = Application.query.filter(
+            Application.listing_id == listing.id, Application.status == "angenommen"
         ).count()
         appointment_count = Appointment.query.filter_by(
             listing_id=listing.id, status="offen"
@@ -380,9 +418,10 @@ def detail(listing_id):
             .order_by(Appointment.scheduled_at.desc())
             .all()
         )
-        is_favorite = Favorite.query.filter_by(
-            user_id=current_user.id, listing_id=listing.id
-        ).first() is not None
+        if not current_user.listings:
+            is_favorite = Favorite.query.filter_by(
+                user_id=current_user.id, listing_id=listing.id
+            ).first() is not None
 
     return render_template(
         "listings/detail.html",
@@ -390,6 +429,7 @@ def detail(listing_id):
         owner=listing.owner,
         is_owner=is_owner,
         application_count=application_count,
+        accepted_application_count=accepted_application_count,
         appointment_count=appointment_count,
         my_application=my_application,
         my_appointments=my_appointments,
@@ -406,6 +446,9 @@ def toggle_favorite(listing_id):
     listing = Listing.query.get_or_404(listing_id)
     if listing.owner_id == current_user.id:
         flash("Du kannst dein eigenes Inserat nicht favorisieren.", "info")
+        return redirect(url_for("listings.detail", listing_id=listing.id))
+    if current_user.listings:
+        flash("Favoriten sind nur fuer Wohnungssuchende verfuegbar.", "info")
         return redirect(url_for("listings.detail", listing_id=listing.id))
 
     form = ConfirmForm()
@@ -534,16 +577,49 @@ def applications(listing_id):
         .order_by(Application.created_at.desc())
         .all()
     )
-    open_apps = [a for a in all_apps if a.status != "abgelehnt"]
+    open_apps = [a for a in all_apps if a.status == "offen"]
+    accepted_apps = [a for a in all_apps if a.status == "angenommen"]
     rejected_apps = [a for a in all_apps if a.status == "abgelehnt"]
 
     return render_template(
         "listings/applications.html",
         listing=listing,
         open_apps=open_apps,
+        accepted_apps=accepted_apps,
         rejected_apps=rejected_apps,
+        accept_form=ConfirmForm(),
         reject_form=ConfirmForm(),
     )
+
+
+@listings_bp.route("/<int:listing_id>/applications/<int:application_id>/accept", methods=["POST"])
+@login_required
+def accept_application(listing_id, application_id):
+    listing = Listing.query.get_or_404(listing_id)
+    if listing.owner_id != current_user.id:
+        abort(403)
+
+    application = Application.query.filter_by(
+        id=application_id, listing_id=listing.id
+    ).first_or_404()
+
+    if ConfirmForm().validate_on_submit():
+        application.status = "angenommen"
+        db.session.add(
+            Message(
+                sender_id=current_user.id,
+                receiver_id=application.applicant_id,
+                listing_id=listing.id,
+                body=(
+                    f"Deine Bewerbung fuer \"{listing.title}\" wurde angenommen. "
+                    "Melde dich gerne hier im Chat fuer die naechsten Schritte."
+                ),
+            )
+        )
+        db.session.commit()
+        flash(f"Bewerbung von {application.applicant.name} angenommen.", "success")
+
+    return redirect(url_for("listings.applications", listing_id=listing.id))
 
 
 @listings_bp.route("/<int:listing_id>/applications/<int:application_id>/reject", methods=["POST"])

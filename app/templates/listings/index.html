@@ -55,9 +55,12 @@
       <label for="ort">Ort / Radius-Zentrum</label>
       <input id="ort" class="input" type="search" name="ort" value="{{ filters.ort }}" placeholder="Zürich, Basel, Bern">
     </div>
-    <div class="range-filter">
-      <label for="radius_km">Radius: <span id="radius_km_value">{% if filters.radius_km and filters.radius_km != '100' %}{{ filters.radius_km }} km{% else %}100+ km{% endif %}</span></label>
-      <input id="radius_km" type="range" min="1" max="100" step="1" name="radius_km" value="{{ filters.radius_km or 100 }}" data-suffix=" km" data-max-label="100+ km">
+    <div class="filter-checkbox-block">
+      <p>Ausstattung</p>
+      <label for="furnished">
+        <input id="furnished" type="checkbox" name="furnished" value="yes" {% if filters.furnished == 'yes' %}checked{% endif %}>
+        Möbliert
+      </label>
     </div>
     <div class="range-filter">
       <label for="rent_max">Max. Miete: <span id="rent_max_value">{% if filters.rent_max and filters.rent_max != '3000' %}CHF {{ filters.rent_max }}{% else %}CHF 3000+{% endif %}</span></label>
@@ -67,12 +70,9 @@
       <label for="room_size_min">Min. Zimmergrösse: <span id="room_size_min_value">{% if filters.room_size_min %}{{ filters.room_size_min }} m²{% else %}Egal{% endif %}</span></label>
       <input id="room_size_min" type="range" min="0" max="60" step="1" name="room_size_min" value="{{ filters.room_size_min or 0 }}" data-empty-label="Egal" data-suffix=" m²">
     </div>
-    <div class="filter-checkbox-block">
-      <p>Ausstattung</p>
-      <label for="furnished">
-        <input id="furnished" type="checkbox" name="furnished" value="yes" {% if filters.furnished == 'yes' %}checked{% endif %}>
-        Möbliert
-      </label>
+    <div id="radius_filter" class="range-filter">
+      <label for="radius_km" class="{% if not filters.ort %}is-hidden{% endif %}">Radius: <span id="radius_km_value">{% if filters.radius_km and filters.radius_km != '100' %}{{ filters.radius_km }} km{% elif filters.radius_km == '100' %}100+ km{% else %}1 km{% endif %}</span></label>
+      <input id="radius_km" class="{% if not filters.ort %}is-hidden{% endif %}" type="range" min="1" max="100" step="1" name="radius_km" value="{{ filters.radius_km or 1 }}" data-suffix=" km" data-max-label="100+ km" {% if not filters.ort %}disabled{% endif %}>
     </div>
     <div class="filter-checkbox-block">
       <p>Hausregeln</p>
@@ -124,6 +124,19 @@
 {% endif %}
 
 <script>
+  const ortInput = document.getElementById('ort');
+  const radiusFilter = document.getElementById('radius_filter');
+  const radiusSlider = document.getElementById('radius_km');
+  const radiusLabel = radiusFilter.querySelector('label');
+  const updateRadiusVisibility = () => {
+    const hasOrt = ortInput.value.trim().length > 0;
+    radiusLabel.classList.toggle('is-hidden', !hasOrt);
+    radiusSlider.classList.toggle('is-hidden', !hasOrt);
+    radiusSlider.disabled = !hasOrt;
+  };
+  ortInput.addEventListener('input', updateRadiusVisibility);
+  updateRadiusVisibility();
+
   for (const slider of document.querySelectorAll('.range-filter input[type="range"]')) {
     const output = document.getElementById(`${slider.id}_value`);
     const render = () => {

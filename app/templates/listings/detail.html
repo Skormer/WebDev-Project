@@ -21,7 +21,7 @@
 
     <p class="eyebrow">Inserat</p>
     <h1>{{ listing.title }}</h1>
-    {% if not is_owner %}
+    {% if not is_owner and not current_user.listings %}
       <form class="favorite-form" method="post" action="{{ url_for('listings.toggle_favorite', listing_id=listing.id) }}">
         {{ favorite_form.hidden_tag() }}
         <input type="hidden" name="next" value="{{ request.full_path }}">
@@ -41,6 +41,9 @@
       <div><dt>Haustiere erlaubt</dt><dd>{{ 'Ja' if listing.pets_allowed else 'Nein' }}</dd></div>
       <div><dt>Rauchen erlaubt</dt><dd>{{ 'Ja' if listing.smoking_allowed else 'Nein' }}</dd></div>
       <div><dt>Mitbewohner</dt><dd>{{ listing.flatmates if listing.flatmates is not none else '–' }}</dd></div>
+      {% if is_owner %}
+        <div><dt>Angenommen</dt><dd>{{ accepted_application_count }} Bewerbungen</dd></div>
+      {% endif %}
     </dl>
 
     {% set map_address = ((listing.strasse ~ ', ') if listing.strasse else '') ~ listing.ort ~ ', ' ~ listing.kanton ~ ', Switzerland' %}
