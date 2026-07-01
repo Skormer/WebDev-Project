@@ -1,7 +1,12 @@
 from flask_wtf.file import FileAllowed, FileField
 from flask_wtf import FlaskForm
 from wtforms import BooleanField, DateField, DateTimeLocalField, IntegerField, PasswordField, SelectField, StringField, SubmitField, TextAreaField
-from wtforms.validators import DataRequired, Email, EqualTo, Length, NumberRange, Optional, URL
+from wtforms.validators import DataRequired, Email, EqualTo, Length, NumberRange, Optional, URL, ValidationError
+
+
+def no_digits(form, field):
+    if field.data and any(char.isdigit() for char in field.data):
+        raise ValidationError("Bitte keine Zahlen eingeben.")
 
 
 class LoginForm(FlaskForm):
@@ -11,7 +16,7 @@ class LoginForm(FlaskForm):
 
 
 class RegisterForm(FlaskForm):
-    name = StringField("Name", validators=[DataRequired(), Length(max=120)])
+    name = StringField("Name", validators=[DataRequired(), Length(max=120), no_digits])
     email = StringField("Email", validators=[DataRequired(), Email()])
     password = PasswordField("Passwort", validators=[DataRequired(), Length(min=6)])
     confirm = PasswordField(
@@ -22,20 +27,20 @@ class RegisterForm(FlaskForm):
 
 
 class ProfileEditForm(FlaskForm):
-    name = StringField("Name", validators=[DataRequired(), Length(max=120)])
+    name = StringField("Name", validators=[DataRequired(), Length(max=120), no_digits])
     rolle = SelectField(
         "Status",
         choices=[("suchend", "Auf Wohnungssuche"), ("anbietend", "Bietet ein Inserat an")],
     )
-    alter = IntegerField("Alter")
-    beruf = StringField("Beruf", validators=[Length(max=120)])
-    stadt = StringField("Stadt", validators=[Length(max=120)])
-    nationalitaet = StringField("Nationalität", validators=[Length(max=120)])
-    budget_min = IntegerField("Minimales Budget")
-    budget_max = IntegerField("Maximales Budget")
+    alter = IntegerField("Alter", validators=[Optional(), NumberRange(min=16, max=120)])
+    beruf = StringField("Beruf", validators=[Optional(), Length(max=120), no_digits])
+    stadt = StringField("Stadt", validators=[Optional(), Length(max=120), no_digits])
+    nationalitaet = StringField("Nationalität", validators=[Optional(), Length(max=120), no_digits])
+    budget_min = IntegerField("Minimales Budget", validators=[Optional(), NumberRange(min=0, max=100000)])
+    budget_max = IntegerField("Maximales Budget", validators=[Optional(), NumberRange(min=0, max=100000)])
     raucher = BooleanField("Raucher")
     haustiere = BooleanField("Haustiere")
-    sauberkeit = IntegerField("Sauberkeit (1-5)")
+    sauberkeit = IntegerField("Sauberkeit (1-5)", validators=[Optional(), NumberRange(min=1, max=5)])
     hobbies = TextAreaField("Hobbys", validators=[Length(max=1000)])
     musikgeschmack = StringField("Musikgeschmack", validators=[Length(max=200)])
     wochenend_typ = SelectField(
@@ -60,7 +65,7 @@ class ProfileEditForm(FlaskForm):
         validators=[Optional()],
     )
     kocht_gern = BooleanField("Kocht gerne")
-    bio = TextAreaField("Bio")
+    bio = TextAreaField("Bio", validators=[Length(max=1000)])
     foto = FileField("Bild hochladen (JPEG)", validators=[FileAllowed(["jpg", "jpeg"], "Nur JPEG-Bilder erlaubt.")])
     foto_url = StringField("… oder Bild-URL", validators=[Optional(), URL(message="Bitte eine gültige URL angeben."), Length(max=500)])
     submit = SubmitField("Profil speichern")
@@ -74,8 +79,8 @@ class ListingForm(FlaskForm):
         validators=[DataRequired(), NumberRange(min=1, max=100000, message="Bitte eine gültige Miete (1–100000) angeben.")],
     )
     deposit = IntegerField("Depot", validators=[Optional(), NumberRange(min=0, max=100000)])
-    kanton = StringField("Kanton", validators=[DataRequired(), Length(max=50)])
-    ort = StringField("Ort", validators=[DataRequired(), Length(max=200)])
+    kanton = StringField("Kanton", validators=[DataRequired(), Length(max=50), no_digits])
+    ort = StringField("Ort", validators=[DataRequired(), Length(max=200), no_digits])
     strasse = StringField("Strasse", validators=[Optional(), Length(max=200)])
     room_size = IntegerField("Zimmergroesse (m2)", validators=[Optional(), NumberRange(min=1, max=1000)])
     available_from = DateField("Verfuegbar ab", format="%Y-%m-%d", validators=[Optional()])

@@ -2,12 +2,13 @@ import os
 from uuid import uuid4
 
 from flask import Blueprint, flash, redirect, render_template, url_for
-from flask_login import current_user, login_required
+from flask_login import current_user, login_required, logout_user
+from sqlalchemy import or_
 from werkzeug.utils import secure_filename
 
 from ..extensions import db
-from ..forms import ProfileEditForm
-from ..models import User
+from ..forms import ConfirmForm, ProfileEditForm
+from ..models import Appointment, Application, Favorite, Listing, Message, User
 from ..storage import upload_photo
 
 profile_bp = Blueprint("profile", __name__)
@@ -58,13 +59,47 @@ def edit():
         current_user.musikgeschmack = form.musikgeschmack.data.strip() if form.musikgeschmack.data else None
         current_user.wochenend_typ = form.wochenend_typ.data or None
         current_user.soziales_level = form.soziales_level.data or None
-        current_user.kocht_gern = form.kocht_gern.data
         current_user.bio = form.bio.data.strip() if form.bio.data else None
         db.session.commit()
         flash("Profil gespeichert.", "success")
         return redirect(url_for("profile.me"))
 
-    return render_template("profile/edit.html", form=form, user=current_user)
+    return render_template("profile/edit.html", form=form, user=current_user, delete_form=ConfirmForm())
+
+
+@profile_bp.route("/profile/delete", methods=["POST"])
+@login_required
+def delete():
+    form = ConfirmForm()
+    if not form.validate_on_submit():
+        flash("Profil konnte nicht geloescht werden.", "warning")
+        return redirect(url_for("profile.edit"))
+
+    user_id = current_user.id
+    user_name = current_user.name
+    listing_ids = [listing.id for listing in current_user.listings]
+
+    if listing_ids:
+        Favorite.query.filter(Favorite.listing_id.in_(listing_ids)).delete(synchronize_session=False)
+        Application.query.filter(Application.listing_id.in_(listing_ids)).delete(synchronize_session=False)
+        Appointment.query.filter(Appointment.listing_id.in_(listing_ids)).delete(synchronize_session=False)
+        Message.query.filter(Message.listing_id.in_(listing_ids)).delete(synchronize_session=False)
+        Listing.query.filter(Listing.id.in_(listing_ids)).delete(synchronize_session=False)
+
+    Favorite.query.filter_by(user_id=user_id).delete(synchronize_session=False)
+    Application.query.filter_by(applicant_id=user_id).delete(synchronize_session=False)
+    Appointment.query.filter(
+        or_(Appointment.applicant_id == user_id, Appointment.owner_id == user_id)
+    ).delete(synchronize_session=False)
+    Message.query.filter(
+        or_(Message.sender_id == user_id, Message.receiver_id == user_id)
+    ).delete(synchronize_session=False)
+
+    db.session.delete(current_user)
+    db.session.commit()
+    logout_user()
+    flash(f"Dein Profil wurde geloescht, {user_name}.", "success")
+    return redirect(url_for("auth.login"))
 
 
 @profile_bp.route("/profile/<int:user_id>")

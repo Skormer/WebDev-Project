@@ -1,6 +1,7 @@
 from flask import Blueprint, flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required, login_user, logout_user
 
+from ..email import send_email
 from ..extensions import db
 from ..forms import LoginForm, RegisterForm
 from ..models import User
@@ -40,6 +41,23 @@ def register():
             user.set_password(form.password.data)
             db.session.add(user)
             db.session.commit()
+            profile_url = url_for("profile.me", _external=True)
+            html = render_template(
+                "email/welcome.html",
+                user_name=user.name,
+                profile_url=profile_url,
+            )
+            text = (
+                f"Hallo {user.name},\n\n"
+                "willkommen bei FlatMate. Dein Konto wurde erfolgreich erstellt.\n"
+                f"\nProfil vervollstaendigen: {profile_url}\n"
+            )
+            send_email(
+                to=user.email,
+                subject="Willkommen bei FlatMate",
+                html=html,
+                text=text,
+            )
             login_user(user)
             flash("Konto erstellt – willkommen bei FlatMate!", "success")
             return redirect(url_for("profile.me"))

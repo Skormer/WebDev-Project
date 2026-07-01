@@ -48,6 +48,10 @@ def _parse_date(value):
         return None
 
 
+def _contains_digit(value):
+    return any(char.isdigit() for char in value or "")
+
+
 def _listing_address(listing):
     return ", ".join(
         part
@@ -129,6 +133,59 @@ def _save_listing_photo(uploaded_file):
     return None
 
 
+def _send_application_decision_email(application, decision):
+    listing = application.listing
+    applicant = application.applicant
+    decision_label = "angenommen" if decision == "accepted" else "abgelehnt"
+    listing_url = url_for("listings.detail", listing_id=listing.id, _external=True)
+    html = render_template(
+        "email/application_decision.html",
+        applicant_name=applicant.name,
+        listing_title=listing.title,
+        decision=decision,
+        decision_label=decision_label,
+        listing_url=listing_url,
+    )
+    text = (
+        f"Hallo {applicant.name},\n\n"
+        f"deine Bewerbung fuer \"{listing.title}\" wurde {decision_label}.\n"
+        f"\nInserat ansehen: {listing_url}\n"
+    )
+    send_email(
+        to=applicant.email,
+        subject=f"Deine Bewerbung wurde {decision_label}",
+        html=html,
+        text=text,
+    )
+
+
+def _send_appointment_decision_email(appointment, decision):
+    listing = appointment.listing
+    applicant = appointment.applicant
+    decision_label = "angenommen" if decision == "accepted" else "abgelehnt"
+    listing_url = url_for("listings.detail", listing_id=listing.id, _external=True)
+    html = render_template(
+        "email/appointment_decision.html",
+        applicant_name=applicant.name,
+        listing_title=listing.title,
+        scheduled_at=appointment.scheduled_at,
+        decision_label=decision_label,
+        listing_url=listing_url,
+    )
+    text = (
+        f"Hallo {applicant.name},\n\n"
+        f"deine Besichtigungsanfrage fuer \"{listing.title}\" wurde {decision_label}.\n"
+        f"Wunschtermin: {appointment.scheduled_at.strftime('%d.%m.%Y %H:%M')} Uhr\n"
+        f"\nInserat ansehen: {listing_url}\n"
+    )
+    send_email(
+        to=applicant.email,
+        subject=f"Deine Besichtigungsanfrage wurde {decision_label}",
+        html=html,
+        text=text,
+    )
+
+
 @listings_bp.route("/")
 @login_required
 def index():
@@ -144,6 +201,14 @@ def index():
         "pets_allowed": request.args.get("pets_allowed", "").strip(),
         "smoking_allowed": request.args.get("smoking_allowed", "").strip(),
     }
+
+    if _contains_digit(filters["ort"]):
+        filters["ort"] = ""
+        filters["radius_km"] = ""
+        flash("Ort darf keine Zahlen enthalten.", "warning")
+    if _contains_digit(filters["near"]):
+        filters["near"] = ""
+        flash("Genauer Standort darf keine Zahlen enthalten.", "warning")
 
     available_kantons = [
         row[0]
@@ -560,6 +625,9 @@ def decide_appointment(listing_id, appointment_id, decision):
     if ConfirmForm().validate_on_submit():
         appointment.status = "angenommen" if decision == "accept" else "abgelehnt"
         db.session.commit()
+        _send_appointment_decision_email(
+            appointment, "accepted" if decision == "accept" else "rejected"
+        )
         flash("Besichtigungstermin aktualisiert.", "success")
 
     return redirect(url_for("listings.appointments", listing_id=listing.id))
@@ -617,6 +685,7 @@ def accept_application(listing_id, application_id):
             )
         )
         db.session.commit()
+        _send_application_decision_email(application, "accepted")
         flash(f"Bewerbung von {application.applicant.name} angenommen.", "success")
 
     return redirect(url_for("listings.applications", listing_id=listing.id))
@@ -636,6 +705,7 @@ def reject_application(listing_id, application_id):
     if ConfirmForm().validate_on_submit():
         application.status = "abgelehnt"
         db.session.commit()
+        _send_application_decision_email(application, "rejected")
         flash(f"Bewerbung von {application.applicant.name} abgelehnt.", "info")
 
     return redirect(url_for("listings.applications", listing_id=listing.id))

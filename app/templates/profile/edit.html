@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Profil bearbeiten · FlatMate{% endblock %}
+{% block title %}Profil bearbeiten - FlatMate{% endblock %}
 
 {% block content %}
 <div class="card listing-form-card">
@@ -21,37 +21,44 @@
 
       <div class="form-field">
         <label>{{ form.alter.label }}</label>
-        {{ form.alter(class="input") }}
+        {{ form.alter(class="input", type="number", min="16", max="120", step="1") }}
+        {% for e in form.alter.errors %}<span class="field-error">{{ e }}</span>{% endfor %}
       </div>
 
       <div class="form-field">
         <label>{{ form.beruf.label }}</label>
         {{ form.beruf(class="input") }}
+        {% for e in form.beruf.errors %}<span class="field-error">{{ e }}</span>{% endfor %}
       </div>
 
       <div class="form-field">
         <label>{{ form.stadt.label }}</label>
         {{ form.stadt(class="input") }}
+        {% for e in form.stadt.errors %}<span class="field-error">{{ e }}</span>{% endfor %}
       </div>
 
       <div class="form-field">
         <label>{{ form.nationalitaet.label }}</label>
         {{ form.nationalitaet(class="input") }}
+        {% for e in form.nationalitaet.errors %}<span class="field-error">{{ e }}</span>{% endfor %}
       </div>
 
       <div class="form-field">
         <label>{{ form.budget_min.label }}</label>
-        {{ form.budget_min(class="input") }}
+        {{ form.budget_min(class="input", type="number", min="0", max="100000", step="1") }}
+        {% for e in form.budget_min.errors %}<span class="field-error">{{ e }}</span>{% endfor %}
       </div>
 
       <div class="form-field">
         <label>{{ form.budget_max.label }}</label>
-        {{ form.budget_max(class="input") }}
+        {{ form.budget_max(class="input", type="number", min="0", max="100000", step="1") }}
+        {% for e in form.budget_max.errors %}<span class="field-error">{{ e }}</span>{% endfor %}
       </div>
 
       <div class="form-field">
         <label>{{ form.sauberkeit.label }}</label>
-        {{ form.sauberkeit(class="input") }}
+        {{ form.sauberkeit(class="input", type="number", min="1", max="5", step="1") }}
+        {% for e in form.sauberkeit.errors %}<span class="field-error">{{ e }}</span>{% endfor %}
       </div>
 
       <div class="form-field">
@@ -97,7 +104,7 @@
 
       <div class="form-field">
         <label>{{ form.foto_url.label }}</label>
-        {{ form.foto_url(class="input", placeholder="https://…/bild.jpg") }}
+        {{ form.foto_url(class="input", placeholder="https://.../bild.jpg") }}
         {% for e in form.foto_url.errors %}<span class="field-error">{{ e }}</span>{% endfor %}
         <p class="muted">Alternativ zum Upload: eine direkte Bild-URL. Upload hat Vorrang.</p>
       </div>
@@ -105,6 +112,36 @@
     </div>
     {{ form.submit(class="btn btn-primary") }}
   </form>
-  <p class="muted"><a href="{{ url_for('profile.me') }}">Zurück zum Profil</a></p>
+
+  <div class="danger-zone card danger-zone-card">
+    <h2>Profil loeschen</h2>
+    <p class="muted">Das entfernt dein Konto samt deinen Inseraten, Favoriten, Bewerbungen, Besichtigungen und Chats.</p>
+    <form method="post" action="{{ url_for('profile.delete') }}" class="danger-form">
+      {{ delete_form.hidden_tag() }}
+      <button
+        class="btn btn-danger"
+        type="submit"
+        onclick="return confirmDeleteProfile(event);">
+        Profil endgueltig loeschen
+      </button>
+    </form>
+  </div>
+  <p class="muted"><a href="{{ url_for('profile.me') }}">Zurueck zum Profil</a></p>
 </div>
+
+<script>
+  function confirmDeleteProfile(event) {
+    if (!confirm('Bist du dir wirklich sicher, dass du dein Profil loeschen willst?')) {
+      event.preventDefault();
+      return false;
+    }
+
+    if (!confirm('Bist du zu 100% sicher, dass du gefunden hast, was du gesucht hast, und dein Konto jetzt loeschen willst?')) {
+      event.preventDefault();
+      return false;
+    }
+
+    return true;
+  }
+</script>
 {% endblock %}
