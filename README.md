@@ -37,7 +37,7 @@ pip install -r requirements.txt
 copy .env.example .env        # then fill in values; safe to skip for local dev
 
 # 4. Create the database with sample data
-python seed.py                # builds flatmate.db + 10 dummy users + 5 dummy listings
+python seed.py                # builds flatmate.db + 40 dummy users + 20 listings
 
 # 5. Run the dev server
 python main.py                # http://127.0.0.1:5000
@@ -123,7 +123,7 @@ Notes:
 ```
 config.py                 # env config; SQLite fallback when no DATABASE_URL
 main.py                   # entry point -> create_app()
-seed.py                   # (re)create tables + 10 dummy users + 5 listings
+seed.py                   # (re)create tables + 40 dummy users + 20 listings
 app/
 ├── __init__.py           # app factory: extensions + blueprints
 ├── extensions.py         # db, login_manager
@@ -135,12 +135,47 @@ app/
 └── static/css/           # base styles + responsive listing grid
 ```
 
-## ✅ Current status
+## ✨ Features
 
-**Implemented:** registration/login; profiles (view/edit, status `suchend`/`anbietend`,
-lifestyle fields); listings with create/edit, Kanton/Ort/Strasse addresses, **search
-filters**, a **Google Maps view** and **radius (km) search**; applications (owner manages
-+ reject) with **email notification** (SendGrid); **visitation requests** with email;
-**favorites**; 1:1 chat with read status; **image upload to Supabase Storage or a direct
-URL**. Runs on SQLite locally and **Supabase Postgres** when deployed (Render-ready). See
-[`BUILD_PLAN.md`](BUILD_PLAN.md) for the full feature list.
+### Core (Grundfunktionen)
+- ✅ **Register / Login / Logout** — hashed passwords (Werkzeug), sessions (Flask-Login), CSRF (Flask-WTF)
+- ✅ **View profiles** — structured data (age, job, city, nationality, budget, cleanliness, smoker, pets, hobbies, music, weekend type, social level) + photo
+- ✅ **Store** — everything persisted in the database (Supabase Postgres deployed, SQLite locally)
+- ✅ **Search / Match** — filter listings by Kanton, Ort, max rent, min room size, availability, furnished, pets & smoking, **plus a radius (km) search**. These filters are how tenants are matched to fitting rooms.
+- ✅ **Chat** — 1:1 messaging, persisted, with read receipts and live updates
+
+### Special (Sonderfunktionen)
+- ✅ **Apply to a listing** — owner sees applicants and can accept / reject
+- ✅ **Visitation appointments** — request a slot; owner accepts / rejects
+- ✅ **Email notifications** (SendGrid) — on application, appointment request, decision, and a welcome mail
+- ✅ **Favorites** — save / remove listings + a favorites list
+- ✅ **Radius search** — Haversine distance (km) around a place
+- ✅ **Google Maps** — map on the detail page + a full map overview with markers
+- ✅ **Image upload** — to Supabase Storage (bucket `images`) or a direct image URL
+
+### Also included
+- ✅ Create / edit / delete listings (one listing per user)
+- ✅ Edit / delete own profile (with confirmation)
+- ✅ Role *suchend* / *anbietend* (auto-set when you post a listing)
+- ✅ Live chat via 5 s polling + *Gesendet / Gelesen* status
+- ✅ Unread badges in the navigation (messages + open applications/appointments)
+- ✅ Responsive UI, inline-SVG icon set, profile dropdown
+
+## 🧱 Architecture at a glance
+
+| Layer | Technology |
+|---|---|
+| Backend | Flask — app factory + blueprints (`auth` / `profile` / `listings` / `chat`) |
+| ORM / DB | Flask-SQLAlchemy → SQLite (local) · **Supabase Postgres** (deployed) |
+| Models | `User`, `Listing`, `Application`, `Message`, `Favorite`, `Appointment` |
+| Auth | Flask-Login sessions · Werkzeug password hashing · Flask-WTF CSRF |
+| Forms | WTForms with server-side validation |
+| Frontend | Jinja2 templates · hand-written CSS · a little vanilla JS (no framework) |
+| Images | Supabase Storage (public `images` bucket) or direct URL |
+| Email | SendGrid HTTP API (Single Sender, no domain needed) |
+| Maps | Google Maps Embed + JS API |
+| Hosting | Render — `gunicorn`, auto-deploy from GitHub via `render.yaml` |
+| Config / secrets | `.env` (git-ignored) / Render env vars |
+
+Seed data: `python seed.py` builds **40 users / 20 listings** across 12 cantons (reproducible fixed seed).
+See [`BUILD_PLAN.md`](BUILD_PLAN.md) for the roadmap and [`changelog.md`](changelog.md) for the per-step history.
