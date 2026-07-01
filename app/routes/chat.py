@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from flask import Blueprint, abort, redirect, render_template, url_for
+from flask import Blueprint, abort, jsonify, redirect, render_template, request, url_for
 from flask_login import current_user, login_required
 from sqlalchemy import and_, or_
 
@@ -79,3 +79,45 @@ def conversation(user_id):
     return render_template(
         "chat/conversation.html", partner=partner, messages=messages, form=form
     )
+
+
+@chat_bp.route("/<int:user_id>/messages")
+@login_required
+def conversation_messages(user_id):
+    """JSON-Endpoint fürs Polling: neue Nachrichten nach ``after``-ID (5s-Refresh im Frontend)."""
+    partner = User.query.get_or_404(user_id)
+    if partner.id == current_user.id:
+        abort(400)
+
+    after = request.args.get("after", default=0, type=int)
+    messages = (
+        Message.query.filter(
+            or_(
+                and_(Message.sender_id == current_user.id, Message.receiver_id == partner.id),
+                and_(Message.sender_id == partner.id, Message.receiver_id == current_user.id),
+            ),
+            Message.id > after,
+        )
+        .order_by(Message.id.asc())
+        .all()
+    )
+
+    # eingehende neue Nachrichten als gelesen markieren
+    changed = False
+    for message in messages:
+        if message.receiver_id == current_user.id and message.read_at is None:
+            message.read_at = datetime.utcnow()
+            changed = True
+    if changed:
+        db.session.commit()
+
+    return jsonify(messages=[
+        {
+            "id": m.id,
+            "mine": m.sender_id == current_user.id,
+            "body": m.body,
+            "time": m.sent_at.strftime("%d.%m.%Y %H:%M"),
+            "read": m.read_at is not None,
+        }
+        for m in messages
+    ])

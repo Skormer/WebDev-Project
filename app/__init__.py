@@ -38,6 +38,25 @@ def create_app(config_class=Config):
             return redirect(url_for("listings.index"))
         return redirect(url_for("auth.login"))
 
+    @app.context_processor
+    def inject_nav_counts():
+        """Zähler für die Navigation (ungelesene Nachrichten + offene Inserat-Aktivität)."""
+        if not current_user.is_authenticated:
+            return {}
+        from .models import Application, Appointment, Message
+
+        unread = Message.query.filter_by(
+            receiver_id=current_user.id, read_at=None
+        ).count()
+        activity = 0
+        if current_user.listings:
+            listing_id = current_user.listings[0].id
+            activity = (
+                Application.query.filter_by(listing_id=listing_id, status="offen").count()
+                + Appointment.query.filter_by(listing_id=listing_id, status="offen").count()
+            )
+        return {"nav_unread_messages": unread, "nav_listing_activity": activity}
+
     return app
 
 

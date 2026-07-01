@@ -5,9 +5,9 @@
 <p class="muted back-link"><a href="{{ url_for('chat.inbox') }}">← Alle Chats</a></p>
 <h1>Chat mit <a href="{{ url_for('profile.view', user_id=partner.id) }}">{{ partner.name }}</a></h1>
 
-<div class="card chat-thread">
+<div class="card chat-thread" id="chat-thread">
   {% for m in messages %}
-    <div class="msg {{ 'msg-out' if m.sender_id == current_user.id else 'msg-in' }}">
+    <div class="msg {{ 'msg-out' if m.sender_id == current_user.id else 'msg-in' }}" data-id="{{ m.id }}">
       <p class="msg-body">{{ m.body }}</p>
       <p class="msg-meta muted">
         {{ m.sent_at.strftime('%d.%m.%Y %H:%M') }}
@@ -15,14 +15,70 @@
       </p>
     </div>
   {% else %}
-    <p class="muted">Noch keine Nachrichten — schreib die erste.</p>
+    <p class="muted chat-empty">Noch keine Nachrichten — schreib die erste.</p>
   {% endfor %}
 </div>
 
-<form method="post" class="chat-form">
+<form method="post" class="chat-form" id="chat-form">
   {{ form.hidden_tag() }}
   {{ form.body(class="input", rows="3", placeholder="Nachricht schreiben…") }}
   {% for e in form.body.errors %}<span class="field-error">{{ e }}</span>{% endfor %}
-  {{ form.submit(class="btn btn-primary") }}
+  {{ form.submit(class="btn btn-primary", id="chat-send") }}
 </form>
+
+<script>
+  (function () {
+    const thread = document.getElementById('chat-thread');
+    const pollUrl = "{{ url_for('chat.conversation_messages', user_id=partner.id) }}";
+    let lastId = 0;
+    thread.querySelectorAll('.msg[data-id]').forEach(function (el) {
+      lastId = Math.max(lastId, parseInt(el.dataset.id, 10) || 0);
+    });
+
+    const toBottom = function () { thread.scrollTop = thread.scrollHeight; };
+
+    const appendMessage = function (m) {
+      const div = document.createElement('div');
+      div.className = 'msg ' + (m.mine ? 'msg-out' : 'msg-in');
+      div.dataset.id = m.id;
+      const body = document.createElement('p');
+      body.className = 'msg-body';
+      body.textContent = m.body;                       // textContent → kein HTML-Injection
+      const meta = document.createElement('p');
+      meta.className = 'msg-meta muted';
+      meta.textContent = m.time + (m.mine ? ' · ' + (m.read ? 'Gelesen' : 'Gesendet') : '');
+      div.appendChild(body);
+      div.appendChild(meta);
+      thread.appendChild(div);
+    };
+
+    const poll = function () {
+      fetch(pollUrl + '?after=' + lastId)
+        .then(function (r) { return r.ok ? r.json() : null; })
+        .then(function (data) {
+          if (!data || !data.messages.length) return;
+          const empty = thread.querySelector('.chat-empty');
+          if (empty) empty.remove();
+          data.messages.forEach(function (m) {
+            appendMessage(m);
+            lastId = Math.max(lastId, m.id);
+          });
+          toBottom();
+        })
+        .catch(function () { /* Netzwerkfehler ignorieren, nächster Tick versucht erneut */ });
+    };
+
+    toBottom();
+    setInterval(poll, 5000);
+
+    // Doppel-Versand verhindern (Render ist langsam): Button nach Klick sperren.
+    const form = document.getElementById('chat-form');
+    if (form) {
+      form.addEventListener('submit', function () {
+        const btn = document.getElementById('chat-send');
+        if (btn) { btn.disabled = true; btn.value = 'Senden…'; }
+      });
+    }
+  })();
+</script>
 {% endblock %}

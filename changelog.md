@@ -617,3 +617,30 @@ auf `.nav-links a:not(.btn)` eingeschränkt, damit Buttons im Nav ihr Button-Sty
 **Getestet:** Alle Seiten rendern (Index, Detail, Profil, Bearbeiten, Chat, Favoriten, Karte,
 Bewerbungen) mit Status 200/302; Navbar mit Icons + Profil-Dropdown; Logout nur noch im Dropdown;
 Registrieren-Button weiss auf Blau (lesbar).
+
+## Schritt 33 — Nav-Badges, Doppel-Versand-Schutz, Live-Chat (Polling) (2026-07-01)
+
+**Nav-Badges (ungelesen/offen):**
+- `app/__init__.py`: Context-Processor `inject_nav_counts` liefert `nav_unread_messages`
+  (ungelesene Chat-Nachrichten) und `nav_listing_activity` (offene Bewerbungen + offene
+  Besichtigungen des eigenen Inserats) an alle Templates.
+- `base.html`: rote Badge am **Chat**-Icon und am **Profil-Dropdown / Mein Inserat**
+  (max. Anzeige „9+"). `style.css`: `.nav-badge`.
+
+**Doppel-Versand verhindern (Chat):**
+- `chat/conversation.html`: beim Absenden wird der Senden-Button gesperrt und auf „Senden…"
+  gesetzt — verhindert Doppelnachrichten bei langsamem Render.
+
+**Live-Chat via Polling:**
+- `app/routes/chat.py`: JSON-Endpoint `/chat/<user_id>/messages?after=<id>` liefert neue
+  Nachrichten und markiert eingehende als gelesen.
+- `chat/conversation.html`: JS pollt alle 5 s und hängt neue Nachrichten an (kein Reload nötig);
+  `body` via `textContent` (kein HTML-Injection).
+
+**Hinweise/Grenzen:** Lese-Bestätigung („Gesendet"→„Gelesen") bereits angezeigter eigener
+Nachrichten aktualisiert sich erst beim nächsten Seitenaufruf (Polling hängt nur neue an).
+Der Context-Processor macht ~2–3 zusätzliche COUNT-Queries pro Request (auf Supabase vertretbar).
+
+**Getestet:** Owner sieht Chat-Badge (2) + Aktivitäts-Badge (1); Poll-Endpoint gibt neue
+Nachrichten zurück und markiert gelesen → Badge verschwindet; `after`-Filter; Konversation
+rendert mit `data-id`, 5 s-Poll und gesperrtem Senden-Button.

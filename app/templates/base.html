@@ -15,7 +15,7 @@
         <a href="{{ url_for('listings.index') }}">{{ icon('grid') }}<span>Inserate</span></a>
         <a href="{{ url_for('listings.map_view') }}">{{ icon('map') }}<span>Karte</span></a>
         <a href="{{ url_for('listings.favorites') }}">{{ icon('heart') }}<span>Favoriten</span></a>
-        <a href="{{ url_for('chat.inbox') }}">{{ icon('chat') }}<span>Chat</span></a>
+        <a href="{{ url_for('chat.inbox') }}">{{ icon('chat') }}<span>Chat</span>{% if nav_unread_messages %}<span class="nav-badge">{{ nav_unread_messages if nav_unread_messages <= 9 else '9+' }}</span>{% endif %}</a>
       </nav>
       <details class="profile-menu">
         <summary>
@@ -25,12 +25,13 @@
             <span class="nav-avatar-fallback">{{ current_user.name[0]|upper }}</span>
           {% endif %}
           <span class="profile-name">{{ current_user.name.split(' ')[0] }}</span>
+          {% if nav_listing_activity %}<span class="nav-badge">{{ nav_listing_activity if nav_listing_activity <= 9 else '9+' }}</span>{% endif %}
           {{ icon('chevron-down') }}
         </summary>
         <div class="menu">
           <a href="{{ url_for('profile.me') }}">{{ icon('user') }} Mein Profil</a>
           {% if current_user.listings %}
-            <a href="{{ url_for('listings.detail', listing_id=current_user.listings[0].id) }}">{{ icon('grid') }} Mein Inserat</a>
+            <a href="{{ url_for('listings.detail', listing_id=current_user.listings[0].id) }}">{{ icon('grid') }} Mein Inserat{% if nav_listing_activity %}<span class="nav-badge">{{ nav_listing_activity if nav_listing_activity <= 9 else '9+' }}</span>{% endif %}</a>
           {% endif %}
           <a href="{{ url_for('profile.edit') }}">{{ icon('edit') }} Profil bearbeiten</a>
           <div class="menu-sep"></div>
