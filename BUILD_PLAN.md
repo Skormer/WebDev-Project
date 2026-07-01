@@ -6,24 +6,23 @@ Ziel-Struktur und Feature-Liste (Schritt für Schritt ausgebaut). Aktueller Stan
 
 ```
 flatmate/
-├── .env.example          # zu .env kopieren, Supabase-Werte einsetzen
+├── .env.example          # zu .env kopieren, Werte einsetzen
 ├── .gitignore
 ├── requirements.txt
-├── config.py             # liest .env, normalisiert DATABASE_URL
-├── main.py               # Einstiegspunkt: flask --app main run
-├── seed.py               # 10 Dummy-User + Inserate
+├── render.yaml           # Render-Deployment (Blueprint)
+├── config.py             # liest .env; SQLite-Fallback bzw. Supabase Postgres
+├── main.py               # Einstiegspunkt (lokal: python main.py, deployed: gunicorn main:app)
+├── seed.py               # 40 Dummy-User + 20 Inserate (fester Seed)
 └── app/
-    ├── __init__.py       # App-Factory, Blueprints, db.create_all()
+    ├── __init__.py       # App-Factory, Blueprints, db.create_all(), Nav-Zähler
     ├── extensions.py     # db, login_manager
-    ├── models.py         # alle 7 Tabellen
-    ├── routes/
-    │   ├── auth.py       # ✅ register/login/logout (fertig)
-    │   ├── profile.py    # ✅ eigenes + fremdes Profil (fertig)
-    │   ├── listings.py   # 🔧 Stub: index + detail, Rest TODO
-    │   ├── search.py     # 🔧 Stub: Filter + match_score TODO
-    │   └── chat.py       # 🔧 Stub: 1:1 Chat Grundgerüst
-    ├── templates/        # base, auth/, profile (fertig); Rest TODO
-    └── static/css/       # Platzhalter-CSS
+    ├── models.py         # User, Listing, Application, Message, Favorite, Appointment
+    ├── forms.py          # WTForms (Login, Register, Profil, Inserat, Bewerbung, …)
+    ├── email.py          # send_email() via SendGrid (Log-Fallback ohne Key)
+    ├── storage.py        # Bild-Upload → Supabase Storage
+    ├── routes/           # auth.py, profile.py, listings.py, chat.py
+    ├── templates/        # base + _icons + auth/ profile/ listings/ chat/ email/
+    └── static/css/       # style.css (Design-System, responsive)
 ```
 
 ## Setup (einmalig)
@@ -33,8 +32,8 @@ python -m venv .venv
 .venv\Scripts\activate          # Windows  (macOS/Linux: source .venv/bin/activate)
 pip install -r requirements.txt
 copy .env.example .env          # dann Supabase DATABASE_URL + SECRET_KEY eintragen
-python seed.py                  # Tabellen + 10 Dummy-Inserate
-flask --app main run
+python seed.py                  # Tabellen + 40 Dummy-User / 20 Inserate
+python main.py                  # http://127.0.0.1:5000
 ```
 
 Login zum Testen: `lena@example.com` / `test1234`
@@ -44,7 +43,7 @@ Login zum Testen: `lena@example.com` / `test1234`
 1. supabase.com → Projekt erstellen.
 2. Project Settings → Database → Connection string (URI) kopieren.
 3. In `.env` als `DATABASE_URL` einsetzen, `[YOUR-PASSWORD]` ersetzen.
-4. Für Fotos: Storage → Bucket „listings" erstellen (bei Sonderfunktion Foto-Upload).
+4. Für Fotos: Storage → öffentlichen Bucket „images" erstellen (Service-Key als `SUPABASE_STORAGE_KEY`).
 5. ⚠️ Projekt pausiert nach 7 Tagen Inaktivität → vor Bewertung im Dashboard reaktivieren.
 
 ## Funktionsumfang (Schritt für Schritt)
@@ -59,6 +58,7 @@ Status: `[x]` fertig · `[ ]` offen
 - [x] **ER-Modell** dokumentiert (Artefakt)
 - [x] **Inserate**: erstellen/bearbeiten + Detail-View; Bild per Upload (Supabase Storage) oder URL
 - [x] **Search**: Filter (Kanton, Ort, max. Miete, min. Zimmergrösse, Verfügbarkeit, Haustiere/Rauchen) in der Inserate-Übersicht (`listings.index`)
+- [x] **Match**: passende Zimmer werden über die Inserate-Filter + Umkreissuche (Ort/Budget/Grösse/Verfügbarkeit/Lifestyle) zugeordnet
 - [x] **Chat**: 1:1 Inbox-Übersicht + Konversation mit gespeicherten Nachrichten + Gelesen-Status (`chat.py`)
 
 ### Sonderfunktionen (mind. 3 wählen — mehr/besser = bessere Note)
@@ -70,6 +70,8 @@ Status: `[x]` fertig · `[ ]` offen
 - [x] **Kartenansicht**: Google Maps Detailkarte + `/listings/map` mit Markern und Detailpanel
 - [x] **Geo-Suche**: Umkreissuche in km mit Haversine-Distanz und gespeicherten Koordinaten
 - [x] **Foto-Upload**: Profil- & Inserat-Bilder in Supabase Storage (Bucket `images`) oder direkte Bild-URL
+- [x] **Live-Chat**: Nachrichten per Polling (5 s) ohne Reload + Ungelesen-Badges in der Navigation
+- [x] **Löschen**: eigenes Inserat und eigenes Konto (mit Bestätigung) entfernbar
 
 ### Testing, Deployment & Abgabe
 

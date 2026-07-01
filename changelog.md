@@ -705,3 +705,20 @@ wird gespeichert und als „Eher für mich" angezeigt; alle Seiten rendern (200/
 Entscheidungs-/Willkommens-E-Mails und der „Profil löschen"-Bereich (`endgueltig`→`endgültig`,
 `erhaeltst`→`erhältst`, `vervollstaendigen`→`vervollständigen`, `loeschen`→`löschen`, `fuer`→`für`).
 `fuer_mich`-Wert und `zuerich`-Geocoding-Alias erneut geschützt.
+
+## Schritt 38 — Dokumentation für Projektabschluss finalisiert (2026-07-01)
+
+**Geändert:**
+- `README.md`: neue Abschnitte **Features** (Grundfunktionen / Sonderfunktionen / Weitere) und
+  **Architecture at a glance**; „Match" ist über die Inserate-Filter/Umkreissuche abgedeckt.
+  Doku-Tabelle: Verweis auf `CLAUDE.md` entfernt (liegt nur lokal, nicht im Repo). Seed-Zahlen
+  korrigiert (40 User / 20 Inserate).
+- `BUILD_PLAN.md`: veraltete Ordnerstruktur/Setup aktualisiert (keine Stubs mehr; `email.py`,
+  `storage.py`, `render.yaml`, 6 Tabellen, 40/20-Seed, Bucket `images`); **Match** als über
+  Filter abgedeckt ergänzt; Live-Chat + Löschen als erledigte Sonderfunktionen ergänzt.
+
+**Hinweis:** Agent-Notizen `CLAUDE.md`/`CODEX.md` sind gitignored und nicht im Repo
+(CODEX.md nie committet, CLAUDE.md nur in 2 alten History-Commits). Repo enthält keine
+Artefakte wie `*.db`, `__pycache__`, `.env` oder Uploads.
+
+**Offen (Abgabe):** Video-Demo, Tagebuch, GitHub-Release (duda/heej als Contributors).

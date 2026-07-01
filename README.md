@@ -13,8 +13,7 @@ The agreed scope and design live in these files — read them before larger chan
 |---|---|
 | [`PROJECT_GUIDELINES.md`](PROJECT_GUIDELINES.md) | Course requirements, required vs. special features, grading, deliverables |
 | [`BUILD_PLAN.md`](BUILD_PLAN.md) | Target structure, milestones, day-by-day feature order |
-| [`temp_flatmate_er_diagram.html`](temp_flatmate_er_diagram.html) | ER model — the 7 tables the schema grows toward (open in a browser) |
-| [`CLAUDE.md`](CLAUDE.md) | Architecture notes / guidance for Claude Code |
+| [`temp_flatmate_er_diagram.html`](temp_flatmate_er_diagram.html) | ER model (open in a browser) |
 | [`changelog.md`](changelog.md) | What was built in each step |
 
 ## 🛠️ Tech stack
