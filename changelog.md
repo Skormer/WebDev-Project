@@ -722,3 +722,18 @@ Entscheidungs-/Willkommens-E-Mails und der „Profil löschen"-Bereich (`endguel
 Artefakte wie `*.db`, `__pycache__`, `.env` oder Uploads.
 
 **Offen (Abgabe):** Video-Demo, Tagebuch, GitHub-Release (duda/heej als Contributors).
+
+## Schritt 39 — ER-Diagramm durch echtes Supabase-Schema ersetzt (2026-07-01)
+
+Das handgezeichnete Mockup (`temp_flatmate_er_diagram.html`, noch mit 7 Tabellen inkl. nie
+gebauter `ListingPhoto`) durch einen Export aus dem **Supabase-Schema-Visualizer** ersetzt,
+der die 6 real existierenden Tabellen zeigt.
+
+**Geändert:**
+- **Neu:** `supabase_ER_schema.png` (aus Supabase exportiert). **Entfernt:** `temp_flatmate_er_diagram.html`.
+- `README.md`: Doku-Tabelle zeigt jetzt auf das PNG; zusätzlich neuer Abschnitt **Schema** mit
+  eingebettetem Bild.
+- `BUILD_PLAN.md` / `CLAUDE.md`: ER-Modell-Verweise auf das Supabase-PNG aktualisiert.
+
+**Verifiziert:** Live-Introspektion der Supabase-DB (`user`, `listing`, `application`,
+`appointment`, `favorite`, `message`) stimmt spaltengenau mit dem PNG überein.

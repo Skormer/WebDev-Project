@@ -13,7 +13,7 @@ The agreed scope and design live in these files — read them before larger chan
 |---|---|
 | [`PROJECT_GUIDELINES.md`](PROJECT_GUIDELINES.md) | Course requirements, required vs. special features, grading, deliverables |
 | [`BUILD_PLAN.md`](BUILD_PLAN.md) | Target structure, milestones, day-by-day feature order |
-| [`temp_flatmate_er_diagram.html`](temp_flatmate_er_diagram.html) | ER model (open in a browser) |
+| [`supabase_ER_schema.png`](supabase_ER_schema.png) | ER schema, exported from the Supabase schema visualizer (the live 6 tables) |
 | [`changelog.md`](changelog.md) | What was built in each step |
 
 ## 🛠️ Tech stack
@@ -61,6 +61,15 @@ python main.py                # http://127.0.0.1:5000
   `python seed.py --force` (use deliberately — it wipes the shared data).
 - Schema changes: `db.create_all()` only creates *missing* tables, it does not migrate
   changed columns. Re-run the seeder (rebuilds) or add Flask-Migrate later.
+
+### Schema
+
+The six tables and their relationships, exported from the Supabase schema visualizer:
+
+![FlatMate ER schema](supabase_ER_schema.png)
+
+`user` owns `listing`s; `application`, `appointment`, `favorite` and `message` all reference
+a `user` and a `listing` (see [`app/models.py`](app/models.py) for the exact columns).
 
 ## 🖼️ Image Uploads
 

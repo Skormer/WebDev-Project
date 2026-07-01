@@ -55,7 +55,7 @@ Status: `[x]` fertig · `[ ]` offen
 - [x] **Fundament**: App-Factory, Models, Auth (Register/Login/Logout), Seed
 - [x] **View**: eigenes & fremdes Profil anzeigen, Profil bearbeiten
 - [x] **Store**: Daten in DB — lokal SQLite, deployed Supabase Postgres (`DATABASE_URL`)
-- [x] **ER-Modell** dokumentiert (Artefakt)
+- [x] **ER-Modell** dokumentiert (`supabase_ER_schema.png`, aus dem Supabase-Schema-Visualizer exportiert — die 6 Live-Tabellen)
 - [x] **Inserate**: erstellen/bearbeiten + Detail-View; Bild per Upload (Supabase Storage) oder URL
 - [x] **Search**: Filter (Kanton, Ort, max. Miete, min. Zimmergrösse, Verfügbarkeit, Haustiere/Rauchen) in der Inserate-Übersicht (`listings.index`)
 - [x] **Match**: passende Zimmer werden über die Inserate-Filter + Umkreissuche (Ort/Budget/Grösse/Verfügbarkeit/Lifestyle) zugeordnet
