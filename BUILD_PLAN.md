@@ -1,6 +1,6 @@
 # FlatMate — Projektgerüst & Build-Plan
 
-Lauffähiges Fundament bis Milestone M1 (Login + Profil aus DB). Restliche Features sind als Stubs mit `# TODO` markiert — Schritt für Schritt ausbauen.
+Ziel-Struktur und Feature-Liste (Schritt für Schritt ausgebaut). Aktueller Stand: siehe Häkchen unten und `changelog.md`.
 
 ## Ordnerstruktur
 
@@ -55,11 +55,10 @@ Status: `[x]` fertig · `[ ]` offen
 
 - [x] **Fundament**: App-Factory, Models, Auth (Register/Login/Logout), Seed
 - [x] **View**: eigenes & fremdes Profil anzeigen, Profil bearbeiten
-- [x] **Store**: Daten in DB persistieren (User, Listing)
+- [x] **Store**: Daten in DB — lokal SQLite, deployed Supabase Postgres (`DATABASE_URL`)
 - [x] **ER-Modell** dokumentiert (Artefakt)
-- [x] **Inserate**: erstellen (`listings.py`) + Detail-View mit Fotos
+- [x] **Inserate**: erstellen/bearbeiten + Detail-View; Bild per Upload (Supabase Storage) oder URL
 - [x] **Search**: Filter (Kanton, Ort, max. Miete, min. Zimmergrösse, Verfügbarkeit, Haustiere/Rauchen) in der Inserate-Übersicht (`listings.index`)
-- [ ] **Match**: `match_score()` ausbauen (Budget + Lifestyle gewichten) → Ergebnisse sortieren
 - [x] **Chat**: 1:1 Inbox-Übersicht + Konversation mit gespeicherten Nachrichten + Gelesen-Status (`chat.py`)
 
 ### Sonderfunktionen (mind. 3 wählen — mehr/besser = bessere Note)
@@ -70,12 +69,12 @@ Status: `[x]` fertig · `[ ]` offen
 - [x] **Email** an Inserent bei Bewerbung → SendGrid HTTP-API, Single Sender (kein SMTP, keine Domain; Dev: Log-Fallback ohne Key)
 - [x] **Kartenansicht**: Google Maps Detailkarte + `/listings/map` mit Markern und Detailpanel
 - [x] **Geo-Suche**: Umkreissuche in km mit Haversine-Distanz und gespeicherten Koordinaten
-- [ ] **Foto-Upload** zu Supabase Storage statt URL-Feld
+- [x] **Foto-Upload**: Profil- & Inserat-Bilder in Supabase Storage (Bucket `images`) oder direkte Bild-URL
 
 ### Testing, Deployment & Abgabe
 
+- [x] Deployment auf Render vorbereitet (`render.yaml`, `gunicorn`, Env-Vars); Supabase Postgres als produktive DB
 - [ ] Test-Prozeduren ausführen → priorisierte Bug-Liste
-- [ ] `gunicorn` Start-Command auf Render, `DATABASE_URL` als Env-Var
 - [ ] Bugs fixen, UX polieren
 - [ ] Video-Demo (max. 10 Min, alle sprechen), Tagebuch, GitHub-Release + duda/heej
 
@@ -85,5 +84,4 @@ Status: `[x]` fertig · `[ ]` offen
 - **Email**: Render-Free blockiert SMTP-Ports → Resend/SendGrid HTTP-API nutzen.
 - **Google Maps**: API-Key nur via `.env` / Env-Var `GOOGLE_MAPS_API_KEY`; in Google Cloud auf erlaubte Domains und benoetigte APIs beschraenken.
 - **DB-Schema-Änderung**: `models.py` anpassen → bei `db.create_all()` werden neue Tabellen erstellt, aber **bestehende nicht migriert**. Im Zweifel `python seed.py` neu laufen lassen (löscht & baut neu) oder Flask-Migrate einführen.
-- **Match-Score** muss kein ML sein — gewichteter Vergleich strukturierter Daten reicht laut Anforderung.
 - **Ein Inserat pro User** (bewusste Vereinfachung): jeder User kann genau ein eigenes Inserat haben. „Neues Inserat" ist nur sichtbar, solange keines existiert; sonst führt „Mein Inserat" direkt dorthin.

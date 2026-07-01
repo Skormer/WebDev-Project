@@ -553,3 +553,41 @@ und Anzeige der Lifestyle-Felder auf der Inserat-Detailseite.
   Mitbewohner-Anzahl.
 
 **Getestet:** Syntax-/Import-Check; Seed-Daten laufen gegen eine In-Memory-SQLite-DB durch.
+
+## Schritt 30 — Mehr Seed-Daten (40 User / 20 Inserate) (2026-07-01)
+
+Zum Testen und um die Filter „mit Leben zu füllen" wurde der Seed deutlich erweitert.
+
+**Geändert:**
+- `seed.py`: neben den bestehenden 10 handgepflegten Usern + 10 Inseraten werden jetzt
+  **zusätzliche Datensätze generiert** — total **40 User** und **20 Inserate** (reproduzierbar
+  über festen `random`-Seed). 20 User sind Inserenten (`anbietend`), 20 `suchend`.
+- Streuung für die Filter: 12 verschiedene Kantone, Mieten ~550–1400 CHF, unterschiedliche
+  Zimmergrössen, Verfügbarkeiten, möbliert/Haustiere/Rauchen, plus **Koordinaten** je Inserat
+  (für Karte + Umkreissuche) und Lifestyle-Felder (Hobbys, Musik, Wochenend-Typ …).
+- Bestehende bekannte Logins (`lena@example.com` …) und die Beispiel-Bewerbungen/-Nachrichten
+  bleiben erhalten.
+
+**Getestet:** Seed gegen lokale SQLite → 40 User / 20 Inserate; 20 anbietend / 20 suchend;
+12 Kantone; alle Inserate mit Koordinaten; `lena@example.com` weiterhin vorhanden.
+
+## Schritt 31 — Aufräumen: Build-Plan, Kommentare, einheitlicher Seed (2026-07-01)
+
+Reine Aufräumarbeit, keine funktionalen Änderungen.
+
+**Geändert:**
+- `BUILD_PLAN.md`: **Match** aus dem Funktionsumfang entfernt (sowie der Match-Score-Hinweis).
+  Bereits umgesetzte, aber noch nicht gelistete Features ergänzt/als erledigt markiert:
+  Inserat **bearbeiten**, **Bild-Upload → Supabase Storage / Bild-URL**, **Supabase Postgres**
+  als produktive DB und **Render-Deployment** (`render.yaml`, gunicorn). Veraltete Einleitung
+  aktualisiert.
+- **Lange Kommentare/Docstrings gekürzt** in `app/email.py`, `app/storage.py`, `config.py`, `seed.py`.
+- `README.md` + `CLAUDE.md`: Status aktualisiert (kein „Match", SendGrid statt Resend, Favoriten/
+  Besichtigungen/Karte/Umkreissuche/Supabase Storage ergänzt).
+- **`seed.py` vereinheitlicht**: statt „10 handgepflegte + Generator für 30 weitere" jetzt EIN
+  Ansatz — Daten-Pools + `make_user()`/`make_listing()` + eine Build-Schleife (40 User / 20 Inserate,
+  fester Seed). `lena@example.com` bleibt als Demo-Login (User #0), Beispiel-Bewerbungen/-Nachrichten
+  referenzieren User per Index.
+
+**Getestet:** Seed gegen lokale SQLite → 40 User / 20 Inserate, 20 anbietend / 20 suchend,
+`lena@example.com` mit Passwort und eigenem Inserat; App bootet.

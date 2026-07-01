@@ -21,19 +21,15 @@ class Config:
     SUPABASE_STORAGE_KEY = os.environ.get("SUPABASE_STORAGE_KEY") or os.environ.get("SUPABASE_SERVICE_ROLE_KEY")
     SUPABASE_STORAGE_BUCKET = os.environ.get("SUPABASE_STORAGE_BUCKET", "images")
 
-    # Falls keine DATABASE_URL gesetzt ist -> lokale SQLite-Datei (läuft sofort ohne Setup).
-    # Für Supabase/Postgres einfach DATABASE_URL in .env eintragen.
+    # Ohne DATABASE_URL: lokale SQLite-Datei; mit: Supabase/Postgres.
     SQLALCHEMY_DATABASE_URI = _normalize_db_url(os.environ.get("DATABASE_URL")) or (
         "sqlite:///" + os.path.join(basedir, "flatmate.db")
     )
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    # Supabase/Postgres schliesst inaktive Verbindungen (und pausiert Free-Projekte) ->
-    # pre_ping prüft die Verbindung vor jeder Nutzung und baut sie bei Bedarf neu auf.
+    # pre_ping: reconnect nach inaktiven/gedroppten Supabase-Verbindungen.
     SQLALCHEMY_ENGINE_OPTIONS = {"pool_pre_ping": True}
 
-    # E-Mail (SendGrid HTTP-API, Single Sender Verification — keine eigene Domain nötig).
-    # Ohne SENDGRID_API_KEY oder MAIL_FROM werden Mails nur ins Log geschrieben
-    # (lokale Entwicklung) statt wirklich versendet.
+    # E-Mail via SendGrid; ohne Key/Absender werden Mails nur geloggt.
     SENDGRID_API_KEY = os.environ.get("SENDGRID_API_KEY")
     MAIL_FROM = os.environ.get("MAIL_FROM")  # die in SendGrid verifizierte Absender-Adresse
     MAIL_FROM_NAME = os.environ.get("MAIL_FROM_NAME", "FlatMate")

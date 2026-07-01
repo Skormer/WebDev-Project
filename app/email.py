@@ -1,14 +1,7 @@
-"""Schlanker E-Mail-Versand über die SendGrid HTTP-API.
+"""E-Mail-Versand über die SendGrid HTTP-API (kein SMTP → läuft auch auf Render).
 
-Warum SendGrid (Single Sender Verification): man verifiziert EINE Absender-Adresse
-(z. B. ein Gmail) per Bestätigungslink — ohne eigene Domain — und kann danach an
-beliebige Empfänger senden. Läuft über HTTPS (Port 443), also auch auf Render
-(SMTP-Ports sind dort gesperrt).
-
-Ohne ``SENDGRID_API_KEY``/``MAIL_FROM`` (lokale Entwicklung) wird die Mail nur ins Log
-geschrieben statt versendet — so läuft die App ohne Setup. Der Versand wirft nie eine
-Exception nach oben: schlägt er fehl, wird nur geloggt (z. B. bleibt eine Bewerbung
-trotzdem gespeichert).
+Ohne SENDGRID_API_KEY/MAIL_FROM wird die Mail nur geloggt statt versendet; Fehler
+werfen nie nach oben (die auslösende Aktion bleibt erhalten).
 """
 
 import json

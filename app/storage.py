@@ -7,11 +7,10 @@ from werkzeug.utils import secure_filename
 
 
 def upload_photo(uploaded_file, filename_stem, folder="listings"):
-    """Upload a JPEG to Supabase Storage under ``<folder>/`` and return its public URL.
+    """Lädt ein JPEG nach ``<folder>/`` im Storage-Bucket und gibt die öffentliche URL zurück.
 
-    Both profile pictures (folder="profiles") and listing photos (folder="listings")
-    use the same bucket. Returns None when storage is not configured or the upload
-    fails, so callers can fall back to the local filesystem.
+    Gibt None zurück, wenn Storage nicht konfiguriert ist oder der Upload fehlschlägt
+    (Aufrufer nutzt dann den lokalen Fallback).
     """
     supabase_url = current_app.config.get("SUPABASE_URL")
     storage_key = current_app.config.get("SUPABASE_STORAGE_KEY")
