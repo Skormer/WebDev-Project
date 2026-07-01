@@ -54,6 +54,11 @@ def edit():
         current_user.raucher = form.raucher.data
         current_user.haustiere = form.haustiere.data
         current_user.sauberkeit = form.sauberkeit.data
+        current_user.hobbies = form.hobbies.data.strip() if form.hobbies.data else None
+        current_user.musikgeschmack = form.musikgeschmack.data.strip() if form.musikgeschmack.data else None
+        current_user.wochenend_typ = form.wochenend_typ.data or None
+        current_user.soziales_level = form.soziales_level.data or None
+        current_user.kocht_gern = form.kocht_gern.data
         current_user.bio = form.bio.data.strip() if form.bio.data else None
         db.session.commit()
         flash("Profil gespeichert.", "success")

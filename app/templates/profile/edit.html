@@ -41,6 +41,21 @@
     <label>{{ form.sauberkeit.label }}</label>
     {{ form.sauberkeit(class="input") }}
 
+    <label>{{ form.hobbies.label }}</label>
+    {{ form.hobbies(class="input", rows="3", placeholder="z.B. Kochen, Klettern, Gaming, Lesen") }}
+
+    <label>{{ form.musikgeschmack.label }}</label>
+    {{ form.musikgeschmack(class="input", placeholder="z.B. Indie, Hip-Hop, Techno, Jazz") }}
+
+    <label>{{ form.wochenend_typ.label }}</label>
+    {{ form.wochenend_typ(class="input") }}
+
+    <label>{{ form.soziales_level.label }}</label>
+    {{ form.soziales_level(class="input") }}
+
+    <label>{{ form.kocht_gern.label }}</label>
+    {{ form.kocht_gern() }}
+
     <label>{{ form.bio.label }}</label>
     {{ form.bio(class="input", rows="5") }}
 

@@ -30,6 +30,7 @@ def create_app(config_class=Config):
 
         db.create_all()
         _ensure_listing_geo_columns()
+        _ensure_user_lifestyle_columns()
 
     @app.route("/")
     def index():
@@ -52,3 +53,23 @@ def _ensure_listing_geo_columns():
             connection.execute(text("ALTER TABLE listing ADD COLUMN latitude FLOAT"))
         if "longitude" not in columns:
             connection.execute(text("ALTER TABLE listing ADD COLUMN longitude FLOAT"))
+
+
+def _ensure_user_lifestyle_columns():
+    """Add optional profile lifestyle columns to older local DBs without migrations."""
+    inspector = inspect(db.engine)
+    if "user" not in inspector.get_table_names():
+        return
+
+    columns = {column["name"] for column in inspector.get_columns("user")}
+    lifestyle_columns = {
+        "hobbies": "TEXT",
+        "musikgeschmack": "VARCHAR(200)",
+        "wochenend_typ": "VARCHAR(30)",
+        "soziales_level": "VARCHAR(30)",
+        "kocht_gern": "BOOLEAN",
+    }
+    with db.engine.begin() as connection:
+        for column_name, column_type in lifestyle_columns.items():
+            if column_name not in columns:
+                connection.execute(text(f"ALTER TABLE \"user\" ADD COLUMN {column_name} {column_type}"))

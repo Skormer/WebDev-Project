@@ -527,3 +527,29 @@ und trotzdem geht Upload → Supabase Storage.
 
 **Getestet:** Inserat mit eingefügter URL speichert diese; ungültige URL wird abgelehnt (Bestand
 bleibt); Upload hat Vorrang. (Lokale SQLite, Storage deaktiviert — keine Bucket-Writes.)
+## Schritt 28 - Lifestyle-Felder im Profil ergaenzt (2026-07-01)
+
+**Neu / geaendert:**
+- `app/models.py`: `User` hat neue optionale Profilfelder fuer Hobbys, Musikgeschmack,
+  Wochenend-Typ, WG-Sozialleben und Kochen.
+- `app/forms.py`, `app/routes/profile.py`: Die neuen Felder koennen im Profil bearbeitet
+  und gespeichert werden.
+- `app/templates/profile/edit.html` und `app/templates/profile/view.html`: Lifestyle-Felder
+  erscheinen im Bearbeiten-Formular und auf dem Profil.
+- `app/templates/listings/detail.html`: Die Inserent-Karte zeigt die Lifestyle-Felder ebenfalls.
+- `app/__init__.py`: Schema-Guard ergaenzt, damit bestehende Datenbanken die neuen
+  User-Spalten automatisch erhalten.
+
+**Getestet:** Syntax-/Import-Check; Test-Client-Checks fuer Profilbearbeitung, Profilanzeige
+und Anzeige der Lifestyle-Felder auf der Inserat-Detailseite.
+
+## Schritt 29 - Seed-Daten fuer Lifestyle-Profile und neue Listing-Attribute ergaenzt (2026-07-01)
+
+**Geaendert:**
+- `seed.py`: Alle Dummy-User haben jetzt passende Werte fuer Hobbys, Musikgeschmack,
+  Wochenend-Typ, WG-Sozialleben und Kochen.
+- `seed.py`: Demo-Inserate von 5 auf 10 erweitert, mit variierenden Kantonen, Adressen,
+  Koordinaten, Moeblierung, Haustier-/Raucherlaubnis, Zimmergroesse, Verfuegbarkeit und
+  Mitbewohner-Anzahl.
+
+**Getestet:** Syntax-/Import-Check; Seed-Daten laufen gegen eine In-Memory-SQLite-DB durch.

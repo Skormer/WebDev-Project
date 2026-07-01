@@ -36,6 +36,30 @@ class ProfileEditForm(FlaskForm):
     raucher = BooleanField("Raucher")
     haustiere = BooleanField("Haustiere")
     sauberkeit = IntegerField("Sauberkeit (1-5)")
+    hobbies = TextAreaField("Hobbys", validators=[Length(max=1000)])
+    musikgeschmack = StringField("Musikgeschmack", validators=[Length(max=200)])
+    wochenend_typ = SelectField(
+        "Wochenend-Typ",
+        choices=[
+            ("", "Keine Angabe"),
+            ("ruhig", "Ruhig"),
+            ("unterwegs", "Oft unterwegs"),
+            ("party", "Party / Ausgang"),
+            ("gemischt", "Gemischt"),
+        ],
+        validators=[Optional()],
+    )
+    soziales_level = SelectField(
+        "WG-Sozialleben",
+        choices=[
+            ("", "Keine Angabe"),
+            ("fuer_mich", "Eher fuer mich"),
+            ("gelegentlich", "Gelegentlich zusammen"),
+            ("gesellig", "Sehr gesellig"),
+        ],
+        validators=[Optional()],
+    )
+    kocht_gern = BooleanField("Kocht gerne")
     bio = TextAreaField("Bio")
     foto = FileField("Bild hochladen (JPEG)", validators=[FileAllowed(["jpg", "jpeg"], "Nur JPEG-Bilder erlaubt.")])
     foto_url = StringField("… oder Bild-URL", validators=[Optional(), URL(message="Bitte eine gültige URL angeben."), Length(max=500)])
