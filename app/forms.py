@@ -1,7 +1,7 @@
 from flask_wtf.file import FileAllowed, FileField
 from flask_wtf import FlaskForm
 from wtforms import BooleanField, DateField, DateTimeLocalField, IntegerField, PasswordField, SelectField, StringField, SubmitField, TextAreaField
-from wtforms.validators import DataRequired, Email, EqualTo, Length, NumberRange, Optional
+from wtforms.validators import DataRequired, Email, EqualTo, Length, NumberRange, Optional, URL
 
 
 class LoginForm(FlaskForm):
@@ -37,7 +37,8 @@ class ProfileEditForm(FlaskForm):
     haustiere = BooleanField("Haustiere")
     sauberkeit = IntegerField("Sauberkeit (1-5)")
     bio = TextAreaField("Bio")
-    foto = FileField("Bild (JPEG)", validators=[FileAllowed(["jpg", "jpeg"], "Nur JPEG-Bilder erlaubt.")])
+    foto = FileField("Bild hochladen (JPEG)", validators=[FileAllowed(["jpg", "jpeg"], "Nur JPEG-Bilder erlaubt.")])
+    foto_url = StringField("… oder Bild-URL", validators=[Optional(), URL(message="Bitte eine gültige URL angeben."), Length(max=500)])
     submit = SubmitField("Profil speichern")
 
 
@@ -58,7 +59,8 @@ class ListingForm(FlaskForm):
     pets_allowed = BooleanField("Haustiere erlaubt")
     smoking_allowed = BooleanField("Rauchen erlaubt")
     flatmates = IntegerField("Anzahl Mitbewohner", validators=[Optional(), NumberRange(min=0, max=20)])
-    foto = FileField("Bild (JPEG)", validators=[FileAllowed(["jpg", "jpeg"], "Nur JPEG-Bilder erlaubt.")])
+    foto = FileField("Bild hochladen (JPEG)", validators=[FileAllowed(["jpg", "jpeg"], "Nur JPEG-Bilder erlaubt.")])
+    photo_url = StringField("… oder Bild-URL", validators=[Optional(), URL(message="Bitte eine gültige URL angeben."), Length(max=500)])
     submit = SubmitField("Inserat speichern")
 
 

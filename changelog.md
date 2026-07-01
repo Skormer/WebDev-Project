@@ -510,3 +510,20 @@ Aufbauend auf Schritt 25: **Profilbilder werden jetzt ebenfalls in Supabase Stor
 
 **Getestet:** Echter Upload über `upload_photo` in beide Ordner (`listings/`, `profiles/`) des
 `images`-Buckets; öffentliche URLs liefern die Bytes zurück (HTTP 200); Testobjekte danach gelöscht.
+
+## Schritt 27 — Foto per Upload ODER direkter Bild-URL (2026-07-01)
+
+Bei Inserat und Profil kann das Bild jetzt **entweder hochgeladen ODER als direkte URL** angegeben
+werden (z. B. Unsplash-Links wie in den Seed-Daten). So bleiben die Dummy-Inserate auf Unsplash,
+und trotzdem geht Upload → Supabase Storage.
+
+**Neu / geändert:**
+- `app/forms.py`: Felder `photo_url` (ListingForm) und `foto_url` (ProfileEditForm) mit
+  `Optional()` + `URL`-Validierung.
+- `app/routes/listings.py` + `app/routes/profile.py`: Reihenfolge — hochgeladene Datei (→ Storage)
+  hat Vorrang, sonst die eingegebene Bild-URL, sonst bleibt das bestehende Bild.
+- `app/templates/listings/form.html` + `profile/edit.html`: „… oder Bild-URL"-Feld; im Profil wird
+  das aktuelle Bild angezeigt.
+
+**Getestet:** Inserat mit eingefügter URL speichert diese; ungültige URL wird abgelehnt (Bestand
+bleibt); Upload hat Vorrang. (Lokale SQLite, Storage deaktiviert — keine Bucket-Writes.)

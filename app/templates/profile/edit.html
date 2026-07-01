@@ -44,9 +44,18 @@
     <label>{{ form.bio.label }}</label>
     {{ form.bio(class="input", rows="5") }}
 
+    {% if user.foto_url %}
+      <img class="avatar" src="{{ user.foto_url }}" alt="Aktuelles Bild">
+    {% endif %}
     <label>{{ form.foto.label }}</label>
     {{ form.foto(class="input", accept="image/jpeg") }}
+    {% for e in form.foto.errors %}<span class="field-error">{{ e }}</span>{% endfor %}
     <p class="muted">Nur JPEG-Dateien (.jpg / .jpeg).</p>
+
+    <label>{{ form.foto_url.label }}</label>
+    {{ form.foto_url(class="input", placeholder="https://…/bild.jpg") }}
+    {% for e in form.foto_url.errors %}<span class="field-error">{{ e }}</span>{% endfor %}
+    <p class="muted">Alternativ zum Upload: eine direkte Bild-URL. Upload hat Vorrang.</p>
 
     {{ form.submit(class="btn btn-primary") }}
   </form>

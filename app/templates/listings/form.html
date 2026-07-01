@@ -59,6 +59,11 @@
     {% for e in form.foto.errors %}<span class="field-error">{{ e }}</span>{% endfor %}
     <p class="muted">Nur JPEG-Dateien (.jpg / .jpeg).{% if listing %} Leer lassen, um das aktuelle Bild zu behalten.{% endif %}</p>
 
+    <label>{{ form.photo_url.label }}</label>
+    {{ form.photo_url(class="input", placeholder="https://…/bild.jpg") }}
+    {% for e in form.photo_url.errors %}<span class="field-error">{{ e }}</span>{% endfor %}
+    <p class="muted">Alternativ zum Upload: eine direkte Bild-URL (z.B. Unsplash). Upload hat Vorrang.</p>
+
     <div class="checkbox-group">
       <label>{{ form.furnished() }} {{ form.furnished.label.text }}</label>
       <label>{{ form.pets_allowed() }} {{ form.pets_allowed.label.text }}</label>

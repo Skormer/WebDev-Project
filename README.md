@@ -65,11 +65,12 @@ python main.py                # http://127.0.0.1:5000
 
 ## 🖼️ Image Uploads
 
-Profile pictures **and** listing photos are uploaded as JPEG. If Supabase Storage is configured,
-the app uploads them to one **public** bucket (default `images`) — listing photos under
-`listings/`, profile pictures under `profiles/` — and stores the public URL in the DB
-(`Listing.photo_url` / `User.foto_url`). If Storage isn't configured, uploads fall back to the
-local `app/static/uploads/` folder (dev-only; ephemeral on Render).
+For each photo you can **either upload a JPEG or paste a direct image URL** (e.g. an Unsplash
+link — that's what the seed data uses). If a file is uploaded it wins; otherwise the pasted URL
+is used. Uploaded files, when Supabase Storage is configured, go to one **public** bucket
+(default `images`) — listing photos under `listings/`, profile pictures under `profiles/` — and
+the public URL is stored in the DB (`Listing.photo_url` / `User.foto_url`). Without Storage,
+uploads fall back to the local `app/static/uploads/` folder (dev-only; ephemeral on Render).
 
 Setup: create a **public** Supabase Storage bucket named `images`, then set these env vars
 locally (`.env`) and on Render. `SUPABASE_URL` is the plain project URL (not the S3 endpoint),

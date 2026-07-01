@@ -40,6 +40,8 @@ def edit():
                 filename = f"{filename_stem}{extension.lower()}"
                 uploaded_file.save(os.path.join(UPLOAD_FOLDER, filename))
                 current_user.foto_url = url_for("static", filename=f"uploads/{filename}")
+        elif form.foto_url.data:
+            current_user.foto_url = form.foto_url.data.strip()
 
         current_user.name = form.name.data.strip()
         current_user.rolle = form.rolle.data

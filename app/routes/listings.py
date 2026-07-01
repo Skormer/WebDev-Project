@@ -236,6 +236,10 @@ def new():
 
     form = ListingForm()
     if form.validate_on_submit():
+        # Foto: hochgeladene Datei (→ Storage) hat Vorrang, sonst optionale Bild-URL.
+        photo = _save_listing_photo(form.foto.data)
+        if not photo and form.photo_url.data:
+            photo = form.photo_url.data.strip()
         listing = Listing(
             owner=current_user,
             title=form.title.data.strip(),
@@ -251,7 +255,7 @@ def new():
             pets_allowed=form.pets_allowed.data,
             smoking_allowed=form.smoking_allowed.data,
             flatmates=form.flatmates.data,
-            photo_url=_save_listing_photo(form.foto.data),
+            photo_url=photo,
         )
         coordinates_found = _assign_listing_coordinates(listing)
         db.session.add(listing)
@@ -292,6 +296,8 @@ def edit(listing_id):
         new_photo = _save_listing_photo(form.foto.data)
         if new_photo:
             listing.photo_url = new_photo
+        elif form.photo_url.data:
+            listing.photo_url = form.photo_url.data.strip()
         db.session.commit()
         flash("Inserat aktualisiert.", "success")
         if not coordinates_found:
