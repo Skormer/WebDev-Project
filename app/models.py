@@ -26,7 +26,6 @@ class User(UserMixin, db.Model):
     musikgeschmack = db.Column(db.String(200))
     wochenend_typ = db.Column(db.String(30))
     soziales_level = db.Column(db.String(30))
-    kocht_gern = db.Column(db.Boolean, default=False)
     bio = db.Column(db.Text)
     foto_url = db.Column(db.String(500))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
