@@ -92,7 +92,6 @@ def make_user(index):
         musikgeschmack=rng.choice(MUSIK),
         wochenend_typ=rng.choice(WOCHENEND),
         soziales_level=rng.choice(SOZIAL),
-        kocht_gern=rng.random() < 0.6,
         bio="Freue mich auf eine unkomplizierte, nette WG.",
         # Die ersten LISTING_COUNT User bieten ein Inserat an, der Rest sucht.
         rolle="anbietend" if index < LISTING_COUNT else "suchend",

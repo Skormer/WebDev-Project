@@ -64,7 +64,6 @@ class ProfileEditForm(FlaskForm):
         ],
         validators=[Optional()],
     )
-    kocht_gern = BooleanField("Kocht gerne")
     bio = TextAreaField("Bio", validators=[Length(max=1000)])
     foto = FileField("Bild hochladen (JPEG)", validators=[FileAllowed(["jpg", "jpeg"], "Nur JPEG-Bilder erlaubt.")])
     foto_url = StringField("… oder Bild-URL", validators=[Optional(), URL(message="Bitte eine gültige URL angeben."), Length(max=500)])

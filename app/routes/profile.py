@@ -84,7 +84,8 @@ def delete():
         Application.query.filter(Application.listing_id.in_(listing_ids)).delete(synchronize_session=False)
         Appointment.query.filter(Appointment.listing_id.in_(listing_ids)).delete(synchronize_session=False)
         Message.query.filter(Message.listing_id.in_(listing_ids)).delete(synchronize_session=False)
-        Listing.query.filter(Listing.id.in_(listing_ids)).delete(synchronize_session=False)
+        for listing in list(current_user.listings):
+            db.session.delete(listing)
 
     Favorite.query.filter_by(user_id=user_id).delete(synchronize_session=False)
     Application.query.filter_by(applicant_id=user_id).delete(synchronize_session=False)

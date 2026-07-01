@@ -86,7 +86,6 @@ def _ensure_user_lifestyle_columns():
         "musikgeschmack": "VARCHAR(200)",
         "wochenend_typ": "VARCHAR(30)",
         "soziales_level": "VARCHAR(30)",
-        "kocht_gern": "BOOLEAN",
     }
     with db.engine.begin() as connection:
         for column_name, column_type in lifestyle_columns.items():
