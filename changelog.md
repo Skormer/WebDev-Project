@@ -4,13 +4,13 @@ Pro abgeschlossenem Schritt/Feature ein Eintrag.
 
 ## Schritt 0 — Projekt-Setup & Dokumentation (2026-06-29)
 
-App-Idee **FlateMate** (WG-/Mitbewohner-Matching) gewählt und das Projektgerüst
+App-Idee **FlatMate** (WG-/Mitbewohner-Matching) gewählt und das Projektgerüst
 samt Planungsunterlagen aufgesetzt.
 
 **Hinzugefügt:**
 - `PROJECT_GUIDELINES.md` — Kursvorgaben (ZHAW), Pflicht-/Sonderfunktionen, Bewertung, Abgaben
 - `BUILD_PLAN.md` — Zielstruktur, Milestones, Tag-für-Tag-Reihenfolge der Features
-- `temp_flatemate_er_diagram.html` — ER-Modell mit 7 Tabellen (User, Listing,
+- `temp_flatmate_er_diagram.html` — ER-Modell mit 7 Tabellen (User, Listing,
   ListingPhoto, Application, Favorite, Message, Appointment) als Mermaid-Diagramm
 - `README.md` — Projektübersicht + Setup-Anleitung
 - `CLAUDE.md` — Kontext/Anleitung für Claude Code
@@ -64,7 +64,7 @@ Das Datenmodell wurde als eigenes Artefakt dokumentiert und in die Projekt-
 Unterlagen eingeordnet.
 
 **Neu:**
-- `temp_flatemate_er_diagram.html`: ER-Diagramm mit 7 Tabellen (User, Listing,
+- `temp_flatmate_er_diagram.html`: ER-Diagramm mit 7 Tabellen (User, Listing,
   ListingPhoto, Application, Favorite, Message, Appointment)
 - `BUILD_PLAN.md`: ER-Modell als erledigt markiert
 
@@ -237,7 +237,7 @@ Inserent bekommt eine E-Mail, wenn sich jemand auf sein Inserat bewirbt — übe
 - `config.py` + `.env.example`: `SENDGRID_API_KEY`, `MAIL_FROM`, `MAIL_FROM_NAME`.
 - `app/routes/listings.py`: nach gespeicherter Bewerbung Mail an `listing.owner.email`.
 - **Gestaltete HTML-Mail**: `app/templates/email/application_notification.html` — Tabellen-Layout
-  mit Inline-Styles, FlateMate-Logo/Header in Markenfarbe, Zitatbox für die Bewerber-Nachricht
+  mit Inline-Styles, FlatMate-Logo/Header in Markenfarbe, Zitatbox für die Bewerber-Nachricht
   und „Bewerbungen ansehen"-Button. Variablen werden durch Jinja escaped (kein HTML-Injection).
 
 **Warum SendGrid:** Single Sender Verification erlaubt das Verifizieren EINER Absender-Adresse
@@ -259,7 +259,7 @@ Analog zur Bewerbung bekommt der Inserent jetzt auch eine E-Mail, wenn jemand ei
 - `app/routes/listings.py`: `request_appointment` sendet nach gespeicherter Anfrage eine Mail
   an `listing.owner.email` (mit Name, **Wunschtermin** und optionaler Nachricht).
 - **Gestaltete HTML-Mail**: `app/templates/email/appointment_notification.html` — gleiches
-  FlateMate-Design wie die Bewerbungs-Mail, plus hervorgehobener Wunschtermin und Button
+  FlatMate-Design wie die Bewerbungs-Mail, plus hervorgehobener Wunschtermin und Button
   „Besichtigungen verwalten". Klartext-Variante für bessere Zustellbarkeit.
 - Nutzt denselben `send_email()`-Helfer (Log-Fallback ohne Key, Fehler werfen nie nach oben).
 
@@ -331,3 +331,19 @@ einsetzen. `DATABASE_URL`/Secrets nur via `.env` (gitignored), nie committen.
 **Getestet:** Verbindung erfolgreich (PostgreSQL 17.6); Seeder mit `--force` legt Tabellen +
 Dummy-Daten in Supabase an (10 User / 5 Inserate / 3 Bewerbungen / 2 Nachrichten); App-Login und
 Seiten laden gegen Supabase; `--force`-Schutz bricht ohne Flag korrekt ab, ohne Daten zu ändern.
+
+## Schritt 15 — Umbenennung FlateMate → FlatMate (2026-07-01)
+
+Einheitliche Schreibweise des App-Namens: **FlatMate** (vorher „FlateMate").
+
+**Geändert:**
+- UI: Marken-/Logo-Text in der Navigation, Seitentitel, Willkommens-Flash bei der Registrierung,
+  beide E-Mail-Templates.
+- Code/Config: `config.py` (SQLite-Datei `flatmate.db`, `MAIL_FROM_NAME` Default `FlatMate`),
+  `.env` / `.env.example`, sämtliche Docs (`README`, `BUILD_PLAN`, `CLAUDE.md`, `changelog`).
+- Datei umbenannt: `temp_flatemate_er_diagram.html` → `temp_flatmate_er_diagram.html`
+  (Referenzen in den Docs mit angepasst).
+- 23 Textdateien angepasst; keine „flatemate"-Vorkommen mehr. Der verifizierte SendGrid-Absender
+  `flatmatesendgrid@gmail.com` blieb unverändert (korrekte Schreibweise, sonst bricht der Versand).
+
+**Getestet:** App-Boot; Navigation zeigt „FlatMate", kein „FlateMate" mehr; `MAIL_FROM_NAME=FlatMate`.

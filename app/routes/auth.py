@@ -41,7 +41,7 @@ def register():
             db.session.add(user)
             db.session.commit()
             login_user(user)
-            flash("Konto erstellt – willkommen bei FlateMate!", "success")
+            flash("Konto erstellt – willkommen bei FlatMate!", "success")
             return redirect(url_for("profile.me"))
 
     return render_template("auth/register.html", form=form)

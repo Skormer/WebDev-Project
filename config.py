@@ -21,7 +21,7 @@ class Config:
     # Falls keine DATABASE_URL gesetzt ist -> lokale SQLite-Datei (läuft sofort ohne Setup).
     # Für Supabase/Postgres einfach DATABASE_URL in .env eintragen.
     SQLALCHEMY_DATABASE_URI = _normalize_db_url(os.environ.get("DATABASE_URL")) or (
-        "sqlite:///" + os.path.join(basedir, "flatemate.db")
+        "sqlite:///" + os.path.join(basedir, "flatmate.db")
     )
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     # Supabase/Postgres schliesst inaktive Verbindungen (und pausiert Free-Projekte) ->
@@ -33,4 +33,4 @@ class Config:
     # (lokale Entwicklung) statt wirklich versendet.
     SENDGRID_API_KEY = os.environ.get("SENDGRID_API_KEY")
     MAIL_FROM = os.environ.get("MAIL_FROM")  # die in SendGrid verifizierte Absender-Adresse
-    MAIL_FROM_NAME = os.environ.get("MAIL_FROM_NAME", "FlateMate")
+    MAIL_FROM_NAME = os.environ.get("MAIL_FROM_NAME", "FlatMate")

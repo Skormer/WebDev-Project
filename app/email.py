@@ -44,7 +44,7 @@ def send_email(to, subject, html, text=None):
     payload = json.dumps(
         {
             "personalizations": [{"to": [{"email": to}]}],
-            "from": {"email": sender, "name": current_app.config.get("MAIL_FROM_NAME", "FlateMate")},
+            "from": {"email": sender, "name": current_app.config.get("MAIL_FROM_NAME", "FlatMate")},
             "subject": subject,
             "content": content,
         }

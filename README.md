@@ -1,4 +1,4 @@
-# 🏠 FlateMate
+# 🏠 FlatMate
 
 A flat-/roommate-matching web app built with **Python + Flask** (ZHAW Full-Stack Web
 Development module). Users create a profile, browse flat listings, and get matched with
@@ -13,7 +13,7 @@ The agreed scope and design live in these files — read them before larger chan
 |---|---|
 | [`PROJECT_GUIDELINES.md`](PROJECT_GUIDELINES.md) | Course requirements, required vs. special features, grading, deliverables |
 | [`BUILD_PLAN.md`](BUILD_PLAN.md) | Target structure, milestones, day-by-day feature order |
-| [`temp_flatemate_er_diagram.html`](temp_flatemate_er_diagram.html) | ER model — the 7 tables the schema grows toward (open in a browser) |
+| [`temp_flatmate_er_diagram.html`](temp_flatmate_er_diagram.html) | ER model — the 7 tables the schema grows toward (open in a browser) |
 | [`CLAUDE.md`](CLAUDE.md) | Architecture notes / guidance for Claude Code |
 | [`changelog.md`](changelog.md) | What was built in each step |
 
@@ -37,7 +37,7 @@ pip install -r requirements.txt
 copy .env.example .env        # then fill in values; safe to skip for local dev
 
 # 4. Create the database with sample data
-python seed.py                # builds flatemate.db + 10 dummy users + 5 dummy listings
+python seed.py                # builds flatmate.db + 10 dummy users + 5 dummy listings
 
 # 5. Run the dev server
 python main.py                # http://127.0.0.1:5000
@@ -47,7 +47,7 @@ python main.py                # http://127.0.0.1:5000
 
 ## 🗄️ Database
 
-- **No `.env` / no `DATABASE_URL`** → the app uses a local **SQLite file** (`flatemate.db`)
+- **No `.env` / no `DATABASE_URL`** → the app uses a local **SQLite file** (`flatmate.db`)
   in the project root. Zero setup, runs immediately. This file is **git-ignored** — it is
   *not* pushed, so each person rebuilds it with `python seed.py`.
 - **`DATABASE_URL` set in `.env`** (a Supabase Postgres URI) → the same code talks to

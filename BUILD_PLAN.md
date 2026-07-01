@@ -1,11 +1,11 @@
-# FlateMate — Projektgerüst & Build-Plan
+# FlatMate — Projektgerüst & Build-Plan
 
 Lauffähiges Fundament bis Milestone M1 (Login + Profil aus DB). Restliche Features sind als Stubs mit `# TODO` markiert — Schritt für Schritt ausbauen.
 
 ## Ordnerstruktur
 
 ```
-flatemate/
+flatmate/
 ├── .env.example          # zu .env kopieren, Supabase-Werte einsetzen
 ├── .gitignore
 ├── requirements.txt
